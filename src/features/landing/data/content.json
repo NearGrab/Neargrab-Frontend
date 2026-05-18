@@ -1,0 +1,125 @@
+{
+  "navbar": {
+    "brand": "Neargrab",
+    "links": [
+      { "label": "Home", "href": "/" },
+      { "label": "How It Works", "href": "/#how-it-works" },
+      { "label": "For Shopkeepers", "href": "/#for-shopkeepers" },
+      { "label": "Features", "href": "/#features" },
+      { "label": "About Us", "href": "/about" },
+      { "label": "FAQs", "href": "/faqs" }
+    ],
+    "button": "Explore"
+  },
+  "hero": {
+    "headingLine1": "Find It Near You.",
+    "headingLine2": "Support Local.",
+    "description": "Neargrab connects you with trusted local shops nearby. Discover products, check availability, read reviews and visit your neighborhood stores.",
+    "primaryButton": "Explore",
+    "secondaryButton": "Start Your Journey\nas a Shopkeeper",
+    "badges": [
+      {
+        "title": "No Delivery Fees",
+        "description": "Shop locally, save more"
+      },
+      {
+        "title": "Trusted by Locals",
+        "description": "Real reviews from real people"
+      },
+      {
+        "title": "Support Local",
+        "description": "Empower your neighborhood"
+      }
+    ],
+    "image": "/src/assets/Landing/Hero.png"
+  },
+  "features": {
+    "tagline": "WHY NEARGRAB?",
+    "heading": "Local Shopping, Made Simple",
+    "description": "Neargrab makes it easy to discover, connect and shop from local stores you trust.",
+    "items": [
+      {
+        "title": "Find Nearby Stores",
+        "description": "Search for any product and find stores near you in seconds.",
+        "icon": "/src/assets/Landing/icons/shop-icon.png"
+      },
+      {
+        "title": "Check Availability",
+        "description": "See what's in stock before you visit. Save time, shop smart.",
+        "icon": "/src/assets/Landing/icons/mobile.png"
+      },
+      {
+        "title": "Read Local Reviews",
+        "description": "Real reviews from people in your area you can depend on.",
+        "icon": "/src/assets/Landing/icons/review-icon.png"
+      },
+      {
+        "title": "Get Directions",
+        "description": "Navigate to the store with one tap using live maps.",
+        "icon": "/src/assets/Landing/icons/direction.png"
+      }
+    ]
+  },
+  "forShopkeepers": {
+    "tagline": "FOR SHOPKEEPERS",
+    "heading": "Grow Your Shop\nWith Neargrab",
+    "description": "Create your digital shop, showcase your products, reach more local customers and grow your business.",
+    "benefits": [
+      "Easy shop setup",
+      "List unlimited products",
+      "Get discovered by nearby customers",
+      "Build trust with local reviews"
+    ],
+    "button": "Start Your Journey as a Shopkeeper",
+    "images": {
+      "shopkeeper": "/src/assets/Landing/Shopkeeper.png",
+      "shopUI": "/src/assets/Landing/shop.png"
+    }
+  },
+  "stats": {
+    "tagline": "LOCALLY CONNECTED, NATIONWIDE IMPACT",
+    "items": [
+      { "value": "10K+", "label": "Local Shops" },
+      { "value": "500K+", "label": "Happy Customers" },
+      { "value": "1M+", "label": "Products Listed" },
+      { "value": "25+", "label": "Cities & Growing" }
+    ]
+  },
+  "howItWorks": {
+    "heading": "How It Works",
+    "description": "Simple steps to discover local shops and products",
+    "steps": [
+      { "number": 1, "title": "Search", "description": "Search for any product you need." },
+      { "number": 2, "title": "Discover", "description": "Find nearby shops with the product in stock." },
+      { "number": 3, "title": "Verify & Decide", "description": "Check reviews, compare choose best." },
+      { "number": 4, "title": "Visit & Shop", "description": "Get directions and visit the store to buy." }
+    ]
+  },
+  "footer": {
+    "cta": {
+      "heading": "Let's Build Stronger Neighborhoods Together",
+      "description": "Neargrab is more than an app. It's a movement to support local businesses and create stronger, happier communities.",
+      "primaryButton": "Explore",
+      "secondaryButton": "Start Your Journey as a Shopkeeper",
+      "image": "/src/assets/Landing/icons/shop-icon.png"
+    },
+    "brand": {
+      "name": "Neargrab",
+      "description": "Find it near you. Support local."
+    },
+    "links": {
+      "company": [
+        { "label": "About Us", "href": "/about" },
+        { "label": "Contact Us", "href": "/contact" },
+        { "label": "Blog", "href": "/blog" }
+      ],
+      "support": [
+        { "label": "FAQs", "href": "/faqs" },
+        { "label": "Privacy Policy", "href": "/privacy" },
+        { "label": "Terms & Conditions", "href": "/terms" },
+        { "label": "Help Center", "href": "/help" }
+      ]
+    },
+    "copyright": "© 2026 Neargrab. All rights reserved."
+  }
+}
