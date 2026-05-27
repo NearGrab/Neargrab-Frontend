@@ -1,9 +1,9 @@
 import React from 'react';
-import content from '../data/content.json';
+import content from '../../data/content.json';
 
 export default function Features() {
   const { features } = content;
-  
+
   return (
     <section id="features" className="py-24 px-4 md:px-8 max-w-[90rem] mx-auto bg-gray-50">
       <div className="text-center mb-16">

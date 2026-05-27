@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, Store, MessageSquare, MapPin } from 'lucide-react';
-import content from '../data/content.json';
+import content from '../../data/content.json';
 
 export default function HowItWorks() {
   const { howItWorks } = content;

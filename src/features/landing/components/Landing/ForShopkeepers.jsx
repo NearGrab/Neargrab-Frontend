@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import content from '../data/content.json';
+import content from '../../data/content.json';
 
 export default function ForShopkeepers() {
   const { forShopkeepers } = content;

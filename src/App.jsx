@@ -1,15 +1,8 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import LandingPage from './features/landing/pages/LandingPage'
-import NotFoundPage from './features/shared/pages/NotFoundPage'
+import React from 'react';
+import AppRouter from './router';
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
-  )
+  return <AppRouter />;
 }
 
-export default App
+export default App;

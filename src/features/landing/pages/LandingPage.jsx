@@ -1,10 +1,9 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
-import Features from '../components/Features';
-import ForShopkeepers from '../components/ForShopkeepers';
-import Stats from '../components/Stats';
-import HowItWorks from '../components/HowItWorks';
+import Hero from '../components/Landing/Hero';
+import Features from '../components/Landing/Features';
+import ForShopkeepers from '../components/Landing/ForShopkeepers';
+import HowItWorks from '../components/Landing/HowItWorks';
 import Footer from '../components/Footer';
 
 export default function LandingPage() {

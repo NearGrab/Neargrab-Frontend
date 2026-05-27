@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Store, Truck, ShieldCheck, HeartHandshake } from 'lucide-react';
-import content from '../data/content.json';
+import content from '../../data/content.json';
 
 export default function Hero() {
   const { hero } = content;

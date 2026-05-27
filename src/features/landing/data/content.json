@@ -121,5 +121,171 @@
       ]
     },
     "copyright": "© 2026 Neargrab. All rights reserved."
+  },
+  "faqs": {
+    "tagline": "HELP & SUPPORT",
+    "heading": "Frequently Asked Questions",
+    "description": "Got questions? We've got answers. Find everything you need to know about using Neargrab.",
+    "categories": [
+      {
+        "id": "general",
+        "name": "General Questions",
+        "icon": "HelpCircle",
+        "items": [
+          {
+            "question": "What is Neargrab and how does it work?",
+            "answer": "Neargrab is a local commerce platform that connects neighborhood shoppers with nearby brick-and-mortar retail stores. You can search for products, check their real-time availability at local shops, read trusted neighborhood reviews, and navigate to the store using integrated directions to pick up your purchase immediately."
+          },
+          {
+            "question": "Is Neargrab free to use for shoppers?",
+            "answer": "Yes, Neargrab is completely free for shoppers! We don't charge any subscription fees, convenience fees, or transaction markups. You pay the exact same price as listed inside the physical store."
+          },
+          {
+            "question": "How do you ensure store information is accurate?",
+            "answer": "We work closely with local shop owners who update their inventory status regularly. Additionally, our community features allow customers to report status updates, keeping stock availability and opening hours extremely reliable."
+          }
+        ]
+      },
+      {
+        "id": "shoppers",
+        "name": "For Customers",
+        "icon": "ShoppingBag",
+        "items": [
+          {
+            "question": "Can I buy products directly through the Neargrab app?",
+            "answer": "Neargrab is designed to facilitate local, in-person shopping to support your neighborhood economy. You browse and reserve products through the app, then visit the physical store to complete the purchase, touch/feel the product, and take it home instantly."
+          },
+          {
+            "question": "How do I leave a review for a local shop?",
+            "answer": "Once you visit a shop, open their profile page on Neargrab and click the 'Write a Review' button. You can rate your experience, upload images, and write details about product quality and customer service."
+          },
+          {
+            "question": "What should I do if a product shown in stock is actually sold out?",
+            "answer": "While we strive for absolute real-time accuracy, occasionally a product might sell out before a shopkeeper can update their inventory. You can report a discrepancy directly on the store profile page, helping us keep the database updated."
+          }
+        ]
+      },
+      {
+        "id": "shopkeepers",
+        "name": "For Shopkeepers",
+        "icon": "Store",
+        "items": [
+          {
+            "question": "How do I list my shop on Neargrab?",
+            "answer": "Registering as a shopkeeper is quick and easy! Click the 'Start Your Journey as a Shopkeeper' button in the navbar or footer, fill out your store profile details, set your location, and start uploading your product inventory instantly."
+          },
+          {
+            "question": "Are there any listing fees or commissions for sellers?",
+            "answer": "We offer a generous free tier that allows neighborhood stores to list their profile and essential catalog. For large-scale inventories and advanced marketing tools, we have low-cost premium plans with absolutely zero commissions on your sales."
+          },
+          {
+            "question": "Can I sync my existing POS or e-commerce inventory?",
+            "answer": "Yes! Neargrab supports bulk Excel/CSV inventory uploads, and we provide modern API integrations to sync directly with popular point-of-sale (POS) systems and e-commerce platforms like Shopify or WooCommerce."
+          }
+        ]
+      }
+    ],
+    "contact": {
+      "heading": "Still have questions?",
+      "description": "Can't find the answer you're looking for? Please contact our friendly support team.",
+      "button": "Get in Touch",
+      "email": "support@neargrab.com"
+    }
+  },
+
+
+
+
+  
+  "about": {
+    "hero": {
+      "tagline": "ABOUT NEARGRAB",
+      "heading": "Connecting Neighborhoods, Empowering Communities",
+      "description": "Neargrab was founded with a single mission: to build a seamless digital bridge between local brick-and-mortar stores and modern convenience-driven shoppers. We believe the heart of every neighborhood lies in its physical retail stores."
+    },
+    "whyNeeded": {
+      "tagline": "THE PROBLEM & OUR MISSION",
+      "heading": "Why Neargrab is Needed",
+      "description": "In a world dominated by global e-commerce giants, local shops are increasingly marginalized. Neargrab acts as a localized digital interface that brings neighborhood inventories right to your screen, protecting local businesses and local jobs.",
+      "items": [
+        {
+          "title": "Supporting the Local Economy",
+          "description": "Every purchase made from a local retailer circulates money within the neighborhood, directly supporting local families and neighborhood facilities."
+        },
+        {
+          "title": "Instant Shopping Gratification",
+          "description": "Why wait 2 to 3 days for standard e-commerce delivery? Find the item in a store 5 minutes away, buy it, and enjoy it immediately."
+        },
+        {
+          "title": "Environmental Sustainability",
+          "description": "By shopping locally, you completely eliminate the massive carbon footprints associated with long-haul shipping and excess delivery packaging."
+        },
+        {
+          "title": "Unrivalled Product Trust",
+          "description": "Nothing beats the physical experience. Browse and hold the product inside the physical store before completing the purchase."
+        }
+      ]
+    },
+    "vision": {
+      "heading": "Our Vision & Values",
+      "description": "We are guided by a set of core principles that put the interests of neighborhood retailers and local consumers first.",
+      "items": [
+        {
+          "title": "Community First",
+          "description": "We build tools that foster trust, connectivity, and direct relationships between shoppers and merchants."
+        },
+        {
+          "title": "Absolute Transparency",
+          "description": "Real-time stock levels, honest community reviews, and direct merchant interactions without hidden algorithms."
+        },
+        {
+          "title": "Zero Transaction Friction",
+          "description": "No hidden platform markups or convenience fees for customers, and easy, commission-free options for local stores."
+        }
+      ]
+    },
+    "team": {
+      "tagline": "THE MINDS BEHIND NEARGRAB",
+      "heading": "Meet the Co-Founders",
+      "description": "A group of tech innovators, design experts, and community advocates working side-by-side to revolutionize local commerce.",
+      "members": [
+        {
+          "name": "Ariont Sharma",
+          "role": "Co-Founder & CEO",
+          "bio": "Strategic visionary and community development enthusiast. Leading Neargrab's expansion and retail partnership networks.",
+          "initials": "AS",
+          "color": "bg-emerald-100 text-brand-900 border-brand-200",
+          "social": {
+            "linkedin": "#",
+            "twitter": "#",
+            "github": "#"
+          }
+        },
+        {
+          "name": "John Doe",
+          "role": "Co-Founder & CTO",
+          "bio": "Cloud developer and local database expert. Architecting the high-performance real-time search engine powering Neargrab.",
+          "initials": "JD",
+          "color": "bg-amber-100 text-amber-900 border-amber-200",
+          "social": {
+            "linkedin": "#",
+            "twitter": "#",
+            "github": "#"
+          }
+        },
+        {
+          "name": "Sarah Patel",
+          "role": "Co-Founder & CPO",
+          "bio": "Local shopping advocate and user experience champion. Directing visual design systems to make local shopping simple and premium.",
+          "initials": "SP",
+          "color": "bg-blue-100 text-blue-900 border-blue-200",
+          "social": {
+            "linkedin": "#",
+            "twitter": "#",
+            "github": "#"
+          }
+        }
+      ]
+    }
   }
 }
