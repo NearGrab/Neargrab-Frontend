@@ -109,15 +109,12 @@
     },
     "links": {
       "company": [
-        { "label": "About Us", "href": "/about" },
-        { "label": "Contact Us", "href": "/contact" },
-        { "label": "Blog", "href": "/blog" }
+        { "label": "About Us", "href": "/about" }
       ],
       "support": [
         { "label": "FAQs", "href": "/faqs" },
         { "label": "Privacy Policy", "href": "/privacy" },
-        { "label": "Terms & Conditions", "href": "/terms" },
-        { "label": "Help Center", "href": "/help" }
+        { "label": "Terms & Conditions", "href": "/terms" }
       ]
     },
     "copyright": "© 2026 Neargrab. All rights reserved."
