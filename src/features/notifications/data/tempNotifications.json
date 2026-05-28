@@ -1,0 +1,124 @@
+{
+  "notifications": [
+    {
+      "id": 1,
+      "userInitials": "NP",
+      "userName": "Neha P.",
+      "type": "follows",
+      "title": "Neha P. started following you",
+      "description": "You can now see her reviews and updates.",
+      "time": "10:30 AM",
+      "dateGroup": "Today",
+      "read": false
+    },
+    {
+      "id": 2,
+      "userInitials": "RS",
+      "userName": "Rohit S.",
+      "type": "likes",
+      "title": "Rohit S. liked your review on Fortune Sunlite Oil 1L",
+      "description": "Thanks for sharing your experience!",
+      "time": "09:15 AM",
+      "dateGroup": "Today",
+      "read": false
+    },
+    {
+      "id": 3,
+      "userInitials": "MB",
+      "userName": "Meena B.",
+      "type": "likes",
+      "title": "Meena B. liked your review on Surf Excel Matic 1kg",
+      "description": "Keep up the good reviews!",
+      "time": "08:45 AM",
+      "dateGroup": "Today",
+      "read": false
+    },
+    {
+      "id": 4,
+      "isAlert": true,
+      "storeName": "Jain Kirana Store",
+      "type": "alerts",
+      "title": "Jain Kirana Store",
+      "badge": "New Alert",
+      "description": "Weekend Special! Get 10% off on all Pulses & Grains. Limited time only!",
+      "time": "Yesterday, 7:30 PM",
+      "dateGroup": "Yesterday",
+      "read": false
+    },
+    {
+      "id": 5,
+      "userInitials": "PG",
+      "userName": "Patel General Store",
+      "type": "follows",
+      "title": "Patel General Store started following you",
+      "description": "Discover their products and latest offers.",
+      "time": "Yesterday, 4:10 PM",
+      "dateGroup": "Yesterday",
+      "read": true
+    },
+    {
+      "id": 6,
+      "userInitials": "AT",
+      "userName": "Anjali T.",
+      "type": "likes",
+      "title": "Anjali T. liked your review on Colgate Strong Teeth 180g",
+      "description": "Your review is helpful!",
+      "time": "Yesterday, 12:20 PM",
+      "dateGroup": "Yesterday",
+      "read": true
+    },
+    {
+      "id": 7,
+      "isAlert": true,
+      "storeName": "Patel Fruits Center",
+      "type": "alerts",
+      "title": "Patel Fruits Center",
+      "badge": "New Alert",
+      "description": "Fresh Fruits Arrived! Check out today's best picks.",
+      "time": "Yesterday, 10:05 AM",
+      "dateGroup": "Yesterday",
+      "read": true
+    },
+    {
+      "id": 8,
+      "userInitials": "VH",
+      "userName": "Viral Hardware",
+      "type": "follows",
+      "title": "Viral Hardware started following you",
+      "description": "See their latest hardware products.",
+      "time": "Mon, 6:45 PM",
+      "dateGroup": "This Week",
+      "read": true
+    }
+  ],
+  "preferences": {
+    "push": true,
+    "email": true,
+    "follows": true,
+    "likes": true,
+    "alerts": true
+  },
+  "recommended": [
+    {
+      "id": 1,
+      "name": "Shree Provision Store",
+      "category": "Grocery, Snacks, Dairy",
+      "distance": "0.3 km away",
+      "following": false
+    },
+    {
+      "id": 2,
+      "name": "Patel Fruits Center",
+      "category": "Fruits, Vegetables",
+      "distance": "0.4 km away",
+      "following": false
+    },
+    {
+      "id": 3,
+      "name": "Shree Hardware",
+      "category": "Hardware, Electricals",
+      "distance": "0.5 km away",
+      "following": false
+    }
+  ]
+}

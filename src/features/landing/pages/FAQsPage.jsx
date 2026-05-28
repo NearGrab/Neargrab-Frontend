@@ -4,8 +4,8 @@ import FAQHeader from '../components/FAQ/FAQHeader';
 import FAQCategories from '../components/FAQ/FAQCategories';
 import FAQAccordion from '../components/FAQ/FAQAccordion';
 import FAQContact from '../components/FAQ/FAQContact';
+import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
-import content from '../data/content.json';
 
 export default function FAQsPage() {
   const { faqs } = content;
@@ -62,6 +62,7 @@ export default function FAQsPage() {
       </main>
 
       {/* Footer Banner & Site links */}
+      <CTABanner />
       <Footer />
     </div>
   );

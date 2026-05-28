@@ -20,11 +20,16 @@ graph TD
         AppRouter --> AP[AboutPage.jsx]
         AppRouter --> FP[FAQsPage.jsx]
         AppRouter --> PP[Privacy/Terms Pages]
+        AppRouter --> EP[ExplorePage.jsx]
+        AppRouter --> NTP[NotificationsPage.jsx]
+        AppRouter --> PFP[ProfilePage.jsx]
         AppRouter --> NP[NotFoundPage.jsx Fallback]
     end
 
-    subgraph Data Layer [Centralized JSON Data]
+    subgraph Data Layer [Centralized JSON Data & Mocks]
         LP & AP & FP & PP --> content[content.json config]
+        EP --> exploreService[exploreService.js + temp.json]
+        NTP --> notificationService[notificationService.js + tempNotifications.json]
     end
 ```
 
@@ -34,18 +39,20 @@ graph TD
 2.  **React 19 (Component Library)**: Employs functional components, custom hooks, and Strict Mode hooks for performance and thread safety.
 3.  **Tailwind CSS v4 (Styling Framework)**: Incorporates a high-performance CSS compiler that is fully integrated into the Vite build pipelining via `@tailwindcss/vite`, avoiding post-processing overhead.
 4.  **React Router DOM v7 (Routing Platform)**: Handles lightning-fast, zero-reloading client-side routes, resolving history buffers, scrolling anchors, and layout switching.
+5.  **Class Merging Utility (`src/shared/utils/cn.js`)**: Leverages `clsx` and `tailwind-merge` to compile clean, conditional, and conflict-free utility overrides dynamically for high-fidelity responsive components.
 
 ---
 
-## 🗂️ Architectural Concept: Feature Slices
+## 🗂️ Architectural Concept: Feature Slices & Mock Data Handlers
 
-To prevent the common React issue where directories become cluttered as files accumulate, Neargrab uses a **Feature Slice Pattern** (simplified variant of Feature-Sliced Design). 
+To prevent the common React issue where directories become cluttered as files accumulate, Neargrab uses a **Feature Slice Pattern** (simplified variant of Feature-Sliced Design).
 
 ### Principles of our Feature Slices:
 
-*   **Self-Contained Slices**: All assets, components, layouts, data objects, and helpers supporting a business concept are encapsulated inside its matching feature directory (e.g. `src/features/landing/`).
-*   **Decoupled Pages**: Route screens (e.g., `AboutPage.jsx`) live inside a slice's `pages/` subdirectory. They behave as orchestrators, importing specific widgets from `components/` and feeding them details extracted from the centralized `content.json`.
-*   **Shared Assets boundary**: The `src/features/shared/` folder contains layouts or fallback features that cross domain boundaries (like global 404 views).
+*   **Self-Contained Slices**: All assets, components, layouts, data objects, and helpers supporting a business concept are encapsulated inside its matching feature directory (e.g. `src/features/landing/`, `src/features/notifications/`).
+*   **Decoupled Pages**: Route screens (e.g., `AboutPage.jsx`, `NotificationsPage.jsx`) live inside a slice's `pages/` subdirectory. They behave as orchestrators, importing specific widgets from `components/` and feeding them details extracted from configuration files or service handlers.
+*   **Asynchronous Mock Services Pattern**: Dashboard queries (e.g., `notificationService.js`, `exploreService.js`) mimic production backend behaviors by loading mock JSON schemas asynchronously. They leverage state cache stores and simulated latency timeouts to yield authentic loading loaders, spinner cues, and dynamic states!
+*   **Shared Assets boundary**: The `src/shared/` folder contains layouts, utils, or components that cross domain boundaries (like global navigation headers or star ratings).
 
 ---
 

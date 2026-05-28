@@ -4,6 +4,7 @@ import AboutHero from '../components/about-us/AboutHero';
 import WhyNeeded from '../components/about-us/WhyNeeded';
 import ValuesSection from '../components/about-us/ValuesSection';
 import TeamSection from '../components/about-us/TeamSection';
+import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 
 export default function AboutPage() {
@@ -32,6 +33,7 @@ export default function AboutPage() {
       </main>
 
       {/* Footer Banner */}
+      <CTABanner />
       <Footer />
     </div>
   );

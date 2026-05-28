@@ -4,6 +4,7 @@ import Hero from '../components/Landing/Hero';
 import Features from '../components/Landing/Features';
 import ForShopkeepers from '../components/Landing/ForShopkeepers';
 import HowItWorks from '../components/Landing/HowItWorks';
+import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 
 export default function LandingPage() {
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <ForShopkeepers />
       {/* <Stats /> */}
       <HowItWorks />
+      <CTABanner />
       <Footer />
     </div>
   );

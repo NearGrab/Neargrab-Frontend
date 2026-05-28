@@ -36,7 +36,7 @@ Neargrab-Frontend/
 │   │   │   │   ├── FAQ/     # Accordion widgets and help center blocks
 │   │   │   │   ├── Landing/ # Hero, Stats, ForShopkeepers, Features, How it Works
 │   │   │   │   ├── about-us/# Co-founder profiles, values and about items
-│   │   │   │   ├── Navbar.jsx
+│   │   │   │   └── CTABanner.jsx # Decoupled promotional CTA block card
 │   │   │   │   └── Footer.jsx
 │   │   │   ├── data/        # Centralized text configuration source of truth
 │   │   │   │   └── content.json
@@ -51,12 +51,21 @@ Neargrab-Frontend/
 │   │   │   ├── data/        # Mock local database model (temp.json)
 │   │   │   ├── services/    # Decoupled mock API queries (exploreService.js)
 │   │   │   └── pages/       # Main screen composing grid (ExplorePage.jsx)
+│   │   ├── notifications/   # Neargrab Customer Notifications slice
+│   │   │   ├── components/  # Item cards, filter tabs, toggle preferences
+│   │   │   ├── data/        # tempNotifications.json (Mock alerts storage)
+│   │   │   ├── services/    # Async handlers in notificationService.js
+│   │   │   └── pages/       # Compose list screen (NotificationsPage.jsx)
+│   │   ├── profile/         # Neargrab Customer Profile slice
+│   │   │   └── pages/       # Layout grid overview (ProfilePage.jsx)
 │   │   └── shared/          # Shared elements across multiple features
 │   │       └── pages/       # Global fallback pages
 │   │           └── NotFoundPage.jsx
 │   ├── shared/              # Reusable core elements (components, custom hooks, utils)
-│   │   └── components/      # Reusable UI widgets across all pages
-│   │       └── Rating.jsx   # Generic star rating component
+│   │   ├── components/      # Reusable UI widgets across all pages
+│   │   │   ├── layout/      # Navbar.jsx with mobile sticky navigation bar
+│   │   │   └── Rating.jsx   # Generic star rating component
+│   │   └── utils/           # Class name class merging helper (cn.js)
 │   ├── App.jsx              # Main React App root component
 │   ├── index.css            # Stylesheet with Tailwind imports and CSS custom variables
 │   ├── main.jsx             # Main application entry point (binds React to DOM)
@@ -78,6 +87,8 @@ Neargrab-Frontend/
 This directory is the heartbeat of the application. Rather than organizing code into standard technical folders (like `components/`, `pages/`, `data/` at the root), we divide by business domains:
 
 *   **`src/features/landing/`**: Encompasses everything related to public customer-facing screens. It includes the landing homepage, the corporate "About Us" profiles, the support FAQ accordion, and public legal resources (Privacy & Terms).
+*   **`src/features/notifications/`**: Manages customer notifications. Contains custom items cards, count indicators, chronological alerts sorting, and live preference configuration widgets.
+*   **`src/features/profile/`**: Houses the registered user account summaries, transaction history links, settings entries, and localized indicators.
 *   **`src/features/shared/`**: Houses components, utilities, state handlers, or layouts that are consumed by *more than one* feature slice. A prime example is the global `NotFoundPage.jsx`, which acts as a fallback for any undefined route.
 
 Within a feature slice, we follow a uniform folder structure:
@@ -102,6 +113,8 @@ Within a feature slice, we follow a uniform folder structure:
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/explore" element={<ExplorePage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     ```

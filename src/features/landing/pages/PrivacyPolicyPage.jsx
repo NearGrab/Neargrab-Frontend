@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 
 const sections = [
@@ -234,6 +235,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
+      <CTABanner />
       <Footer />
     </div>
   );

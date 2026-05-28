@@ -106,3 +106,66 @@ To modify or append a team profile:
       }
     }
     ```
+
+---
+
+## 🗄️ Mock Databases & In-Memory Data Stores
+
+To allow high-fidelity feature validation before actual database deployment, Neargrab implements in-memory localized database mocks.
+
+### 1. Customer Explore Catalog (`src/features/explore/data/temp.json`)
+Maintains the complete, high-fidelity list of categories, brick-and-mortar stores, ratings, and localized product records.
+```json
+{
+  "categories": [
+    { "id": "bakery", "name": "Breads & Bakery", "icon": "Croissant" }
+  ],
+  "stores": [
+    {
+      "id": "s1",
+      "name": "Fresh Earth Bakery",
+      "distance": "0.4 miles",
+      "rating": 4.8
+    }
+  ]
+}
+```
+
+### 2. Live Notifications Records (`src/features/notifications/data/tempNotifications.json`)
+Maintains alert history arrays containing unique IDs, categories, timestamps, read flags, and interactive redirect anchors.
+```json
+[
+  {
+    "id": "noti_001",
+    "type": "order",
+    "title": "Reservation Confirmed!",
+    "message": "Fresh Earth Bakery accepted your order.",
+    "time": "10 mins ago",
+    "read": false,
+    "store": "Fresh Earth Bakery",
+    "avatarColor": "bg-emerald-100 text-emerald-800"
+  }
+]
+```
+
+---
+
+## 📝 Additional Administrator Tutorials
+
+### How to Add or Modify Simulated Notification Alerts
+To change or add mock notification records:
+1. Open [src/features/notifications/data/tempNotifications.json](file:///home/ariont/Code/StartUps/Frontend/src/features/notifications/data/tempNotifications.json).
+2. Append or edit an alert entry following this structure:
+   ```json
+   {
+     "id": "noti_new_09",
+     "type": "promo",
+     "title": "Midnight Madness Flash Sale!",
+     "message": "Organic Green Grocers is offering 30% off all physical stocks.",
+     "time": "Just now",
+     "read": false,
+     "store": "Organic Green Grocers",
+     "avatarColor": "bg-amber-100 text-amber-800"
+   }
+   ```
+3. Save the file. The next time the customer accesses `/notifications`, the newly created mock item will appear dynamically at the top of the timeline.

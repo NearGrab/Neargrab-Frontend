@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Scale } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
 
 const sections = [
@@ -225,6 +226,7 @@ export default function TermsPage() {
         </div>
       </main>
 
+      <CTABanner />
       <Footer />
     </div>
   );
