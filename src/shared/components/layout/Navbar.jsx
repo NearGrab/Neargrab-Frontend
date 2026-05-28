@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { MapPin, Search, SlidersHorizontal, Bell, MessageSquare, ChevronDown, LogOut } from 'lucide-react';
+import { MapPin, Search, SlidersHorizontal, Bell, MessageSquare, ChevronDown, LogOut, User, Settings } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
 
-export default function ExploreHeader({ user }) {
+export default function Navbar({ user }) {
   const navigate = useNavigate();
   const { logout, isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,7 +17,7 @@ export default function ExploreHeader({ user }) {
         <div className="hidden md:flex items-center justify-between gap-6">
           {/* Left Side: Brand Logo & Interactive Location Selector */}
           <div className="flex items-center gap-6 shrink-0">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/explore" className="flex items-center gap-2">
               <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-10 h-10 object-contain" />
               <span className="font-poppins font-bold text-lg text-brand-900 tracking-tight">Neargrab</span>
             </Link>
@@ -99,17 +99,39 @@ export default function ExploreHeader({ user }) {
               {showDropdown && (
                 <div className="absolute right-0 top-12 w-44 bg-white border border-neutral-100 rounded-2xl shadow-xl p-2 z-50 text-left">
                   {isAuthenticated ? (
-                    <button
-                      onClick={() => {
-                        logout();
-                        setShowDropdown(false);
-                        navigate('/login');
-                      }}
-                      className="w-full text-left px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
-                    >
-                      <LogOut className="w-4 h-4 shrink-0 text-red-500" />
-                      <span>Sign Out</span>
-                    </button>
+                    <div className="flex flex-col gap-0.5">
+                      <Link
+                        to="/profile"
+                        onClick={() => setShowDropdown(false)}
+                        className="w-full text-left px-3.5 py-2 text-xs font-bold text-text-primary hover:bg-neutral-50 rounded-xl flex items-center gap-2 transition-colors"
+                      >
+                        <User className="w-4 h-4 shrink-0 text-text-secondary" />
+                        <span>Profile</span>
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => {
+                          setShowDropdown(false);
+                          alert("Settings view will be integrated soon! (High fidelity mockup preview)");
+                        }}
+                        className="w-full text-left px-3.5 py-2 text-xs font-bold text-text-primary hover:bg-neutral-50 rounded-xl flex items-center gap-2 transition-colors"
+                      >
+                        <Settings className="w-4 h-4 shrink-0 text-text-secondary" />
+                        <span>Settings</span>
+                      </Link>
+                      <div className="my-1 border-t border-neutral-100"></div>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setShowDropdown(false);
+                          navigate('/login');
+                        }}
+                        className="w-full text-left px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 shrink-0 text-red-500" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
                   ) : (
                     <button
                       onClick={() => {
@@ -132,7 +154,7 @@ export default function ExploreHeader({ user }) {
         <div className="flex flex-col gap-3 md:hidden">
           {/* Row 1: Logo & Interactive Action Buttons */}
           <div className="flex items-center justify-between w-full">
-            <Link to="/" className="flex items-center gap-1.5">
+            <Link to="/explore" className="flex items-center gap-1.5">
               <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-9 h-9 object-contain" />
               <span className="font-poppins font-bold text-base text-brand-900 tracking-tight">Neargrab</span>
             </Link>

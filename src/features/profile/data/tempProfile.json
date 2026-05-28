@@ -1,0 +1,122 @@
+{
+  "currentUser": {
+    "name": "Meet Patel",
+    "username": "meet_patel",
+    "bio": "Exploring my local, supporting locals. Good products, good people. ✨",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+    "location": {
+      "city": "Navsari",
+      "state": "Gujarat",
+      "radius": "Within 3 km"
+    },
+    "followingCount": 128,
+    "followersCount": 96,
+    "reviewsCount": 24,
+    "avgRatingGiven": 4.8,
+    "memberSince": "March 2024",
+    "helpfulVotes": 136,
+    "areasExplored": 18,
+    "shopsVisited": 42
+  },
+  "impact": {
+    "shopsSupported": 24,
+    "helpfulVotes": 136,
+    "areasExplored": 18
+  },
+  "badges": [
+    {
+      "id": 1,
+      "name": "Local Explorer",
+      "level": 2,
+      "type": "brand"
+    },
+    {
+      "id": 2,
+      "name": "Review Star",
+      "level": 3,
+      "type": "amber"
+    },
+    {
+      "id": 3,
+      "name": "Helpful Human",
+      "level": 1,
+      "type": "brand"
+    },
+    {
+      "id": 4,
+      "name": "Early Supporter",
+      "level": 1,
+      "type": "brand"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 101,
+      "productName": "Fortune Sunlite Refined Sunflower Oil 1L",
+      "storeName": "Patel General Store",
+      "distance": "0.2 km",
+      "rating": 5.0,
+      "verified": true,
+      "comment": "Always available and original product. Shopkeeper is very polite. Best place to buy groceries in our area.",
+      "time": "2 days ago",
+      "helpfulCount": 12,
+      "productImage": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80",
+        "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=300&q=80"
+      ]
+    },
+    {
+      "id": 102,
+      "productName": "Tata Tea Premium 1kg",
+      "storeName": "Jain Kirana Store",
+      "distance": "0.4 km",
+      "rating": 4.5,
+      "verified": true,
+      "comment": "Good taste and fresh stock. Better price than other nearby shops. Will buy again.",
+      "time": "5 days ago",
+      "helpfulCount": 8,
+      "productImage": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=300&q=80",
+        "https://images.unsplash.com/photo-1530124566582-a618bc2615ad?auto=format&fit=crop&w=300&q=80"
+      ]
+    },
+    {
+      "id": 103,
+      "productName": "Harpic Power Plus 500ml",
+      "storeName": "Shree Provision Store",
+      "distance": "0.5 km",
+      "rating": 4.0,
+      "verified": true,
+      "comment": "Product is genuine and works great. Keep it up!",
+      "time": "1 week ago",
+      "helpfulCount": 5,
+      "productImage": "https://images.unsplash.com/photo-1628172909249-14a09df073a6?auto=format&fit=crop&w=300&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80",
+        "https://images.unsplash.com/photo-1610397613090-a9c6c8672535?auto=format&fit=crop&w=300&q=80"
+      ]
+    }
+  ],
+  "whoToFollow": [
+    {
+      "id": 201,
+      "name": "Rohan Shah",
+      "username": "rohan_shah",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80"
+    },
+    {
+      "id": 202,
+      "name": "Divya Trivedi",
+      "username": "divya_t",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+    },
+    {
+      "id": 203,
+      "name": "Ketan Desai",
+      "username": "ketan_desai",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import TermsPage from './features/landing/pages/TermsPage';
 import ExplorePage from './features/explore/pages/ExplorePage';
 import LoginPage from './features/auth/pages/LoginPage';
 import SignupPage from './features/auth/pages/SignupPage';
+import ProfilePage from './features/profile/pages/ProfilePage';
 import NotFoundPage from './features/shared/pages/NotFoundPage';
 
 export default function AppRouter() {
@@ -21,6 +22,7 @@ export default function AppRouter() {
       <Route path="/explore" element={<ExplorePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
