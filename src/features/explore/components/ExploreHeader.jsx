@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { MapPin, Search, SlidersHorizontal, Bell, MessageSquare, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { MapPin, Search, SlidersHorizontal, Bell, MessageSquare, ChevronDown, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../../store/useAuthStore';
 
 export default function ExploreHeader({ user }) {
+  const navigate = useNavigate();
+  const { logout, isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   return (
     <header className="w-full bg-white sticky top-0 z-50 border-b border-neutral-100 shadow-sm shadow-neutral-100/30">
@@ -71,20 +75,55 @@ export default function ExploreHeader({ user }) {
             <div className="w-px h-6 bg-neutral-200"></div>
 
             {/* User Profile avatar */}
-            <div className="flex items-center gap-2.5 pl-1 cursor-pointer hover:opacity-90 transition-opacity group">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-9 h-9 rounded-full object-cover border-2 border-brand-100/50 shadow-sm"
-              />
-              <div className="text-left leading-none pr-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-semibold text-text-primary group-hover:text-brand-900 transition-colors">
-                    {user.name}
-                  </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
+            <div className="relative">
+              <div
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center gap-2.5 pl-1 cursor-pointer hover:opacity-90 transition-opacity group"
+              >
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-9 h-9 rounded-full object-cover border-2 border-brand-100/50 shadow-sm"
+                />
+                <div className="text-left leading-none pr-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-semibold text-text-primary group-hover:text-brand-900 transition-colors">
+                      {user.name}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
+                  </div>
                 </div>
               </div>
+
+              {/* Dynamic Auth Profile Tooltip Menu Dropdown */}
+              {showDropdown && (
+                <div className="absolute right-0 top-12 w-44 bg-white border border-neutral-100 rounded-2xl shadow-xl p-2 z-50 text-left">
+                  {isAuthenticated ? (
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowDropdown(false);
+                        navigate('/login');
+                      }}
+                      className="w-full text-left px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 shrink-0 text-red-500" />
+                      <span>Sign Out</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setShowDropdown(false);
+                        navigate('/login');
+                      }}
+                      className="w-full text-left px-3.5 py-2 text-xs font-bold text-brand-900 hover:bg-brand-50 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 shrink-0 text-brand-500" />
+                      <span>Sign In</span>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

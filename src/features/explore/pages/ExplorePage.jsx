@@ -7,9 +7,11 @@ import ValueProps from '../components/ValueProps';
 import NearbyStores from '../components/NearbyStores';
 import TopPicks from '../components/TopPicks';
 import ExploreSidebar from '../components/ExploreSidebar';
+import { useAuthStore } from '../../../store/useAuthStore';
 import { Loader2 } from 'lucide-react';
 
 export default function ExplorePage() {
+  const { user } = useAuthStore();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,7 +49,7 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col selection:bg-brand-500 selection:text-white">
       {/* Dynamic Header */}
-      <ExploreHeader user={data.currentUser} />
+      <ExploreHeader user={user || data.currentUser} />
 
       {/* Main Grid Wrapper */}
       <main className="flex-grow max-w-[115rem] w-full mx-auto px-[5px] md:px-0 py-4 md:py-8 mb-24">
