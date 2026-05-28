@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import content from '../data/content.json';
 
@@ -12,7 +12,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-4 md:px-8 max-w-[90rem] mx-auto py-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <MapPin className="text-amber-500 w-8 h-8" fill="#10B981" />
+          <img src="/nobg-Logo.png" alt="Logo" className="w-16 h-16" />
           <span className="font-poppins font-bold text-xl text-gray-900">{navbar.brand}</span>
         </Link>
 
@@ -31,9 +31,9 @@ export default function Navbar() {
 
         {/* Action Button & Mobile Toggle */}
         <div className="flex items-center gap-4">
-          <button className="hidden md:flex bg-brand-900 text-white px-6 py-2.5 rounded-xl font-medium text-sm items-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer">
+          <Link to="/explore" className="hidden md:flex bg-brand-900 text-white px-6 py-2.5 rounded-xl font-medium text-sm items-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer">
             {navbar.button} <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
           
           <button 
             className="lg:hidden text-gray-900 p-2"
@@ -57,9 +57,9 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <button className="bg-brand-900 text-white px-6 py-3 rounded-xl font-medium flex justify-center items-center gap-2 mt-2">
+          <Link to="/explore" onClick={() => setIsMenuOpen(false)} className="bg-brand-900 text-white px-6 py-3 rounded-xl font-medium flex justify-center items-center gap-2 mt-2">
             {navbar.button} <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
       )}
     </nav>

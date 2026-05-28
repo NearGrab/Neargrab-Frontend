@@ -1,0 +1,218 @@
+{
+  "currentUser": {
+    "name": "Patel",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+    "location": {
+      "city": "Navsari",
+      "state": "Gujarat",
+      "radius": "Within 3 km"
+    }
+  },
+  "heroBanner": {
+    "tagline": "Support Local 🌾",
+    "headingLine1": "Shop Local.",
+    "headingLine2": "Strengthen Community.",
+    "description": "Discover trusted local shops and find everything you need nearby.",
+    "buttonText": "Explore Now",
+    "image": "/src/assets/Explore/explore_hero.png"
+  },
+  "categories": [
+    { "id": "grocery", "name": "Grocery", "icon": "Grocery" },
+    { "id": "dairy", "name": "Dairy", "icon": "Dairy" },
+    { "id": "snacks", "name": "Snacks", "icon": "Snacks" },
+    { "id": "personal-care", "name": "Personal Care", "icon": "PersonalCare" },
+    { "id": "households", "name": "Households", "icon": "Households" },
+    { "id": "electronics", "name": "Electronics", "icon": "Electronics" },
+    { "id": "hardware", "name": "Hardware", "icon": "Hardware" },
+    { "id": "stationery", "name": "Stationery", "icon": "Stationery" },
+    { "id": "more", "name": "More", "icon": "More" }
+  ],
+  "valueProps": [
+    {
+      "id": "convenient",
+      "title": "Nearby & Convenient",
+      "description": "Find what you need around you."
+    },
+    {
+      "id": "trusted",
+      "title": "Trusted & Verified",
+      "description": "Verified shops with real reviews."
+    },
+    {
+      "id": "prices",
+      "title": "Best Prices",
+      "description": "Compare and choose the best deals."
+    },
+    {
+      "id": "delivery",
+      "title": "No Delivery Fee",
+      "description": "Buy nearby, save more."
+    }
+  ],
+  "stores": [
+    {
+      "id": "store-patel",
+      "name": "Patel General Store",
+      "tags": ["Grocery", "Dairy", "Snacks"],
+      "distance": 0.2,
+      "rating": 4.7,
+      "reviewsCount": 128,
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "store-jain",
+      "name": "Jain Kirana Store",
+      "tags": ["Grocery", "Personal Care"],
+      "distance": 0.3,
+      "rating": 4.6,
+      "reviewsCount": 96,
+      "image": "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "store-shree-prov",
+      "name": "Shree Provision Store",
+      "tags": ["Grocery", "Stationery"],
+      "distance": 0.4,
+      "rating": 4.5,
+      "reviewsCount": 78,
+      "image": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "store-shree-hard",
+      "name": "Shree Hardware",
+      "tags": ["Hardware", "Electricals"],
+      "distance": 0.5,
+      "rating": 4.4,
+      "reviewsCount": 64,
+      "image": "https://images.unsplash.com/photo-1530124566582-a618bc2615ad?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "store-fruits",
+      "name": "Patel Fruits Center",
+      "tags": ["Fruits", "Vegetables"],
+      "distance": 0.3,
+      "rating": 4.3,
+      "reviewsCount": 58,
+      "image": "https://images.unsplash.com/photo-1610397613090-a9c6c8672535?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "topPicks": [
+    {
+      "id": "pick-banana",
+      "name": "Yellow Banana (1 Dozen)",
+      "store": "Patel Fruits Center",
+      "price": 36,
+      "rating": 4.8,
+      "reviewsCount": 210,
+      "distance": 0.3,
+      "image": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "pick-onion",
+      "name": "Onion (1 kg)",
+      "store": "Patel Fruits Center",
+      "price": 28,
+      "rating": 4.7,
+      "reviewsCount": 186,
+      "distance": 0.4,
+      "image": "https://images.unsplash.com/photo-1618265341355-d0e2d1fdf26b?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "pick-milk",
+      "name": "Amul Fresh Milk 500ml",
+      "store": "Jain Dairy Store",
+      "price": 28,
+      "rating": 4.6,
+      "reviewsCount": 152,
+      "distance": 0.2,
+      "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "pick-eggs",
+      "name": "Eggs (6 pcs)",
+      "store": "Shree Provision Store",
+      "price": 36,
+      "rating": 4.6,
+      "reviewsCount": 131,
+      "distance": 0.3,
+      "image": "https://images.unsplash.com/photo-1516448424440-9dbca97779c1?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "pick-tomato",
+      "name": "Tomato (1 kg)",
+      "store": "Patel Fruits Center",
+      "price": 22,
+      "rating": 4.5,
+      "reviewsCount": 98,
+      "distance": 0.3,
+      "image": "https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=400&q=80"
+    }
+  ],
+  "topOffers": [
+    {
+      "id": "offer-oil",
+      "name": "Fortune Sunlite Oil 1L",
+      "discount": "15% OFF",
+      "price": 145,
+      "originalPrice": 170,
+      "store": "Patel General Store",
+      "distance": 0.3,
+      "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "offer-surf",
+      "name": "Surf Excel Matic 1kg",
+      "discount": "10% OFF",
+      "price": 185,
+      "originalPrice": 205,
+      "store": "Jalaram Provision",
+      "distance": 0.8,
+      "image": "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "offer-parleg",
+      "name": "Parle-G Biscuit 1kg",
+      "discount": "12% OFF",
+      "price": 90,
+      "originalPrice": 102,
+      "store": "Jain Kirana Store",
+      "distance": 0.4,
+      "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "offer-colgate",
+      "name": "Colgate Strong Teeth 180g",
+      "discount": "8% OFF",
+      "price": 42,
+      "originalPrice": 45,
+      "store": "Shree Provision Store",
+      "distance": 0.5,
+      "image": "https://images.unsplash.com/photo-1628172909249-14a09df073a6?auto=format&fit=crop&w=400&q=80"
+    }
+  ],
+  "listShopCTA": {
+    "heading": "List your shop on Neargrab",
+    "description": "Get discovered by thousands of nearby customers.",
+    "buttonText": "List Your Shop"
+  },
+  "realReviews": [
+    {
+      "id": "rev-1",
+      "user": "Neha P.",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
+      "time": "2 days ago",
+      "rating": 5.0,
+      "comment": "Great quality and fresh products. Very helpful shopkeeper!",
+      "storeName": "Patel General Store"
+    },
+    {
+      "id": "rev-2",
+      "user": "Rohit S.",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
+      "time": "1 week ago",
+      "rating": 5.0,
+      "comment": "Found exact product nearby. Saved time and money.",
+      "storeName": "Jain Kirana Store"
+    }
+  ]
+}

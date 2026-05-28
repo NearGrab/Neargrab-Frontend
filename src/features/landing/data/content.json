@@ -247,7 +247,7 @@
       "description": "A group of tech innovators, design experts, and community advocates working side-by-side to revolutionize local commerce.",
       "members": [
         {
-          "name": "Ariont Sharma",
+          "name": "Abdulkadir Shaikh",
           "role": "Co-Founder & CEO",
           "bio": "Strategic visionary and community development enthusiast. Leading Neargrab's expansion and retail partnership networks.",
           "initials": "AS",
@@ -255,14 +255,14 @@
           "social": {
             "linkedin": "#",
             "twitter": "#",
-            "github": "#"
+            "github": "https://github.com/Abdulkadir-22"
           }
         },
         {
-          "name": "John Doe",
-          "role": "Co-Founder & CTO",
-          "bio": "Cloud developer and local database expert. Architecting the high-performance real-time search engine powering Neargrab.",
-          "initials": "JD",
+          "name": "Rukshana Bhamji",
+          "role": "Co-Founder & COO",
+          "bio": "Local shopping and user experience champion. Directing visual design systems to make local shopping simple and premium.",
+          "initials": "RB",
           "color": "bg-amber-100 text-amber-900 border-amber-200",
           "social": {
             "linkedin": "#",
@@ -271,10 +271,10 @@
           }
         },
         {
-          "name": "Sarah Patel",
-          "role": "Co-Founder & CPO",
-          "bio": "Local shopping advocate and user experience champion. Directing visual design systems to make local shopping simple and premium.",
-          "initials": "SP",
+          "name": "Husna Motiwala",
+          "role": "Co-Founder & CMO",
+          "bio": "Brand builder and community connector. Leading marketing strategy to bring local shopping to every neighborhood.",
+          "initials": "HM",
           "color": "bg-blue-100 text-blue-900 border-blue-200",
           "social": {
             "linkedin": "#",

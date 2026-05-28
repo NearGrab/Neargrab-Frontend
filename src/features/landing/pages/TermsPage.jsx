@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Scale, ShieldAlert, CheckCircle, FileText } from 'lucide-react';
+import { Scale } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 

@@ -1,216 +1,116 @@
-# Frontend Folder Structure
+# Neargrab Frontend Folder Structure
 
-This structure is based on the product docs and the available customer/shopkeeper designs in `Docs/03_Design/screens`. The frontend should cover the customer app and shopkeeper experience; the admin experience already exists separately in the `Admin` app.
+Neargrab's frontend uses a scalable, modern **Feature Slice Architecture** that groups code by its logical business domains rather than simple technical roles (like putting all components in a global `components` folder). This ensures that as the codebase grows, features remain decoupled, self-contained, and easy to maintain.
 
-## Recommended Structure
+---
 
-```text
-Frontend/
-  docs/
-    folderstructure.md
-  public/
-  src/
-    app/
-      App.jsx
-      providers/
-        AppProviders.jsx
-      router/
-        AppRouter.jsx
-        customerRoutes.jsx
-        shopkeeperRoutes.jsx
-        publicRoutes.jsx
-    assets/
-      images/
-      icons/
-      logos/
-    shared/
-      components/
-        AppButton.jsx
-        AppInput.jsx
-        AppModal.jsx
-        AppToast.jsx
-        EmptyState.jsx
-        LoadingState.jsx
-      hooks/
-        useDebouncedValue.js
-        useDisclosure.js
-      lib/
-        apiClient.js
-        constants.js
-        formatters.js
-        storage.js
-      styles/
-        base.css
-        tokens.css
-        utilities.css
-    features/
-      auth/
-        components/
-          LoginForm.jsx
-          SignupForm.jsx
-          AuthGate.jsx
-        hooks/
-          useAuth.js
-        pages/
-          LoginPage.jsx
-          SignupPage.jsx
-        services/
-          authApi.js
-        store/
-          authStore.js
-      customer/
-        components/
-          BottomNav.jsx
-          CustomerHeader.jsx
-          CustomerLayout.jsx
-          HomeFeed.jsx
-          NearbyShopList.jsx
-          ProductAvailabilityBadge.jsx
-          ProductCard.jsx
-          ProductFilters.jsx
-          ProductGrid.jsx
-          ProductSearchBar.jsx
-          ShopCard.jsx
-          ShopInfoPanel.jsx
-          ShopRating.jsx
-          SponsoredBanner.jsx
-          RecommendationRail.jsx
-        hooks/
-          useCurrentLocation.js
-          useNearbyProducts.js
-          useProductSearch.js
-        pages/
-          LandingPage.jsx
-          HomePage.jsx
-          SearchResultsPage.jsx
-          ProductDetailsPage.jsx
-          ProfilePage.jsx
-          NotificationsPage.jsx
-          SettingsPage.jsx
-          MapRedirectPage.jsx
-          NotFoundPage.jsx
-        services/
-          customerApi.js
-          productDiscoveryApi.js
-          shopDiscoveryApi.js
-        store/
-          locationStore.js
-      shopkeeper/
-        components/
-          DashboardSummary.jsx
-          ProductCatalogTable.jsx
-          ProductForm.jsx
-          ShopProfileForm.jsx
-          ShopQrCard.jsx
-          ShopkeeperHeader.jsx
-          ShopkeeperLayout.jsx
-        hooks/
-          useShopProducts.js
-          useShopProfile.js
-        pages/
-          BecomeShopkeeperPage.jsx
-          ShopDashboardPage.jsx
-          ProductCatalogPage.jsx
-          AddProductPage.jsx
-          EditProductPage.jsx
-          ShopProfilePage.jsx
-        services/
-          shopkeeperApi.js
-          shopProductApi.js
-        store/
-          shopkeeperStore.js
-      reviews/
-        components/
-          ReviewCard.jsx
-          ReviewForm.jsx
-        hooks/
-          useProductReviews.js
-        pages/
-          CreateReviewPage.jsx
-        services/
-          reviewApi.js
-      chat/
-        components/
-          ChatThread.jsx
-          MessageComposer.jsx
-        hooks/
-          useChatThread.js
-        pages/
-          ChatPage.jsx
-        services/
-          chatApi.js
-    test/
-      mocks/
-      setup.js
-    main.jsx
-    index.css
-```
+## 🌳 Workspace Directory Tree
 
-## Why This Shape Fits Neargrab
-
-The PRD defines three user groups: customers, shopkeepers, and admins. Since admin has its own `Admin` project, `Frontend/src/features` should focus on `customer`, `shopkeeper`, and the supporting workflows those users touch.
-
-The customer design screens map directly to `features/customer/pages`: landing, login/signup through auth, home, search results, product details, profile, notifications, settings, map redirect, and not found states.
-
-The shopkeeper design screens map to `features/shopkeeper/pages`: dashboard, add product, product catalog, shop profile, and shopkeeper listing/onboarding. Keeping these separate from customer pages prevents dashboard forms and customer discovery screens from getting mixed together.
-
-Each feature should own its pages, components, hooks, services, and state. Product cards used only for customer discovery stay in `features/customer/components`; product forms used only by sellers stay in `features/shopkeeper/components`. Move something to `shared/` only after it is genuinely reused by multiple unrelated features.
-
-## Folder Responsibilities
-
-`app/` should contain app bootstrap code: providers, router setup, route grouping, and the top-level `App.jsx`.
-
-`features/` should contain business workflows. Each feature owns its local `pages`, `components`, `hooks`, `services`, and `store` folders so its implementation stays close to the screens in the docs.
-
-`shared/components/` should contain reusable UI primitives that are not tied to one business workflow: buttons, inputs, modals, toasts, loading states, and empty states.
-
-`shared/hooks/` should contain only generic hooks such as disclosure state or debounced values. Feature-specific hooks, like product search or shop profile loading, should live inside the relevant feature.
-
-`shared/lib/` should contain framework-light helpers such as API client setup, constants, storage helpers, and formatting utilities.
-
-`shared/styles/` should hold app-wide CSS foundations. Use it for tokens, base styles, and utilities; keep feature-specific styling close to the feature when it grows.
-
-## Suggested Route Groups
+Here is a visual map of the repository's layout:
 
 ```text
-/                         -> customer LandingPage
-/home                     -> customer HomePage
-/search                   -> customer SearchResultsPage
-/products/:productId      -> customer ProductDetailsPage
-/profile                  -> customer ProfilePage
-/notifications            -> customer NotificationsPage
-/settings                 -> customer SettingsPage
-/map-redirect             -> customer MapRedirectPage
-/login                    -> auth LoginPage
-/signup                   -> auth SignupPage
-/chat/:threadId           -> chat ChatPage
-/reviews/new              -> reviews CreateReviewPage
-
-/shopkeeper/become        -> shopkeeper BecomeShopkeeperPage
-/shopkeeper/dashboard     -> shopkeeper ShopDashboardPage
-/shopkeeper/products      -> shopkeeper ProductCatalogPage
-/shopkeeper/products/new  -> shopkeeper AddProductPage
-/shopkeeper/products/:id  -> shopkeeper EditProductPage
-/shopkeeper/profile       -> shopkeeper ShopProfilePage
+Neargrab-Frontend/
+├── .agent/                  # Custom agent skills and tool configurations
+├── dist/                    # Compiled production build output (Git ignored)
+├── docs/                    # Architectural, Design, and Developer guides
+│   ├── index.md             # Documentation Hub Entry Point
+│   ├── folderstructure.md   # [This File] Directory map and slices layout
+│   ├── design-system.md     # Color palettes, typography and UI tokens
+│   ├── architecture.md      # Tech stack details and data flows
+│   ├── getting-started.md   # Installing dependencies and build scripts
+│   └── data-management.md   # Guide to centralized JSON data models
+├── node_modules/            # Node package dependencies (Git ignored)
+├── public/                  # Static assets served as-is (e.g. favicon, robots.txt)
+├── src/                     # Core application codebase
+│   ├── assets/              # UI Media files (images, icons) grouped by slice
+│   │   ├── Landing/
+│   │   │   ├── Hero.png
+│   │   │   ├── Shopkeeper.png
+│   │   │   ├── shop.png
+│   │   │   └── icons/       # Custom SVGs / images for landing widgets
+│   │   └── Explore/
+│   │       └── explore_hero.png # Generated custom home banner
+│   ├── features/            # Feature slices containing isolated domains
+│   │   ├── landing/         # Neargrab Main Landing and Support slice
+│   │   │   ├── components/  # Isolated modular UI components
+│   │   │   │   ├── FAQ/     # Accordion widgets and help center blocks
+│   │   │   │   ├── Landing/ # Hero, Stats, ForShopkeepers, Features, How it Works
+│   │   │   │   ├── about-us/# Co-founder profiles, values and about items
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   └── Footer.jsx
+│   │   │   ├── data/        # Centralized text configuration source of truth
+│   │   │   │   └── content.json
+│   │   │   └── pages/       # Route page containers serving as main layouts
+│   │   │       ├── AboutPage.jsx
+│   │   │       ├── FAQsPage.jsx
+│   │   │       ├── LandingPage.jsx
+│   │   │       ├── PrivacyPolicyPage.jsx
+│   │   │       └── TermsPage.jsx
+│   │   ├── explore/         # Neargrab Customer Explore Dashboard slice
+│   │   │   ├── components/  # Widgets (Header, Slider, ValueProps, Stores, Picks, Sidebar)
+│   │   │   ├── data/        # Mock local database model (temp.json)
+│   │   │   ├── services/    # Decoupled mock API queries (exploreService.js)
+│   │   │   └── pages/       # Main screen composing grid (ExplorePage.jsx)
+│   │   └── shared/          # Shared elements across multiple features
+│   │       └── pages/       # Global fallback pages
+│   │           └── NotFoundPage.jsx
+│   ├── shared/              # Reusable core elements (components, custom hooks, utils)
+│   │   └── components/      # Reusable UI widgets across all pages
+│   │       └── Rating.jsx   # Generic star rating component
+│   ├── App.jsx              # Main React App root component
+│   ├── index.css            # Stylesheet with Tailwind imports and CSS custom variables
+│   ├── main.jsx             # Main application entry point (binds React to DOM)
+│   └── router.jsx           # Declares all page routes and mapping logic
+├── .gitignore               # Excludes build output, node modules, and system files
+├── eslint.config.js         # JavaScript standards and lint rules
+├── index.html               # Main index.html containing the React root mount div
+├── package-lock.json        # Strict dependency version locker
+├── package.json             # Build script configurations and package versions
+└── vite.config.js           # Vite server, plugin, and routing configurations
 ```
 
-## Implementation Order
+---
 
-1. Move the current Vite starter files into the `app/` shape without changing behavior.
-2. Add routing and layouts for public, authenticated customer, and shopkeeper sections.
-3. Build shared components only for true primitives: buttons, inputs, modals, toasts, loading states, and empty states.
-4. Implement customer pages in the order of the user flow: landing, home, search, product details, auth gate, profile/settings.
-5. Implement shopkeeper pages in the order of the seller flow: become shopkeeper, dashboard, product catalog, add/edit product, shop profile.
-6. Connect API services inside each feature first, then promote only repeated API/client logic into `shared/lib`.
+## 🧩 Architectural Slices Explained
 
-## Naming Rules
+### 1. The `src/features` Directory
 
-Use PascalCase for React components and pages, such as `ProductDetailsPage.jsx`.
+This directory is the heartbeat of the application. Rather than organizing code into standard technical folders (like `components/`, `pages/`, `data/` at the root), we divide by business domains:
 
-Use camelCase for hooks, utilities, stores, and API modules, such as `useProductSearch.js` and `shopProductApi.js`.
+*   **`src/features/landing/`**: Encompasses everything related to public customer-facing screens. It includes the landing homepage, the corporate "About Us" profiles, the support FAQ accordion, and public legal resources (Privacy & Terms).
+*   **`src/features/shared/`**: Houses components, utilities, state handlers, or layouts that are consumed by *more than one* feature slice. A prime example is the global `NotFoundPage.jsx`, which acts as a fallback for any undefined route.
 
-Keep page components inside `features/*/pages`, and keep components that are reused only within one feature inside `features/*/components`.
+Within a feature slice, we follow a uniform folder structure:
+*   `components/`: Smaller presentational widgets or layout divisions.
+*   `data/`: Configuration parameters or content models (e.g. `content.json`).
+*   `pages/`: The top-level route components that compile visual widgets into full screens.
 
-Promote code to `shared/` only when at least two features need it and the shared version does not contain feature-specific business language.
+---
 
-Do not place admin screens in this frontend structure unless the project later decides to merge the `Admin` app into `Frontend`.
+## 🔑 Key Entrypoint Files
+
+*   **[index.html](file:///home/ariont/Code/StartUps/Frontend/index.html)**: The shell HTML document. Contains the root `div` (`<div id="root"></div>`) that React injects itself into, as well as font configurations and viewport scaling metadata.
+*   **[src/main.jsx](file:///home/ariont/Code/StartUps/Frontend/src/main.jsx)**: Binds the React application to the DOM root element in `index.html`. Wraps the app in `<StrictMode>` for warning detection and `<BrowserRouter>` to enable client-side URL parsing.
+*   **[src/index.css](file:///home/ariont/Code/StartUps/Frontend/src/index.css)**: Implements Tailwind CSS imports and sets up **CSS Custom Properties** inside `:root`. Maps these properties to Tailwind classes inside the Tailwind v4 `@theme` compiler layer, allowing custom brand colors and font weights.
+*   **[src/App.jsx](file:///home/ariont/Code/StartUps/Frontend/src/App.jsx)**: The direct child of `main.jsx`'s DOM render. Immediately serves the core router engine (`AppRouter`).
+*   **[src/router.jsx](file:///home/ariont/Code/StartUps/Frontend/src/router.jsx)**: Outlines routing matching. Uses standard path variables mapped directly to feature slice page containers:
+    ```javascript
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/faqs" element={<FAQsPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/explore" element={<ExplorePage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+    ```
+
+---
+
+## 🎨 Asset Management Guidelines
+
+To keep project assets tidy:
+1.  All images and icons supporting a specific feature slice should be stored in a matching folder inside `src/assets/` (e.g. `src/assets/Landing/`).
+2.  Do not place large image binary files directly inside the component folders.
+3.  Any media path reference is loaded using standard absolute paths from Vite root (e.g., `src/assets/...` or `/src/assets/...`).

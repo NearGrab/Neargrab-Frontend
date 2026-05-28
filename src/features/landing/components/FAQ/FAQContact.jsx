@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MessageCircle, ArrowRight } from 'lucide-react';
+import { Mail, MessageCircle } from 'lucide-react';
 import content from '../../data/content.json';
 
 export default function FAQContact() {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Store, Truck, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import content from '../../data/content.json';
 
 export default function Hero() {
@@ -21,9 +22,9 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mb-16">
-            <button className="bg-brand-900 text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer shadow-lg shadow-brand-900/20 whitespace-pre-line">
+            <Link to="/explore" className="bg-brand-900 text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer shadow-lg shadow-brand-900/20 whitespace-pre-line">
               {hero.primaryButton} <ArrowRight className="w-5 h-5" />
-            </button>
+            </Link>
             <button className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-medium flex items-center gap-3 hover:border-brand-900 hover:text-brand-900 transition-all cursor-pointer whitespace-pre-line text-left leading-tight">
               <Store className="w-5 h-5 shrink-0" /> {hero.secondaryButton}
             </button>
