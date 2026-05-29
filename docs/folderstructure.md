@@ -58,6 +58,15 @@ Neargrab-Frontend/
 │   │   │   └── pages/       # Compose list screen (NotificationsPage.jsx)
 │   │   ├── profile/         # Neargrab Customer Profile slice
 │   │   │   └── pages/       # Layout grid overview (ProfilePage.jsx)
+│   │   ├── search/          # Neargrab Product Search and Store Filtering slice
+│   │   │   ├── components/  # SearchBar, FilterSidebar, ProductCard, RequestProductModal
+│   │   │   ├── hooks/       # Custom query parsing (useSearchFilters.js)
+│   │   │   ├── services/    # Search query mock filter handlers (searchService.js)
+│   │   │   └── pages/       # Results page with filter layout (SearchPage.jsx)
+│   │   ├── product/         # Neargrab Detailed Products and Store Mapping slice
+│   │   │   ├── components/  # AddressCard, SoldByCard, ProductShopHeaderCard, ProductDirectionsMap, ProductReviewsBreakdown, FeedbackCollector, ReviewProductModal
+│   │   │   ├── services/    # Detailed queries database fetchers (productService.js)
+│   │   │   └── pages/       # Main detail screen (ProductPage.jsx) & coordinate map view (ProductMapPage.jsx)
 │   │   └── shared/          # Shared elements across multiple features
 │   │       └── pages/       # Global fallback pages
 │   │           └── NotFoundPage.jsx
@@ -115,6 +124,9 @@ Within a feature slice, we follow a uniform folder structure:
       <Route path="/explore" element={<ExplorePage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/search" element={<SearchPage />} />
+      <Route path="/product/:productId" element={<ProductPage />} />
+      <Route path="/product/:productId/map" element={<ProductMapPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     ```

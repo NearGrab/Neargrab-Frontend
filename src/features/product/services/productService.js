@@ -201,9 +201,48 @@ export const productService = {
   async getSimilarProducts(productBrand, productCategory) {
     const response = await searchService.searchProducts({});
     // Filter out items of the same brand or refined category
-    const similar = response.products
-      .filter(p => p.brand !== productBrand || p.category === productCategory)
-      .slice(0, 5);
     return similar;
+  },
+
+  /**
+   * Return custom thumbnail-rich reviews for the directions & reviews page.
+   */
+  async getMapReviews(productId) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          {
+            id: 'rev-m1',
+            user: 'Neha P.',
+            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80',
+            time: '2 days ago',
+            rating: 5,
+            comment: 'Good quality and always available at Patel General Store. Staff behavior is also very nice.',
+            verifiedPurchase: true,
+            thumbnail: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=120&q=80'
+          },
+          {
+            id: 'rev-m2',
+            user: 'Rohit S.',
+            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80',
+            time: '5 days ago',
+            rating: 5,
+            comment: 'Best price in the area. I always buy from here.',
+            verifiedPurchase: true,
+            thumbnail: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=120&q=80'
+          },
+          {
+            id: 'rev-m3',
+            user: 'Meena B.',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80',
+            time: '1 week ago',
+            rating: 4,
+            comment: 'Nice experience. Product is genuine and fresh.',
+            verifiedPurchase: true,
+            thumbnail: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=120&q=80'
+          }
+        ]);
+      }, 50);
+    });
   }
 };

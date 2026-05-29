@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RotateCw, Star, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import Badge from '../../../shared/components/ui/Badge';
 import Button from '../../../shared/components/ui/Button';
 
 export default function AvailableAtStores({ stores = [], productName = 'Product' }) {
+  const navigate = useNavigate();
+  const { productId } = useParams();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -13,7 +16,7 @@ export default function AvailableAtStores({ stores = [], productName = 'Product'
   };
 
   const handleNavigation = (storeName) => {
-    alert(`Map navigation routing and shop detailed pages for "${storeName}" coming soon!`);
+    navigate(`/product/${productId || 'prod-fortune-1l'}/map`);
   };
 
   // Dynamic walk duration calculator

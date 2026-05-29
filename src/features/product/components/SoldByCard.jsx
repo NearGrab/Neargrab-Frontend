@@ -1,10 +1,14 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Star, Navigation, Store } from 'lucide-react';
 import Button from '../../../shared/components/ui/Button';
 
 export default function SoldByCard({ soldBy }) {
+  const navigate = useNavigate();
+  const { productId } = useParams();
+
   const handleNavigate = () => {
-    alert(`Map navigation routing and direction panels for "${soldBy.name}" coming soon!`);
+    navigate(`/product/${productId || 'prod-fortune-1l'}/map`);
   };
 
   const handleCheckStore = () => {

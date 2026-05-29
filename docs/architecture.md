@@ -23,6 +23,8 @@ graph TD
         AppRouter --> EP[ExplorePage.jsx]
         AppRouter --> NTP[NotificationsPage.jsx]
         AppRouter --> PFP[ProfilePage.jsx]
+        AppRouter --> SP[SearchPage.jsx]
+        AppRouter --> PDP[ProductPage.jsx & ProductMapPage.jsx]
         AppRouter --> NP[NotFoundPage.jsx Fallback]
     end
 
@@ -30,6 +32,8 @@ graph TD
         LP & AP & FP & PP --> content[content.json config]
         EP --> exploreService[exploreService.js + temp.json]
         NTP --> notificationService[notificationService.js + tempNotifications.json]
+        SP --> searchService[searchService.js]
+        PDP --> productService[productService.js]
     end
 ```
 
