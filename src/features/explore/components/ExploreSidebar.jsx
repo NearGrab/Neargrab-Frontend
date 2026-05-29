@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShoppingCart, ArrowRight, Store, Star, MapPin } from 'lucide-react';
+import ReviewCard from '../../../shared/components/ReviewCard';
 
 export default function ExploreSidebar({ offers, listShop, reviews }) {
   return (
@@ -119,48 +120,17 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
         {/* Stack of user reviews */}
         <div className="flex flex-col gap-4">
           {reviews.map((rev) => (
-            <div
+            <ReviewCard
               key={rev.id}
-              className="p-3 bg-neutral-50 rounded-2xl flex flex-col gap-2.5 text-left border border-neutral-100"
-            >
-              {/* User Identity Details */}
-              <div className="flex items-center gap-2">
-                <img
-                  src={rev.avatar}
-                  alt={rev.user}
-                  className="w-8 h-8 rounded-full object-cover border border-neutral-200"
-                />
-                <div className="leading-tight">
-                  <h4 className="font-bold text-text-primary text-xs">{rev.user}</h4>
-                  <span className="text-[9px] text-text-muted">{rev.time}</span>
-                </div>
-              </div>
-
-              {/* Star rating icons */}
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <Star
-                    key={idx}
-                    className={`w-3.5 h-3.5 shrink-0 ${
-                      idx < Math.floor(rev.rating)
-                        ? 'text-amber-500 fill-amber-500'
-                        : 'text-neutral-200'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Comment text snippet */}
-              <p className="text-text-secondary text-[11px] leading-relaxed italic">
-                "{rev.comment}"
-              </p>
-
-              {/* Direct hyperlink back to physical store */}
-              <div className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-emerald-600 hover:underline cursor-pointer">
-                <Store className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                <span>{rev.storeName}</span>
-              </div>
-            </div>
+              avatar={rev.avatar}
+              user={rev.user}
+              time={rev.time}
+              rating={rev.rating}
+              comment={rev.comment}
+              storeName={rev.storeName}
+              showStoreLink={true}
+              onClickStore={() => alert(`Redirecting to shop profile for ${rev.storeName}! (Coming soon)`)}
+            />
           ))}
         </div>
       </div>

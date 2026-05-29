@@ -12,6 +12,7 @@ import ProfilePage from './features/profile/pages/ProfilePage';
 import NotificationsPage from './features/notifications/pages/NotificationsPage';
 import NotFoundPage from './features/shared/pages/NotFoundPage';
 import SearchPage from './features/search/pages/SearchPage';
+import ProductPage from './features/product/pages/ProductPage';
 
 export default function AppRouter() {
   return (
@@ -27,6 +28,7 @@ export default function AppRouter() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/search" element={<SearchPage />} />
+      <Route path="/product/:productId" element={<ProductPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
