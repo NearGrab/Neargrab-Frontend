@@ -11,6 +11,7 @@ import SignupPage from './features/auth/pages/SignupPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 import NotificationsPage from './features/notifications/pages/NotificationsPage';
 import NotFoundPage from './features/shared/pages/NotFoundPage';
+import SearchPage from './features/search/pages/SearchPage';
 
 export default function AppRouter() {
   return (
@@ -25,6 +26,7 @@ export default function AppRouter() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
