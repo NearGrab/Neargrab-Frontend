@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   User, 
   MessageSquare, 
@@ -24,6 +25,7 @@ import { profileService } from '../services/profileService';
 
 export default function ProfilePage() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSidebarTab, setActiveSidebarTab] = useState('Overview');
@@ -46,8 +48,15 @@ export default function ProfilePage() {
     loadProfileData();
   }, []);
 
+  // Listen to sidebar tab change and redirect to settings if Settings is clicked
+  useEffect(() => {
+    if (activeSidebarTab === 'Settings') {
+      navigate('/settings');
+    }
+  }, [activeSidebarTab, navigate]);
+
   const handleSettingsClick = () => {
-    alert('Settings panel opened! (High fidelity settings page transition mockup)');
+    navigate('/settings');
   };
 
   const handleAvatarEdit = () => {

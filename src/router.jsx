@@ -14,6 +14,8 @@ import NotFoundPage from './features/shared/pages/NotFoundPage';
 import SearchPage from './features/search/pages/SearchPage';
 import ProductPage from './features/product/pages/ProductPage';
 import ProductMapPage from './features/product/pages/ProductMapPage';
+import SettingsPage from './features/settings/pages/SettingsPage';
+import CartPage from './features/cart/pages/CartPage';
 
 export default function AppRouter() {
   return (
@@ -31,6 +33,8 @@ export default function AppRouter() {
       <Route path="/search" element={<SearchPage />} />
       <Route path="/product/:productId" element={<ProductPage />} />
       <Route path="/product/:productId/map" element={<ProductMapPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/cart" element={<CartPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

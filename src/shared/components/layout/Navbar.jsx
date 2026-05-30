@@ -298,7 +298,7 @@ export default function Navbar() {
 
             {/* Cart Trigger */}
             <button
-              onClick={() => alert(`Shopping Cart preview panel: you currently have ${cartCount} items.`)}
+              onClick={() => navigate('/cart')}
               className="relative w-10 h-10 rounded-full bg-neutral-50 border border-neutral-200/40 hover:bg-neutral-100 flex items-center justify-center text-text-secondary cursor-pointer transition-colors group"
             >
               <ShoppingCart className="w-5 h-5 text-text-secondary group-hover:text-brand-900 transition-colors" />
@@ -350,7 +350,6 @@ export default function Navbar() {
                         to="/settings"
                         onClick={() => {
                           setShowProfileDropdown(false);
-                          alert("Settings view will be integrated soon! (High fidelity mockup preview)");
                         }}
                         className="w-full text-left px-3.5 py-2 text-xs font-bold text-text-primary hover:bg-neutral-50 rounded-xl flex items-center gap-2 transition-colors"
                       >

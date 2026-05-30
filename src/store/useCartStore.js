@@ -69,6 +69,18 @@ export function useCartStore() {
     setGlobalState(updatedItems);
   };
 
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      const updatedItems = globalState.items.filter(item => item.id !== productId);
+      setGlobalState(updatedItems);
+      return;
+    }
+    const updatedItems = globalState.items.map(item =>
+      item.id === productId ? { ...item, quantity: newQuantity } : item
+    );
+    setGlobalState(updatedItems);
+  };
+
   const clearCart = () => {
     setGlobalState([]);
   };
@@ -77,6 +89,7 @@ export function useCartStore() {
     ...state,
     addItem,
     removeItem,
+    updateQuantity,
     clearCart
   };
 }
