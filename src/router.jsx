@@ -18,6 +18,9 @@ import SettingsPage from './features/settings/pages/SettingsPage';
 import CartPage from './features/cart/pages/CartPage';
 import ShopOnboardingPage from './features/shopkeeper/pages/ShopOnboardingPage';
 import ShopkeeperDashboardPage from './features/shopkeeper/pages/ShopkeeperDashboardPage';
+import AddProductPage from './features/shopkeeper/pages/AddProductPage';
+import ProductCatalogPage from './features/shopkeeper/pages/ProductCatalogPage';
+import ShopProfilePage from './features/shop/pages/ShopProfilePage';
 
 export default function AppRouter() {
   return (
@@ -39,6 +42,9 @@ export default function AppRouter() {
       <Route path="/cart" element={<CartPage />} />
       <Route path="/shopkeeper/onboarding" element={<ShopOnboardingPage />} />
       <Route path="/shopkeeper/dashboard" element={<ShopkeeperDashboardPage />} />
+      <Route path="/shopkeeper/products" element={<ProductCatalogPage />} />
+      <Route path="/shopkeeper/products/add" element={<AddProductPage />} />
+      <Route path="/shopkeeper/profile" element={<ShopProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
