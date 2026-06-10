@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import { Award, ShieldCheck, HeartHandshake, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Award, ShieldCheck, HeartHandshake, CheckCircle2, ChevronDown, ChevronUp, ShoppingCart, Plus, Minus } from 'lucide-react';
 import Rating from '../../../shared/components/Rating';
 import Badge from '../../../shared/components/ui/Badge';
+import { useCartStore } from '../../../store/useCartStore';
 
 export default function ProductInfo({ product, onReportClick }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { addItem } = useCartStore();
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
 
-  // Icon selector helper for USP badges
+  const handleAddToCart = () => {
+    addItem(product, qty);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
   const getBadgeIcon = (text) => {
     const cls = "w-4 h-4 text-brand-900 shrink-0";
     if (text.includes('Original')) return <ShieldCheck className={cls} />;
@@ -61,6 +70,41 @@ export default function ProductInfo({ product, onReportClick }) {
             </Badge>
           </>
         )}
+      </div>
+
+      {/* Add to Cart Action Widget */}
+      <div className="flex items-center gap-4 py-3 my-1 border-b border-neutral-100">
+        <div className="flex items-center border border-neutral-200 rounded-full px-2.5 py-1.5 bg-neutral-50/50">
+          <button 
+            type="button"
+            onClick={() => setQty(prev => Math.max(1, prev - 1))}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-200 transition-colors text-text-secondary cursor-pointer"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <span className="w-10 text-center font-poppins font-bold text-sm text-text-primary">
+            {qty}
+          </span>
+          <button 
+            type="button"
+            onClick={() => setQty(prev => prev + 1)}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-200 transition-colors text-text-secondary cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+
+        <button
+          onClick={handleAddToCart}
+          className={`flex-grow flex items-center justify-center gap-2 py-3 px-6 rounded-full font-poppins font-bold text-sm shadow-md transition-all active:scale-98 cursor-pointer select-none ${
+            added 
+              ? 'bg-[#12634B] hover:bg-[#0B3B2C] text-white' 
+              : 'bg-brand-900 hover:bg-brand-800 text-white shadow-brand-900/10'
+          }`}
+        >
+          <ShoppingCart className="w-4 h-4" />
+          <span>{added ? 'Added to Cart ✓' : 'Add to Cart'}</span>
+        </button>
       </div>
 
       {/* USP Badges row */}

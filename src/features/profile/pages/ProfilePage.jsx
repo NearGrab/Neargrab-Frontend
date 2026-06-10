@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { 
   User, 
   MessageSquare, 
@@ -26,17 +26,21 @@ import { profileService } from '../services/profileService';
 export default function ProfilePage() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const { username } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSidebarTab, setActiveSidebarTab] = useState('Overview');
 
-  // Load mock profile data asynchronously
+  const isOwnProfile = !username || username === user?.username;
+
+  // Load profile data asynchronously when username changes
   useEffect(() => {
     window.scrollTo(0, 0);
+    setLoading(true);
 
     const loadProfileData = async () => {
       try {
-        const profileData = await profileService.getProfileData();
+        const profileData = await profileService.getProfileData(username);
         setData(profileData);
       } catch (err) {
         console.error('Failed to resolve customer profile data', err);
@@ -46,7 +50,7 @@ export default function ProfilePage() {
     };
 
     loadProfileData();
-  }, []);
+  }, [username]);
 
   // Listen to sidebar tab change and redirect to settings if Settings is clicked
   useEffect(() => {
@@ -61,6 +65,31 @@ export default function ProfilePage() {
 
   const handleAvatarEdit = () => {
     alert('Avatar upload triggered! (High fidelity image selector mockup)');
+  };
+
+  const handleFollowToggle = async () => {
+    try {
+      const targetUserId = data?.currentUser?.id;
+      if (!targetUserId) return;
+
+      if (data.isFollowing) {
+        await profileService.unfollowUser(targetUserId);
+      } else {
+        await profileService.followUser(targetUserId);
+      }
+      
+      // Update follow state and follower count locally for immediate visual feedback
+      setData(prev => ({
+        ...prev,
+        isFollowing: !prev.isFollowing,
+        currentUser: {
+          ...prev.currentUser,
+          followersCount: prev.currentUser.followersCount + (prev.isFollowing ? -1 : 1)
+        }
+      }));
+    } catch (err) {
+      console.error('Failed to update follow status', err);
+    }
   };
 
   if (loading) {
@@ -85,7 +114,7 @@ export default function ProfilePage() {
     { id: 'Saved', label: 'Saved', icon: <Bookmark className="w-4 h-4 shrink-0" />, badge: 32 },
     { id: 'Recently Visited', label: 'Recently Visited', icon: <Clock className="w-4 h-4 shrink-0" />, badge: 18 },
     { id: 'Badges', label: 'Badges', icon: <Award className="w-4 h-4 shrink-0" /> },
-    { id: 'Settings', label: 'Settings', icon: <Settings className="w-4 h-4 shrink-0" /> }
+    ...(isOwnProfile ? [{ id: 'Settings', label: 'Settings', icon: <Settings className="w-4 h-4 shrink-0" /> }] : [])
   ];
 
   return (
@@ -100,6 +129,9 @@ export default function ProfilePage() {
           <ProfileHeader 
             user={currentUserDetails} 
             onSettingsClick={handleSettingsClick} 
+            isOwnProfile={isOwnProfile}
+            isFollowing={data.isFollowing}
+            onFollowToggle={handleFollowToggle}
           />
         </div>
 
@@ -114,6 +146,7 @@ export default function ProfilePage() {
               activeSidebarTab={activeSidebarTab}
               setActiveSidebarTab={setActiveSidebarTab}
               onEditClick={handleAvatarEdit}
+              isOwnProfile={isOwnProfile}
             />
 
             {/* Extracted YourImpact Sprout Component */}
@@ -127,6 +160,9 @@ export default function ProfilePage() {
               <ProfileHeader 
                 user={currentUserDetails} 
                 onSettingsClick={handleSettingsClick} 
+                isOwnProfile={isOwnProfile}
+                isFollowing={data.isFollowing}
+                onFollowToggle={handleFollowToggle}
               />
             </div>
 

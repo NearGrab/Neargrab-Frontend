@@ -7,7 +7,8 @@ export default function ProfileSidebar({
   sidebarItems,
   activeSidebarTab,
   setActiveSidebarTab,
-  onEditClick
+  onEditClick,
+  isOwnProfile = true
 }) {
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -24,13 +25,15 @@ export default function ProfileSidebar({
           </div>
           
           {/* Pencil Edit overlay icon */}
-          <button
-            onClick={onEditClick}
-            className="absolute -top-1.5 -right-1.5 bg-white hover:bg-neutral-50 text-emerald-800 border border-neutral-200 w-8 h-8 rounded-full flex items-center justify-center shadow-md cursor-pointer hover:scale-105 transition-transform"
-            aria-label="Edit Avatar"
-          >
-            <Edit className="w-3.5 h-3.5 text-emerald-700" />
-          </button>
+          {isOwnProfile && (
+            <button
+              onClick={onEditClick}
+              className="absolute -top-1.5 -right-1.5 bg-white hover:bg-neutral-50 text-emerald-800 border border-neutral-200 w-8 h-8 rounded-full flex items-center justify-center shadow-md cursor-pointer hover:scale-105 transition-transform"
+              aria-label="Edit Avatar"
+            >
+              <Edit className="w-3.5 h-3.5 text-emerald-700" />
+            </button>
+          )}
         </div>
 
         <h2 className="font-poppins font-bold text-lg md:text-xl text-text-primary mb-0.5 leading-tight">

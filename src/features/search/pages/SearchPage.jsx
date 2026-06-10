@@ -55,7 +55,15 @@ export default function SearchPage() {
     const loadSearchData = async () => {
       setLoading(true);
       try {
-        const radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, '')) : 10;
+        let radiusKm;
+        if (filters.customDistance) {
+          radiusKm = parseFloat(filters.customDistance);
+        } else if (filters.distance) {
+          radiusKm = parseInt(filters.distance.replace(/[^0-9]/g, ''), 10);
+        } else {
+          radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, ''), 10) : 10;
+        }
+
         const data = await searchService.searchProducts({
           ...filters,
           categoryTab: activeTab,

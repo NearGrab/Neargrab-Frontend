@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
 import { UserPlus, UserCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/components/ui';
+import { profileService } from '../services/profileService';
 
 export default function WhoToFollow({ initialUsers }) {
   const [users, setUsers] = useState(initialUsers);
 
   // Handle follow state toggle dynamically
-  const handleFollowToggle = (userId) => {
-    setUsers(prevUsers => 
-      prevUsers.map(user => {
-        if (user.id === userId) {
-          return {
-            ...user,
-            isFollowing: !user.isFollowing
-          };
-        }
-        return user;
-      })
-    );
+  const handleFollowToggle = async (userId, isCurrentlyFollowing) => {
+    try {
+      if (isCurrentlyFollowing) {
+        await profileService.unfollowUser(userId);
+      } else {
+        await profileService.followUser(userId);
+      }
+      setUsers(prevUsers => 
+        prevUsers.map(user => {
+          if (user.id === userId) {
+            return {
+              ...user,
+              isFollowing: !user.isFollowing
+            };
+          }
+          return user;
+        })
+      );
+    } catch (err) {
+      console.error('Failed to update follow status', err);
+    }
   };
 
   return (
@@ -39,24 +50,24 @@ export default function WhoToFollow({ initialUsers }) {
             className="flex items-center justify-between gap-4 group"
           >
             {/* User profile avatar info */}
-            <div className="flex items-center gap-3">
+            <Link to={`/profile/${user.username}`} className="flex items-center gap-3 cursor-pointer group/link">
               <div className="w-10 h-10 rounded-full overflow-hidden border border-neutral-200/40 shrink-0 shadow-sm">
                 <img 
                   src={user.avatar} 
                   alt={user.name} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover/link:scale-105 transition-transform duration-300"
                 />
               </div>
               
               <div className="leading-tight text-left">
-                <span className="block font-poppins font-bold text-text-primary text-xs md:text-sm group-hover:text-brand-900 transition-colors">
+                <span className="block font-poppins font-bold text-text-primary text-xs md:text-sm group-hover/link:text-brand-900 transition-colors">
                   {user.name}
                 </span>
                 <span className="text-[10px] md:text-xs text-text-secondary">
                   @{user.username}
                 </span>
               </div>
-            </div>
+            </Link>
 
             {/* Follow button primitive */}
             <Button
@@ -72,7 +83,7 @@ export default function WhoToFollow({ initialUsers }) {
                   ? <UserCheck className="w-3 h-3 text-text-secondary" />
                   : <UserPlus className="w-3 h-3 text-brand-900" />
               }
-              onClick={() => handleFollowToggle(user.id)}
+              onClick={() => handleFollowToggle(user.id, user.isFollowing)}
             >
               {user.isFollowing ? 'Following' : 'Follow'}
             </Button>

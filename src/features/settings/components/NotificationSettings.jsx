@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Bell, Mail, Users, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, Mail, Users, Heart, Loader2 } from 'lucide-react';
+import { notificationService } from '../../notifications/services/notificationService';
 
 export default function NotificationSettings() {
   const [preferences, setPreferences] = useState({
@@ -8,13 +9,52 @@ export default function NotificationSettings() {
     follow: true,
     likes: true,
   });
+  const [loading, setLoading] = useState(true);
 
-  const togglePreference = (key) => {
-    setPreferences((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  useEffect(() => {
+    const fetchPrefs = async () => {
+      try {
+        const data = await notificationService.getNotificationsData();
+        if (data && data.preferences) {
+          setPreferences({
+            push: data.preferences.push ?? true,
+            email: data.preferences.email ?? true,
+            follow: data.preferences.follow ?? true,
+            likes: data.preferences.likes ?? true,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch notification preferences:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrefs();
+  }, []);
+
+  const togglePreference = async (key) => {
+    try {
+      const updated = await notificationService.togglePreference(key);
+      setPreferences({
+        push: updated.push ?? true,
+        email: updated.email ?? true,
+        follow: updated.follow ?? true,
+        likes: updated.likes ?? true,
+      });
+    } catch (err) {
+      console.error('Failed to toggle preference:', err);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-3xl border border-neutral-200/50 shadow-sm p-6 text-center flex items-center justify-center gap-2 min-h-36">
+        <Loader2 className="w-5 h-5 text-brand-900 animate-spin" />
+        <span className="text-xs text-text-secondary font-medium">Loading preferences...</span>
+      </div>
+    );
+  }
+
 
   const notificationCards = [
     {

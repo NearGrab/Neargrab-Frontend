@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 const DEFAULT_FILTERS = {
-  distance: 'Within 3 km',
+  distance: 'Within 10 km',
   customDistance: '',
   minPrice: 0,
-  maxPrice: 200,
+  maxPrice: 1000,
   brands: [],
-  packSizes: ['1 Litre'],
-  inStockOnly: true,
+  packSizes: [],
+  inStockOnly: false,
   page: 1
 };
 

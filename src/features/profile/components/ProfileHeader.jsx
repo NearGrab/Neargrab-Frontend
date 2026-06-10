@@ -1,8 +1,14 @@
 import React from 'react';
-import { Share2, Settings, Star, MapPin } from 'lucide-react';
+import { Share2, Settings, Star, MapPin, UserPlus, UserCheck } from 'lucide-react';
 import { Button } from '../../../shared/components/ui';
 
-export default function ProfileHeader({ user, onSettingsClick }) {
+export default function ProfileHeader({ 
+  user, 
+  onSettingsClick, 
+  isOwnProfile = true,
+  isFollowing = false,
+  onFollowToggle
+}) {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -96,15 +102,35 @@ export default function ProfileHeader({ user, onSettingsClick }) {
             Share Profile
           </Button>
           
-          <Button
-            variant="secondary"
-            size="md"
-            className="flex-1 md:flex-none py-2 md:py-2.5"
-            leftIcon={<Settings className="w-3.5 h-3.5" />}
-            onClick={onSettingsClick}
-          >
-            Settings
-          </Button>
+          {isOwnProfile ? (
+            <Button
+              variant="secondary"
+              size="md"
+              className="flex-1 md:flex-none py-2 md:py-2.5"
+              leftIcon={<Settings className="w-3.5 h-3.5" />}
+              onClick={onSettingsClick}
+            >
+              Settings
+            </Button>
+          ) : (
+            <Button
+              variant={isFollowing ? 'secondary' : 'primary'}
+              size="md"
+              className={`flex-1 md:flex-none py-2 md:py-2.5 ${
+                isFollowing 
+                  ? 'bg-neutral-100 border-neutral-200/50 text-text-secondary hover:bg-neutral-200/30' 
+                  : 'bg-brand-900 text-white hover:bg-brand-800'
+              }`}
+              leftIcon={
+                isFollowing 
+                  ? <UserCheck className="w-3.5 h-3.5 text-text-secondary" />
+                  : <UserPlus className="w-3.5 h-3.5 text-white" />
+              }
+              onClick={onFollowToggle}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
+            </Button>
+          )}
         </div>
       </div>
     </div>

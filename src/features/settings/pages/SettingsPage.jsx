@@ -30,18 +30,18 @@ import RightSidebarWidgets from '../components/RightSidebarWidgets';
 import { Button } from '../../../shared/components/ui';
 
 export default function SettingsPage() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, updateUserLocally } = useAuthStore();
   const navigate = useNavigate();
   
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Account'); // Account, Notifications, Privacy, Preferences, Language, About
   const [activeSidebarTab, setActiveSidebarTab] = useState('Settings');
-
+ 
   // Load profile data
   useEffect(() => {
     window.scrollTo(0, 0);
-
+ 
     const loadData = async () => {
       try {
         const data = await profileService.getProfileData();
@@ -52,10 +52,10 @@ export default function SettingsPage() {
         setLoading(false);
       }
     };
-
+ 
     loadData();
   }, []);
-
+ 
   // Listen to sidebar tab change
   useEffect(() => {
     if (activeSidebarTab !== 'Settings') {
@@ -63,19 +63,35 @@ export default function SettingsPage() {
       navigate(`/profile?tab=${activeSidebarTab}`);
     }
   }, [activeSidebarTab, navigate]);
-
-  const handleUpdateUser = (updatedInfo) => {
-    setProfileData((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        currentUser: {
-          ...prev.currentUser,
-          ...updatedInfo,
-        },
-      };
-    });
+ 
+  const handleUpdateUser = async (updatedInfo) => {
+    try {
+      const result = await profileService.updateAccount(updatedInfo);
+      if (result) {
+        // Sync local auth store reactively
+        updateUserLocally({
+          ...user,
+          ...updatedInfo
+        });
+        
+        // Update settings dashboard view
+        setProfileData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            currentUser: {
+              ...prev.currentUser,
+              ...updatedInfo,
+            },
+          };
+        });
+      }
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      alert(err.message || 'Failed to update profile information.');
+    }
   };
+
 
   const handleLogOutClick = () => {
     if (confirm('Are you sure you want to log out from Neargrab?')) {

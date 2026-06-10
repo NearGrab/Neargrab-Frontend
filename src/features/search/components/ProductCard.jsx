@@ -43,8 +43,7 @@ export default function ProductCard({ product, compact = false }) {
           e.stopPropagation();
           setIsWishlisted(!isWishlisted);
           if (!isWishlisted) {
-            addItem(product, 1); // Mock addition to cart as an extra surprise for high fidelity!
-            alert(`"${product.name}" added to shopping cart!`);
+            alert(`"${product.name}" added to your wishlist!`);
           }
         }}
         className="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-sm border border-neutral-100 flex items-center justify-center text-text-muted hover:text-red-500 hover:scale-105 active:scale-95 transition-all shadow-sm z-10 cursor-pointer"
@@ -168,16 +167,30 @@ export default function ProductCard({ product, compact = false }) {
               </div>
             </div>
 
-            {/* Primary outlined visual Action Button matches mockup exactly */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleViewStore();
-              }}
-              className="w-full py-1.5 sm:py-2 border border-neutral-200 hover:border-neutral-300 bg-white hover:bg-neutral-50 text-text-secondary hover:text-text-primary font-poppins font-bold text-[10px] sm:text-xs rounded-full transition-all cursor-pointer text-center"
-            >
-              View store
-            </button>
+            {/* Actions: View Store & Add to Cart */}
+            <div className="flex gap-2 w-full">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewStore();
+                }}
+                className="flex-1 py-1.5 sm:py-2 border border-neutral-200 hover:border-neutral-300 bg-white hover:bg-neutral-50 text-text-secondary hover:text-text-primary font-poppins font-bold text-[10px] sm:text-xs rounded-full transition-all cursor-pointer text-center"
+              >
+                View store
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(product, 1);
+                  alert(`"${product.name}" added to shopping cart!`);
+                }}
+                className="flex-1 py-1.5 sm:py-2 bg-brand-900 hover:bg-brand-800 text-white font-poppins font-bold text-[10px] sm:text-xs rounded-full transition-all cursor-pointer text-center shadow-md shadow-brand-900/5 hover:scale-102 active:scale-95"
+              >
+                Add to cart
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -215,6 +215,13 @@ export function useAuthStore() {
     });
   };
 
+  const updateUserLocally = (updatedUser) => {
+    localStorage.setItem('neargrab_user', JSON.stringify(updatedUser));
+    setGlobalState({
+      user: updatedUser
+    });
+  };
+
   return {
     ...state,
     login,
@@ -225,6 +232,8 @@ export function useAuthStore() {
     refreshSession,
     loadCurrentUser,
     setSession,
-    clearSession
+    clearSession,
+    updateUserLocally
   };
 }
+

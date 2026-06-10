@@ -128,6 +128,8 @@ export default function OrderSummarySidebar({ items, onCheckoutClick }) {
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-2.5 pt-2">
+            {/* Proceed to Checkout is commented out as reservation flow is disabled for now */}
+            {/*
             <Button
               variant="primary"
               size="md"
@@ -136,6 +138,15 @@ export default function OrderSummarySidebar({ items, onCheckoutClick }) {
             >
               <span>Proceed to Checkout</span>
               <ArrowRight className="w-4.5 h-4.5 shrink-0" />
+            </Button>
+            */}
+            <Button
+              variant="primary"
+              size="md"
+              disabled
+              className="w-full font-bold flex items-center justify-center gap-2 py-3 opacity-60 cursor-not-allowed"
+            >
+              <span>Reservations Disabled</span>
             </Button>
             <Button
               variant="outline"

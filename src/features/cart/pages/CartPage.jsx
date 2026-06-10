@@ -21,56 +21,6 @@ import OrderSummarySidebar from '../components/OrderSummarySidebar';
 import ClearCartModal from '../components/ClearCartModal';
 import RouteModal from '../components/RouteModal';
 
-// High-fidelity pre-populate details matching visual mock design exactly
-const MOCK_PREPOPULATE_ITEMS = [
-  {
-    id: 'aashirvaad-atta',
-    name: 'Aashirvaad Atta 5kg',
-    price: 275,
-    originalPrice: 290,
-    discountPercent: 5,
-    unit: '5kg • Whole Wheat',
-    quantity: 1,
-    store: 'Patel General Store',
-    distance: '0.3 km away',
-    image: 'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'fortune-oil',
-    name: 'Fortune Sunlite Oil 1L',
-    price: 145,
-    originalPrice: 170,
-    discountPercent: 15,
-    unit: '1 Litre',
-    quantity: 1,
-    store: 'Patel General Store',
-    distance: '0.3 km away',
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'surf-excel',
-    name: 'Surf Excel Matic 2kg',
-    price: 210,
-    originalPrice: 235,
-    discountPercent: 16,
-    unit: '2kg • Top Load',
-    quantity: 1,
-    store: 'Jain Kirana Store',
-    distance: '0.5 km away',
-    image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'amul-milk',
-    name: 'Amul Taaza Milk 1L',
-    price: 56,
-    unit: '1 Litre • Fresh & Pure',
-    quantity: 2,
-    store: 'Shree Provision Store',
-    distance: '0.4 km away',
-    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=150&q=80'
-  }
-];
-
 export default function CartPage() {
   const navigate = useNavigate();
   const { items, updateQuantity, removeItem, clearCart, addItem } = useCartStore();
@@ -79,24 +29,15 @@ export default function CartPage() {
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
 
-  // Initialize and populate cart if empty (for high-fidelity demo presentation)
   useEffect(() => {
     window.scrollTo(0, 0);
-
     const timer = setTimeout(() => {
-      if (items.length === 0 && !localStorage.getItem('neargrab_cart_cleared')) {
-        MOCK_PREPOPULATE_ITEMS.forEach(mockItem => {
-          addItem(mockItem, mockItem.quantity);
-        });
-      }
       setLoading(false);
-    }, 350);
-
+    }, 150);
     return () => clearTimeout(timer);
-  }, [items.length, addItem]);
+  }, []);
 
   const handleClearCart = () => {
-    // Flag to prevent re-populating cleared cart automatically
     localStorage.setItem('neargrab_cart_cleared', 'true');
     clearCart();
   };
@@ -106,8 +47,9 @@ export default function CartPage() {
   };
 
   const handleCheckoutClick = () => {
-    alert('Proceeding to checkout secure payment gateway gateway mockup. Pickup instructions sent to registered phone number.');
+    // Checkout is currently disabled in the frontend
   };
+
 
   if (loading) {
     return (

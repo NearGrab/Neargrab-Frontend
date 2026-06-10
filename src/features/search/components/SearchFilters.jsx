@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function SearchFilters({
@@ -19,6 +19,14 @@ export default function SearchFilters({
   // Local state for Price Range sliders to avoid laggy performance during slides
   const [localMinPrice, setLocalMinPrice] = useState(filters.minPrice);
   const [localMaxPrice, setLocalMaxPrice] = useState(filters.maxPrice);
+
+  useEffect(() => {
+    setLocalMinPrice(filters.minPrice);
+  }, [filters.minPrice]);
+
+  useEffect(() => {
+    setLocalMaxPrice(filters.maxPrice);
+  }, [filters.maxPrice]);
 
   const handlePriceApply = () => {
     updateFilter('minPrice', localMinPrice);
@@ -231,11 +239,12 @@ export default function SearchFilters({
         </h4>
         <div className="flex flex-col gap-2.5">
           {[
-            { name: 'Fortune', count: 36 },
-            { name: 'Saffola', count: 21 },
-            { name: 'Gemini', count: 18 },
-            { name: 'Dhara', count: 14 },
-            { name: 'Nature Fresh', count: 12 }
+            { name: 'Generic', count: 5 },
+            { name: 'Amul', count: 1 },
+            { name: 'Surf Excel', count: 1 },
+            { name: 'Samsung', count: 1 },
+            { name: 'Classmate', count: 1 },
+            { name: 'Fevicol', count: 1 }
           ].map((b) => (
             <label
               key={b.name}
@@ -253,50 +262,6 @@ export default function SearchFilters({
               <span className="text-text-muted">({b.count})</span>
             </label>
           ))}
-
-          {/* Reveal details toggle */}
-          {showMoreBrands && (
-            <div className="flex flex-col gap-2.5 pt-1 transition-all duration-300">
-              {[
-                { name: 'Sundrop', count: 8 },
-                { name: 'Gold Winner', count: 6 },
-                { name: 'Dalda', count: 4 }
-              ].map((b) => (
-                <label
-                  key={b.name}
-                  className="flex items-center justify-between text-xs font-semibold text-text-secondary cursor-pointer hover:text-text-primary transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.brands.includes(b.name)}
-                      onChange={() => toggleBrand(b.name)}
-                      className="w-4 h-4 text-brand-900 border-neutral-300 rounded focus:ring-brand-900"
-                    />
-                    <span>{b.name}</span>
-                  </div>
-                  <span className="text-text-muted">({b.count})</span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          <button
-            onClick={() => setShowMoreBrands(!showMoreBrands)}
-            className="flex items-center gap-1 text-[11px] font-bold text-brand-900 hover:text-brand-800 transition-colors mt-1 text-left cursor-pointer shrink-0"
-          >
-            {showMoreBrands ? (
-              <>
-                <span>View less</span>
-                <ChevronUp className="w-3.5 h-3.5" />
-              </>
-            ) : (
-              <>
-                <span>View more</span>
-                <ChevronDown className="w-3.5 h-3.5" />
-              </>
-            )}
-          </button>
         </div>
       </div>
 
@@ -307,10 +272,10 @@ export default function SearchFilters({
         </h4>
         <div className="flex flex-col gap-2.5">
           {[
-            { name: '500 ml', count: 12 },
-            { name: '1 Litre', count: 64, checked: true },
-            { name: '2 Litre', count: 28 },
-            { name: '5 Litre', count: 8 }
+            { name: '500 g', count: 1 },
+            { name: '1 kg', count: 1 },
+            { name: '5 kg', count: 1 },
+            { name: '1 Unit', count: 7 }
           ].map((item) => (
             <label
               key={item.name}
