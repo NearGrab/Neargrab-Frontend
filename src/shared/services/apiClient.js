@@ -17,7 +17,24 @@ const apiClient = {
 
   async request(path, options = {}) {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-    const url = `${baseUrl}${path}`;
+    let url = `${baseUrl}${path}`;
+
+    if (options.params) {
+      const searchParams = new URLSearchParams();
+      Object.entries(options.params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            searchParams.set(key, value.join(','));
+          } else {
+            searchParams.set(key, String(value));
+          }
+        }
+      });
+      const queryStr = searchParams.toString();
+      if (queryStr) {
+        url += (url.includes('?') ? '&' : '?') + queryStr;
+      }
+    }
 
     const {
       timeout = DEFAULT_TIMEOUT,

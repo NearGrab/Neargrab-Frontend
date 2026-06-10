@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../../search/components/ProductCard';
 import { productService } from '../services/productService';
+import { useLocationStore } from '../../../store/useLocationStore';
 import { ChevronRight } from 'lucide-react';
 
-export default function SimilarProducts({ brand, category }) {
+export default function SimilarProducts({ productId, brand, category }) {
+  const { location } = useLocationStore();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -11,7 +13,8 @@ export default function SimilarProducts({ brand, category }) {
     const loadSimilar = async () => {
       setLoading(true);
       try {
-        const items = await productService.getSimilarProducts(brand, category);
+        const idToFetch = productId || brand || category;
+        const items = await productService.getSimilarProducts(idToFetch, { city: location?.city });
         setProducts(items);
       } catch (err) {
         console.error('Failed to load similar products:', err);
@@ -20,7 +23,7 @@ export default function SimilarProducts({ brand, category }) {
       }
     };
     loadSimilar();
-  }, [brand, category]);
+  }, [productId, brand, category, location]);
 
   if (loading) {
     return (

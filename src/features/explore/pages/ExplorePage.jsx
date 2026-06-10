@@ -8,20 +8,29 @@ import NearbyStores from '../components/NearbyStores';
 import TopPicks from '../components/TopPicks';
 import ExploreSidebar from '../components/ExploreSidebar';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { useLocationStore } from '../../../store/useLocationStore';
 import { Loader2 } from 'lucide-react';
 
 export default function ExplorePage() {
   const { user } = useAuthStore();
+  const { location } = useLocationStore();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Query explore data asynchronously from the service layer on mount
+  // Query explore data asynchronously from the service layer reactively when location changes
   useEffect(() => {
     window.scrollTo(0, 0);
 
     const loadData = async () => {
+      setLoading(true);
       try {
-        const dashboardData = await exploreService.getExploreDashboardData();
+        const radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, '')) : 10;
+        const dashboardData = await exploreService.getExploreDashboardData({
+          city: location?.city,
+          latitude: location?.coordinates?.lat,
+          longitude: location?.coordinates?.lng,
+          radiusKm
+        });
         setData(dashboardData);
       } catch (err) {
         console.error('Failed to resolve explore dashboard data', err);
@@ -31,7 +40,7 @@ export default function ExplorePage() {
     };
 
     loadData();
-  }, []);
+  }, [location]);
 
   // Display highly polished brand loading state
   if (loading) {

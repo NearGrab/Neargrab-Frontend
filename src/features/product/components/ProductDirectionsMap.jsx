@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { MapPin, Navigation, Compass, ExternalLink, ShieldCheck } from 'lucide-react';
 import Button from '../../../shared/components/ui/Button';
 
-export default function ProductDirectionsMap({ storeName = 'Patel General Store', distance = '0.2 km', address = 'Shop No. 12, GIDC Road' }) {
+export default function ProductDirectionsMap({ storeName = 'Patel General Store', distance = '0.2 km', address = 'Shop No. 12, GIDC Road', onDirectionsClick }) {
   const [activeTransit, setActiveTransit] = useState('walk');
 
   const handleGoogleMapsRedirect = () => {
-    const query = encodeURIComponent(`${storeName}, ${address}`);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    if (onDirectionsClick) {
+      onDirectionsClick();
+    } else {
+      const query = encodeURIComponent(`${storeName}, ${address}`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    }
   };
 
   const transitModes = [

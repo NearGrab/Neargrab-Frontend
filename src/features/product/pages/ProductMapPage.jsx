@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../../../shared/components/layout/Navbar';
 import Footer from '../../landing/components/Footer';
 import ProductDirectionsMap from '../components/ProductDirectionsMap';
@@ -10,14 +10,18 @@ import ReviewProductModal from '../components/ReviewProductModal';
 import ReviewCard from '../../../shared/components/ReviewCard';
 import Button from '../../../shared/components/ui/Button';
 import { productService } from '../services/productService';
+import { shopProfileService } from '../../shop/services/shopProfileService';
 import { ChevronLeft, Star, Store, ShieldCheck, Info } from 'lucide-react';
 
 export default function ProductMapPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const shopId = searchParams.get('shopId');
   
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [initialReviewRating, setInitialReviewRating] = useState(0);
@@ -30,9 +34,11 @@ export default function ProductMapPage() {
         const idToFetch = productId || 'prod-fortune-1l';
         const prodData = await productService.getProductDetails(idToFetch);
         const mapReviews = await productService.getMapReviews(idToFetch);
+        const storeData = await productService.getAvailableStores(idToFetch);
 
         setProduct(prodData);
         setReviews(mapReviews);
+        setStores(storeData);
       } catch (err) {
         console.error('Failed to load product map details:', err);
       } finally {
@@ -41,6 +47,32 @@ export default function ProductMapPage() {
     };
     loadPageData();
   }, [productId]);
+
+  const mainStore = product ? {
+    id: product.soldBy?.id,
+    name: product.soldBy?.name,
+    verified: product.soldBy?.verified,
+    distance: product.soldBy?.distance,
+    price: product.price,
+    rating: product.soldBy?.rating,
+    reviewsCount: product.soldBy?.reviewsCount,
+    address: product.soldBy?.address,
+    image: product.soldBy?.image
+  } : null;
+
+  const activeStore = (shopId === product?.soldBy?.id)
+    ? mainStore
+    : (stores.find(s => s.id === shopId) || (shopId ? null : mainStore) || stores[0] || mainStore);
+
+  const handleDirectionsClick = async () => {
+    if (!activeStore) return;
+    
+    // Non-blocking trackLead event
+    shopProfileService.trackLead(activeStore.id, 'DIRECTIONS_OPEN');
+    
+    const query = encodeURIComponent(`${activeStore.name}, ${activeStore.address}`);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+  };
 
   if (loading) {
     return (
@@ -57,12 +89,13 @@ export default function ProductMapPage() {
     );
   }
 
-  if (!product) {
+  if (!product || !activeStore) {
     return (
       <div className="min-h-screen bg-neutral-50 flex flex-col selection:bg-brand-500 selection:text-white">
         <Navbar />
         <div className="flex-grow flex flex-col items-center justify-center p-20 gap-4 text-center">
           <h2 className="font-poppins font-extrabold text-2xl text-text-primary">Shop Details Not Found</h2>
+          <p className="text-sm text-text-secondary font-inter">The selected store carrying this product is not available nearby.</p>
           <Link to="/search" className="px-6 py-2.5 bg-brand-900 text-white rounded-full font-bold text-xs shadow-md">
             Back to Search
           </Link>
@@ -71,8 +104,6 @@ export default function ProductMapPage() {
       </div>
     );
   }
-
-  const { soldBy } = product;
 
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col selection:bg-brand-500 selection:text-white">
@@ -103,9 +134,10 @@ export default function ProductMapPage() {
 
             {/* 2. DIRECTIONS MAP BLOCK */}
             <ProductDirectionsMap 
-              storeName={soldBy.name} 
-              distance={`${soldBy.distance} km`} 
-              address={soldBy.address} 
+              storeName={activeStore.name} 
+              distance={`${activeStore.distance} km`} 
+              address={activeStore.address} 
+              onDirectionsClick={handleDirectionsClick}
             />
 
             {/* 3. STORE SPECIFICATIONS BOTTOM PROFILE CARD */}
@@ -113,15 +145,15 @@ export default function ProductMapPage() {
               
               <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                 <img 
-                  src={soldBy.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'} 
-                  alt={soldBy.name} 
+                  src={activeStore.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'} 
+                  alt={activeStore.name} 
                   className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-neutral-200 shadow-sm shrink-0"
                 />
                 
                 <div className="leading-tight">
                   <div className="flex items-center justify-center sm:justify-start gap-1">
-                    <h2 className="text-sm sm:text-base font-extrabold text-text-primary">{soldBy.name}</h2>
-                    {soldBy.verified && (
+                    <h2 className="text-sm sm:text-base font-extrabold text-text-primary">{activeStore.name}</h2>
+                    {activeStore.verified && (
                       <span className="w-3.5 h-3.5 bg-[#0B3B2C] text-white rounded-full flex items-center justify-center scale-75 shrink-0">
                         <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -133,14 +165,14 @@ export default function ProductMapPage() {
                     Grocery, Daily Needs, Household
                   </p>
                   <p className="text-[10px] sm:text-xs text-text-secondary font-medium font-inter mt-1.5 max-w-[340px]">
-                    {soldBy.address}
+                    {activeStore.address}
                   </p>
 
                   <div className="flex items-center justify-center sm:justify-start gap-4 mt-2.5 text-[10px] sm:text-xs font-bold text-text-secondary font-inter">
                     <div className="flex items-center gap-0.5 text-amber-500">
                       <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
-                      <span className="text-text-primary">4.7</span>
-                      <span className="text-text-muted font-normal">({soldBy.reviewsCount || 128} reviews)</span>
+                      <span className="text-text-primary">{activeStore.rating || 4.5}</span>
+                      <span className="text-text-muted font-normal">({activeStore.reviewsCount || 128} reviews)</span>
                     </div>
                     <span className="text-text-muted font-normal">•</span>
                     <div>
@@ -152,7 +184,11 @@ export default function ProductMapPage() {
 
               {/* Action trigger button */}
               <Button
-                onClick={() => alert(`Full shop catalog pages for "${soldBy.name}" coming soon!`)}
+                onClick={() => {
+                  if (activeStore.id) {
+                    navigate(`/shops/${activeStore.id}`);
+                  }
+                }}
                 variant="outline"
                 size="sm"
                 className="!py-2.5 !px-5 mt-4 sm:mt-0 w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5"
@@ -172,7 +208,7 @@ export default function ProductMapPage() {
             <ProductReviewsBreakdown 
               rating={product.rating} 
               reviewsCount={product.reviewsCount} 
-              storeName={soldBy.name} 
+              storeName={activeStore.name} 
             />
 
             {/* 2. REUSABLE THUMBNAIL-RICH RECENT REVIEWS FEED */}

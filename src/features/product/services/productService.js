@@ -1,248 +1,193 @@
-import { searchService } from '../../search/services/searchService';
-
-// High-fidelity Unsplash images representing multiple angles of a sunflower oil / cooking oil bottle
-const MULTI_ANGLE_IMAGES = [
-  'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80', // Front angle (proven working)
-  'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=600&q=80', // Zoom in detail
-  'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80', // Lifestyle context on kitchen shelf
-  'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80', // Physical storefront placement
-  'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=600&q=80'  // Hand pouring / ingredient zoom
-];
-
-// Fallback high-fidelity details mapping for sunflower cooking oils
-const DETAILED_PRODUCTS_DB = {
-  'prod-fortune-1l': {
-    id: 'prod-fortune-1l',
-    name: 'Fortune Sunlite Refined Sunflower Oil 1L',
-    brand: 'Fortune',
-    category: 'Refined',
-    size: '1 Litre',
-    specs: ['1 Litre', 'Refined', 'Sunflower Oil'],
-    rating: 4.6,
-    reviewsCount: 152,
-    boughtThisWeek: '2K+ bought this week',
-    price: 145,
-    originalPrice: 160,
-    discount: '10% OFF',
-    inStock: true,
-    description: 'Fortune Sunlite is a healthy choice for your family. It is a light and healthy oil that is rich in Vitamin A, D & E and has the goodness of Sunflower. It helps preserve the natural flavor of food cooked in it, keeping your family active and energetic all day long.',
-    images: MULTI_ANGLE_IMAGES,
-    uspBadges: ['100% Original', 'Best Quality', 'Trusted by Locals', 'Secure Info'],
-    soldBy: {
-      id: 'store-patel',
-      name: 'Patel General Store',
-      verified: true,
-      rating: 4.7,
-      reviewsCount: 128,
-      category: 'Grocery, Daily Needs',
-      status: 'Open now',
-      timings: 'Closes 10:00 PM',
-      distance: 0.2,
-      delivery: 'Not available',
-      address: 'Shop No. 12, GIDC Road, Navsari, Gujarat - 396445',
-      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
-    }
-  }
-};
+import apiClient from '../../../shared/services/apiClient';
+import { mapBackendProductToFrontend } from '../../../shared/utils/mappers';
 
 export const productService = {
   /**
-   * Fetch rich product details. If dynamic productId is not fortune oil, 
-   * we dynamically resolve and adapt it from the global search mock catalog.
+   * Fetch rich product details.
    */
   async getProductDetails(productId) {
-    return new Promise(async (resolve) => {
-      // 1. Check if we have absolute explicit details in our DB
-      if (DETAILED_PRODUCTS_DB[productId]) {
-        resolve(DETAILED_PRODUCTS_DB[productId]);
-        return;
-      }
+    const { data } = await apiClient.get(`/api/v1/products/${productId}`);
+    
+    const shop = data.shop || {};
+    const address = shop.address || {};
+    
+    const soldBy = {
+      id: shop.id,
+      name: shop.name,
+      slug: shop.slug || shop.username,
+      verified: shop.verificationStatus === 'VERIFIED',
+      rating: shop.ratingAvg || 4.5,
+      reviewsCount: shop.ratingCount || 10,
+      category: 'Grocery, Daily Needs',
+      status: 'Open now',
+      timings: 'Closes 10:00 PM',
+      distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,
+      delivery: 'Not available',
+      address: `${address.street || ''}, ${address.city || ''} - ${address.pincode || ''}`.replace(/^,\s*/, ''),
+      image: shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
+    };
 
-      // 2. Otherwise, fetch the product from global search service
-      const response = await searchService.searchProducts({});
-      const matchedProd = response.products.find(p => p.id === productId) || response.products[0];
-      
-      // Adapt base product to detailed structure
-      const adaptedDetail = {
-        id: matchedProd.id,
-        name: matchedProd.name,
-        brand: matchedProd.brand,
-        category: matchedProd.category,
-        size: matchedProd.size,
-        specs: [matchedProd.size, matchedProd.category, matchedProd.brand + ' Oil'],
-        rating: matchedProd.rating,
-        reviewsCount: matchedProd.reviewsCount,
-        boughtThisWeek: '500+ bought this week',
-        price: matchedProd.price,
-        originalPrice: matchedProd.originalPrice,
-        discount: matchedProd.discount,
-        inStock: matchedProd.inStock,
-        description: `${matchedProd.name} is selected from the premium golden seeds, delivered to local shelves fresh from nearby stores. Ideal for light deep frying, roasting, and authentic home culinary creations, packed with goodness and verified pure by local merchants.`,
-        images: [
-          matchedProd.image,
-          ...MULTI_ANGLE_IMAGES.slice(1) // Adapt alternative thumbnails dynamically
-        ],
-        uspBadges: ['100% Original', 'Best Quality', 'Trusted by Locals', 'Secure Info'],
-        soldBy: {
-          id: matchedProd.id.includes('fortune') ? 'store-patel' : matchedProd.id.includes('saffola') ? 'store-jain' : 'store-shree-prov',
-          name: matchedProd.store,
-          verified: matchedProd.verified,
-          rating: matchedProd.rating,
-          reviewsCount: matchedProd.reviewsCount,
-          category: 'Grocery, Daily Needs',
-          status: 'Open now',
-          timings: 'Closes 9:30 PM',
-          distance: matchedProd.distance,
-          delivery: matchedProd.distance < 0.5 ? 'Free Delivery' : 'Not available',
-          address: matchedProd.id.includes('fortune')
-            ? 'Shop No. 12, GIDC Road, Navsari, Gujarat - 396445'
-            : matchedProd.id.includes('saffola')
-            ? 'Plot 45, Station Road, Navsari, Gujarat - 396401'
-            : 'Shop 8-C, Sayaji Road, Navsari, Gujarat - 396445',
-          image: matchedProd.id.includes('fortune')
-            ? 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
-            : matchedProd.id.includes('saffola')
-            ? 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=150&q=80'
-            : 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80'
-        }
-      };
+    const specs = [
+      data.size ? `${data.size} ${data.unit || ''}`.trim() : '1 Unit',
+      data.category?.name || 'Grocery',
+      data.brand?.name || 'Local Brand'
+    ];
 
-      resolve(adaptedDetail);
-    });
+    const images = Array.isArray(data.images) && data.images.length > 0
+      ? data.images.map(img => img.url || img.media?.url).filter(Boolean)
+      : ['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80'];
+
+    return {
+      id: data.id,
+      name: data.name,
+      brand: data.brand?.name || '',
+      category: data.category?.name || 'Grocery',
+      size: data.size ? `${data.size} ${data.unit || ''}`.trim() : '1 Unit',
+      specs,
+      rating: data.ratingAvg || 4.2,
+      reviewsCount: data.reviewCount || 2,
+      boughtThisWeek: data.viewCount > 50 ? `${data.viewCount}+ viewed recently` : '100+ viewed recently',
+      price: typeof data.pricePaise === 'number' ? data.pricePaise / 100 : 0,
+      originalPrice: typeof data.mrpPaise === 'number' ? data.mrpPaise / 100 : null,
+      discount: (data.mrpPaise && data.pricePaise && data.mrpPaise > data.pricePaise)
+        ? `${Math.round(((data.mrpPaise - data.pricePaise) / data.mrpPaise) * 100)}% OFF`
+        : null,
+      inStock: data.stockStatus === 'IN_STOCK' || data.stockAvailable,
+      description: data.description || '',
+      images,
+      uspBadges: ['100% Original', 'Best Quality', 'Trusted by Locals', 'Secure Info'],
+      soldBy,
+      isSaved: data.isSaved || false
+    };
   },
 
   /**
    * Return available stores selling this product with distance, rating, price, and stock status.
    */
-  async getAvailableStores(productId) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          {
-            id: 'store-patel',
-            name: 'Patel General Store',
-            verified: true,
-            distance: 0.2,
-            price: 145,
-            originalPrice: 160,
-            discount: '10% OFF',
-            rating: 4.7,
-            reviewsCount: 128,
-            inStock: true,
-            category: 'Grocery, Daily Needs',
-            image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
-          },
-          {
-            id: 'store-jain',
-            name: 'Jain Kirana Store',
-            verified: true,
-            distance: 0.4,
-            price: 147,
-            originalPrice: 160,
-            discount: '8% OFF',
-            rating: 4.5,
-            reviewsCount: 96,
-            inStock: true,
-            category: 'Grocery, Personal Care',
-            image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=150&q=80'
-          },
-          {
-            id: 'store-shree-prov',
-            name: 'Shree Provision Store',
-            verified: true,
-            distance: 0.5,
-            price: 148,
-            originalPrice: 160,
-            discount: '7% OFF',
-            rating: 4.4,
-            reviewsCount: 74,
-            inStock: true,
-            category: 'Grocery, Stationery',
-            image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80'
-          }
-        ]);
-      }, 50);
+  async getAvailableStores(productId, locationParams = {}) {
+    const { data } = await apiClient.get(`/api/v1/products/${productId}/stores`, {
+      params: {
+        city: locationParams.city || undefined,
+        latitude: locationParams.latitude || undefined,
+        longitude: locationParams.longitude || undefined,
+        radiusKm: locationParams.radiusKm || undefined
+      }
     });
+
+    return (data || []).map(item => ({
+      id: item.shop.id,
+      name: item.shop.name,
+      verified: item.shop.verificationStatus === 'VERIFIED',
+      distance: typeof item.distanceKm === 'number' ? Number(item.distanceKm.toFixed(1)) : 0.5,
+      price: typeof item.pricePaise === 'number' ? item.pricePaise / 100 : 0,
+      rating: item.shop.ratingAvg || 4.5,
+      reviewsCount: item.shop.ratingCount || 10,
+      inStock: item.stockStatus === 'IN_STOCK',
+      category: 'Grocery, Daily Needs',
+      image: item.shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
+    }));
   },
 
   /**
-   * Return top-rated customer reviews for this specific product mockup.
+   * Return top-rated customer reviews for this specific product.
    */
   async getTopReviews(productId) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          {
-            id: 'rev-neha',
-            user: 'Neha P.',
-            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80',
-            rating: 5,
-            time: '2 days ago',
-            verifiedPurchase: true,
-            comment: 'Good quality oil. Always available at Patel General Store. Staff behavior is also very nice.'
-          },
-          {
-            id: 'rev-rohit',
-            user: 'Rohit S.',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
-            rating: 5,
-            time: '1 week ago',
-            verifiedPurchase: true,
-            comment: 'Best price in the area. I always buy from here. Highly recommended!'
-          }
-        ]);
-      }, 40);
+    const { data } = await apiClient.get(`/api/v1/products/${productId}/reviews`, {
+      params: { limit: 10, sort: 'newest' }
     });
+
+    return (data || []).map(rev => ({
+      id: rev.id,
+      user: rev.user?.name || 'Anonymous User',
+      avatar: rev.user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
+      rating: rev.rating || 5,
+      time: rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : '2 days ago',
+      verifiedPurchase: rev.verifiedPurchase ?? true,
+      comment: rev.comment || ''
+    }));
   },
 
   /**
    * Resolves similar products from the search database.
    */
-  async getSimilarProducts(productBrand, productCategory) {
-    const response = await searchService.searchProducts({});
-    // Filter out items of the same brand or refined category
-    return similar;
+  async getSimilarProducts(productId, locationParams = {}) {
+    const { data } = await apiClient.get(`/api/v1/products/${productId}/similar`, {
+      params: { city: locationParams.city || undefined, limit: 10 }
+    });
+    return (data || []).map(mapBackendProductToFrontend);
   },
 
   /**
    * Return custom thumbnail-rich reviews for the directions & reviews page.
    */
   async getMapReviews(productId) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          {
-            id: 'rev-m1',
-            user: 'Neha P.',
-            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80',
-            time: '2 days ago',
-            rating: 5,
-            comment: 'Good quality and always available at Patel General Store. Staff behavior is also very nice.',
-            verifiedPurchase: true,
-            thumbnail: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=120&q=80'
-          },
-          {
-            id: 'rev-m2',
-            user: 'Rohit S.',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80',
-            time: '5 days ago',
-            rating: 5,
-            comment: 'Best price in the area. I always buy from here.',
-            verifiedPurchase: true,
-            thumbnail: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=120&q=80'
-          },
-          {
-            id: 'rev-m3',
-            user: 'Meena B.',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80',
-            time: '1 week ago',
-            rating: 4,
-            comment: 'Nice experience. Product is genuine and fresh.',
-            verifiedPurchase: true,
-            thumbnail: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=120&q=80'
-          }
-        ]);
-      }, 50);
+    const { data } = await apiClient.get(`/api/v1/products/${productId}/reviews`, {
+      params: { limit: 5, sort: 'newest' }
     });
+
+    return (data || []).map(rev => ({
+      id: rev.id,
+      user: rev.user?.name || 'Anonymous User',
+      avatar: rev.user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
+      time: rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Recent',
+      rating: rev.rating || 5,
+      comment: rev.comment || '',
+      verifiedPurchase: rev.verifiedPurchase ?? true,
+      thumbnail: rev.media?.[0]?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=120&q=80'
+    }));
+  },
+
+  /**
+   * Submit a new product review.
+   */
+  async createProductReview(productId, reviewData) {
+    const { data } = await apiClient.post(`/api/v1/products/${productId}/reviews`, {
+      rating: reviewData.rating,
+      comment: reviewData.comment
+    });
+    return data;
+  },
+
+  /**
+   * Save a product to favorites list.
+   */
+  async saveProduct(productId) {
+    const { data } = await apiClient.post(`/api/v1/products/${productId}/save`);
+    return data;
+  },
+
+  /**
+   * Remove a product from favorites list.
+   */
+  async unsaveProduct(productId) {
+    const { data } = await apiClient.delete(`/api/v1/products/${productId}/save`);
+    return data;
+  },
+
+  /**
+   * Track product view count.
+   */
+  async trackProductView(productId, shopId) {
+    try {
+      await apiClient.post(`/api/v1/products/${productId}/view`, {
+        source: 'DETAIL',
+        shopId: shopId || undefined
+      });
+    } catch (err) {
+      console.error('Failed to log product view:', err);
+    }
+  },
+
+  /**
+   * Submit product report/feedback.
+   */
+  async createProductFeedback(productId, feedbackData) {
+    const { data } = await apiClient.post(`/api/v1/products/${productId}/feedback`, {
+      type: feedbackData.type || 'PRODUCT_REPORT',
+      subject: feedbackData.subject,
+      message: feedbackData.message,
+      metadata: feedbackData.metadata || {}
+    });
+    return data;
   }
 };

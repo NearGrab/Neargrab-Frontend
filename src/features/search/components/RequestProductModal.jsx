@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { X, Check } from 'lucide-react';
+import { searchService } from '../services/searchService';
+import { useLocationStore } from '../../../store/useLocationStore';
 
 export default function RequestProductModal({ isOpen, onClose }) {
+  const { location } = useLocationStore();
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [reqProduct, setReqProduct] = useState('');
   const [reqSpec, setReqSpec] = useState('');
@@ -9,18 +12,33 @@ export default function RequestProductModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleRequestSubmit = (e) => {
+  const handleRequestSubmit = async (e) => {
     e.preventDefault();
     if (!reqProduct.trim()) return;
     
     setRequestSubmitted(true);
-    setTimeout(() => {
+    try {
+      const radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, '')) : 10;
+      await searchService.requestMissingProduct({
+        query: reqSpec ? `${reqProduct} (${reqSpec})` : reqProduct,
+        city: location?.city,
+        latitude: location?.coordinates?.lat,
+        longitude: location?.coordinates?.lng,
+        radiusKm
+      });
+      
+      setTimeout(() => {
+        setRequestSubmitted(false);
+        setReqProduct('');
+        setReqSpec('');
+        onClose();
+        alert("Your product request has been broadcasted successfully! Nearby shops will alert you once stock resolves.");
+      }, 1000);
+    } catch (err) {
+      console.error('Failed to submit product request', err);
       setRequestSubmitted(false);
-      setReqProduct('');
-      setReqSpec('');
-      onClose();
-      alert("Your product request has been broadcasted successfully! Nearby shops will alert you once stock resolves.");
-    }, 1500);
+      alert('Failed to broadcast request. Please try again.');
+    }
   };
 
   return (

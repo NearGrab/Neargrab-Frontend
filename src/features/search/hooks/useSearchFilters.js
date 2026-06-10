@@ -8,7 +8,8 @@ const DEFAULT_FILTERS = {
   maxPrice: 200,
   brands: [],
   packSizes: ['1 Litre'],
-  inStockOnly: true
+  inStockOnly: true,
+  page: 1
 };
 
 /**
@@ -31,7 +32,8 @@ export function useSearchFilters() {
       maxPrice: searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice'), 10) : DEFAULT_FILTERS.maxPrice,
       brands: qBrands ? qBrands.split(',').filter(Boolean) : DEFAULT_FILTERS.brands,
       packSizes: qSizes ? qSizes.split(',').filter(Boolean) : DEFAULT_FILTERS.packSizes,
-      inStockOnly: searchParams.get('inStockOnly') ? searchParams.get('inStockOnly') === 'true' : DEFAULT_FILTERS.inStockOnly
+      inStockOnly: searchParams.get('inStockOnly') ? searchParams.get('inStockOnly') === 'true' : DEFAULT_FILTERS.inStockOnly,
+      page: searchParams.get('page') ? parseInt(searchParams.get('page'), 10) : 1
     };
   });
 
@@ -48,7 +50,8 @@ export function useSearchFilters() {
       maxPrice: searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice'), 10) : DEFAULT_FILTERS.maxPrice,
       brands: qBrands ? qBrands.split(',').filter(Boolean) : DEFAULT_FILTERS.brands,
       packSizes: qSizes ? qSizes.split(',').filter(Boolean) : DEFAULT_FILTERS.packSizes,
-      inStockOnly: searchParams.get('inStockOnly') ? searchParams.get('inStockOnly') === 'true' : DEFAULT_FILTERS.inStockOnly
+      inStockOnly: searchParams.get('inStockOnly') ? searchParams.get('inStockOnly') === 'true' : DEFAULT_FILTERS.inStockOnly,
+      page: searchParams.get('page') ? parseInt(searchParams.get('page'), 10) : 1
     });
   }, [searchParams]);
 
@@ -64,12 +67,17 @@ export function useSearchFilters() {
     if (newFilters.brands.length > 0) params.set('brands', newFilters.brands.join(','));
     if (newFilters.packSizes.length > 0) params.set('packSizes', newFilters.packSizes.join(','));
     if (newFilters.inStockOnly !== DEFAULT_FILTERS.inStockOnly) params.set('inStockOnly', newFilters.inStockOnly.toString());
+    if (newFilters.page && newFilters.page !== 1) params.set('page', newFilters.page.toString());
 
     setSearchParams(params);
   };
 
   const updateFilter = (key, value) => {
-    const nextFilters = { ...filters, [key]: value };
+    const nextFilters = { 
+      ...filters, 
+      [key]: value,
+      ...(key !== 'page' ? { page: 1 } : {})
+    };
     setFilters(nextFilters);
     applyFiltersToUrl(nextFilters);
   };
@@ -104,7 +112,8 @@ export function useSearchFilters() {
       maxPrice: 1000,
       brands: [],
       packSizes: [],
-      inStockOnly: false
+      inStockOnly: false,
+      page: 1
     };
     setFilters(cleared);
     applyFiltersToUrl(cleared);

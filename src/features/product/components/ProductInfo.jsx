@@ -3,7 +3,7 @@ import { Award, ShieldCheck, HeartHandshake, CheckCircle2, ChevronDown, ChevronU
 import Rating from '../../../shared/components/Rating';
 import Badge from '../../../shared/components/ui/Badge';
 
-export default function ProductInfo({ product }) {
+export default function ProductInfo({ product, onReportClick }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Icon selector helper for USP badges
@@ -80,9 +80,17 @@ export default function ProductInfo({ product }) {
 
       {/* Collapsible Product Description block */}
       <div className="flex flex-col gap-1.5">
-        <h3 className="font-poppins font-bold text-text-primary text-sm tracking-wide">
-          About this product
-        </h3>
+        <div className="flex justify-between items-center">
+          <h3 className="font-poppins font-bold text-text-primary text-sm tracking-wide">
+            About this product
+          </h3>
+          <button
+            onClick={onReportClick}
+            className="text-[10px] font-bold text-text-muted hover:text-brand-900 transition-colors cursor-pointer select-none"
+          >
+            Report incorrect info
+          </button>
+        </div>
         
         <div className="text-xs sm:text-sm text-text-secondary leading-relaxed font-inter">
           <p className={isExpanded ? '' : 'line-clamp-2'}>

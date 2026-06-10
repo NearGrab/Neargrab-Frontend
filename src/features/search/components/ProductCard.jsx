@@ -12,8 +12,11 @@ export default function ProductCard({ product, compact = false }) {
   const formatPrice = (p) => `₹${p}`;
 
   const handleViewStore = () => {
-    // Navigate to shop details page or trigger standard interactive preview
-    navigate(`/shop/${product.id.includes('fortune') ? 'store-patel' : product.id.includes('saffola') ? 'store-jain' : 'store-shree-prov'}`);
+    if (product.shopId) {
+      navigate(`/shops/${product.shopId}`);
+    } else {
+      navigate(`/explore`);
+    }
   };
 
   const handleCardClick = () => {

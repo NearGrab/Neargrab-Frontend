@@ -12,8 +12,10 @@ import RequestProductModal from '../components/RequestProductModal';
 import { useSearchParams } from 'react-router-dom';
 import { useSearchFilters } from '../hooks/useSearchFilters';
 import { searchService } from '../services/searchService';
+import { useLocationStore } from '../../../store/useLocationStore';
 
 export default function SearchPage() {
+  const { location } = useLocationStore();
   const {
     filters,
     updateFilter,
@@ -53,11 +55,29 @@ export default function SearchPage() {
     const loadSearchData = async () => {
       setLoading(true);
       try {
+        const radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, '')) : 10;
         const data = await searchService.searchProducts({
           ...filters,
-          categoryTab: activeTab
+          categoryTab: activeTab,
+          city: location?.city,
+          latitude: location?.coordinates?.lat,
+          longitude: location?.coordinates?.lng,
+          radiusKm
         });
         setSearchData(data);
+
+        // Track search event on success
+        if (filters.query) {
+          searchService.logSearchEvent({
+            query: filters.query,
+            city: location?.city,
+            latitude: location?.coordinates?.lat,
+            longitude: location?.coordinates?.lng,
+            radiusKm,
+            filters: { ...filters, categoryTab: activeTab },
+            resultCount: data.products.length
+          });
+        }
       } catch (err) {
         console.error('Failed to query search results', err);
       } finally {
@@ -66,13 +86,13 @@ export default function SearchPage() {
     };
 
     loadSearchData();
-  }, [filters, activeTab]);
+  }, [filters, activeTab, location]);
 
   // Load static sidebar content
   useEffect(() => {
     const loadSidebarData = async () => {
       try {
-        const stores = await searchService.getTopRatedStores();
+        const stores = await searchService.getTopRatedStores(location?.city);
         setTopStores(stores);
         const tags = searchService.getPopularSearches();
         setPopularTags(tags);
@@ -81,7 +101,7 @@ export default function SearchPage() {
       }
     };
     loadSidebarData();
-  }, []);
+  }, [location]);
 
   const handlePopularTagClick = (tag) => {
     updateFilter('query', tag);
@@ -130,6 +150,8 @@ export default function SearchPage() {
               products={searchData.products}
               loading={loading}
               resetFilters={resetFilters}
+              meta={searchData.meta}
+              onPageChange={(page) => updateFilter('page', page)}
             />
           </section>
 

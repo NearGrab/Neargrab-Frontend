@@ -1,7 +1,7 @@
 import React from 'react';
 import { MessageSquare, PhoneCall, Compass } from 'lucide-react';
 
-export default function ContactActionsCard({ shopInfo = {} }) {
+export default function ContactActionsCard({ shopInfo = {}, onAction }) {
   const {
     phone = '+91 98765 43210',
     whatsapp = '+91 98765 43210',
@@ -9,12 +9,17 @@ export default function ContactActionsCard({ shopInfo = {} }) {
   } = shopInfo;
 
   const handleAction = (type) => {
+    if (onAction) {
+      onAction(type);
+    }
     if (type === 'whatsapp') {
       window.open(`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`, '_blank');
     } else if (type === 'call') {
       window.open(`tel:${phone}`, '_self');
     } else if (type === 'directions') {
-      alert('Launching Google Maps directions to Navsari storefront...');
+      if (!onAction) {
+        alert('Launching Google Maps directions to Navsari storefront...');
+      }
     }
   };
 

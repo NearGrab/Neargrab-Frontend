@@ -24,6 +24,7 @@ import ShopkeeperDashboardPage from './features/shopkeeper/pages/ShopkeeperDashb
 import AddProductPage from './features/shopkeeper/pages/AddProductPage';
 import ProductCatalogPage from './features/shopkeeper/pages/ProductCatalogPage';
 import ShopProfilePage from './features/shop/pages/ShopProfilePage';
+import PublicShopProfilePage from './features/shop/pages/PublicShopProfilePage';
 
 // A lightweight, premium loading screen for session boot
 function LoadingScreen() {
@@ -102,6 +103,7 @@ export default function AppRouter() {
       <Route path="/search" element={<SearchPage />} />
       <Route path="/product/:productId" element={<ProductPage />} />
       <Route path="/product/:productId/map" element={<ProductMapPage />} />
+      <Route path="/shops/:shopId" element={<PublicShopProfilePage />} />
 
       {/* Guest Only Pages */}
       <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />

@@ -12,12 +12,14 @@ import ReviewCard from '../../../shared/components/ReviewCard';
 import Button from '../../../shared/components/ui/Button';
 import { productService } from '../services/productService';
 import { useLocationStore } from '../../../store/useLocationStore';
+import { useAuthStore } from '../../../store/useAuthStore';
 import { ChevronRight, ArrowUpRight, ArrowLeft } from 'lucide-react';
 
 export default function ProductPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { location: userLoc } = useLocationStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [product, setProduct] = useState(null);
   const [stores, setStores] = useState([]);
@@ -32,12 +34,24 @@ export default function ProductPage() {
       try {
         const idToFetch = productId || 'prod-fortune-1l';
         const prodData = await productService.getProductDetails(idToFetch);
-        const storeData = await productService.getAvailableStores(idToFetch);
+        
+        const radiusKm = userLoc?.radius ? parseInt(userLoc.radius.replace(/[^0-9]/g, '')) : 10;
+        const locationParams = {
+          city: userLoc?.city,
+          latitude: userLoc?.coordinates?.lat,
+          longitude: userLoc?.coordinates?.lng,
+          radiusKm
+        };
+        const storeData = await productService.getAvailableStores(idToFetch, locationParams);
         const reviewData = await productService.getTopReviews(idToFetch);
 
         setProduct(prodData);
         setStores(storeData);
         setReviews(reviewData);
+
+        if (prodData) {
+          productService.trackProductView(idToFetch, prodData.soldBy?.id);
+        }
       } catch (err) {
         console.error('Failed to load product details:', err);
       } finally {
@@ -45,7 +59,45 @@ export default function ProductPage() {
       }
     };
     loadProductData();
-  }, [productId]);
+  }, [productId, userLoc]);
+
+  const handleSaveToggle = async () => {
+    if (!isAuthenticated) {
+      if (confirm('You must be logged in to save products to your wishlist. Would you like to log in now?')) {
+        navigate('/login', { state: { from: window.location.pathname } });
+      }
+      return;
+    }
+
+    try {
+      if (product.isSaved) {
+        await productService.unsaveProduct(product.id);
+        setProduct(prev => ({ ...prev, isSaved: false }));
+      } else {
+        await productService.saveProduct(product.id);
+        setProduct(prev => ({ ...prev, isSaved: true }));
+      }
+    } catch (err) {
+      console.error('Failed to toggle wishlist status:', err);
+    }
+  };
+
+  const handleReportClick = async () => {
+    const message = prompt('Please describe what information is incorrect or missing (e.g. Price, Description, Images):');
+    if (!message || !message.trim()) return;
+
+    try {
+      await productService.createProductFeedback(product.id, {
+        type: 'PRODUCT_REPORT',
+        subject: 'Incorrect Product Info',
+        message
+      });
+      alert('Thank you for your feedback! We will review and update this listing shortly.');
+    } catch (err) {
+      console.error('Failed to submit product feedback:', err);
+      alert('Failed to submit report. Please try again later.');
+    }
+  };
 
   const handleOpenReviews = () => {
     alert('Full customer reviews and testimonials panel coming soon!');
@@ -130,12 +182,14 @@ export default function ProductPage() {
                   images={product.images} 
                   productName={product.name} 
                   discount={product.discount} 
+                  isSaved={product.isSaved}
+                  onSaveToggle={handleSaveToggle}
                 />
               </div>
 
               {/* Product Information: Flows naturally on the page canvas (Spans 7 Cols on desktop) */}
               <div className="md:col-span-7 w-full pl-0 md:pl-2 flex flex-col gap-6 justify-between">
-                <ProductInfo product={product} />
+                <ProductInfo product={product} onReportClick={handleReportClick} />
 
                 {/* Mobile SoldBy Widget: Displayed immediately below product description on mobile screens */}
                 <div className="block lg:hidden w-full mt-4">
@@ -144,14 +198,10 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Inventory Comparator at nearby physical storefronts */}
-            <AvailableAtStores 
-              stores={stores} 
-              productName={product.name} 
-            />
 
             {/* Similar Products carousel list */}
             <SimilarProducts 
+              productId={product.id}
               brand={product.brand} 
               category={product.category} 
             />

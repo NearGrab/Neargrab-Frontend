@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCartStore } from '../../../store/useCartStore';
 
-export default function ProductImages({ images = [], productName = 'Product Image', discount }) {
+export default function ProductImages({ images = [], productName = 'Product Image', discount, isSaved, onSaveToggle }) {
   const { addItem } = useCartStore();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % images.length);
@@ -32,17 +31,14 @@ export default function ProductImages({ images = [], productName = 'Product Imag
         {/* Wishlist Heart Button - Top Right */}
         <button
           onClick={() => {
-            setIsWishlisted(!isWishlisted);
-            if (!isWishlisted) {
-              alert(`"${productName}" added to wishlist!`);
-            }
+            if (onSaveToggle) onSaveToggle();
           }}
           className="absolute top-0 right-0 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200/60 flex items-center justify-center text-text-secondary hover:text-red-500 hover:scale-105 active:scale-95 transition-all shadow-sm z-10 cursor-pointer"
           aria-label="Toggle wishlist"
         >
           <Heart 
             className={`w-4.5 h-4.5 transition-colors ${
-              isWishlisted ? 'fill-red-500 text-red-500' : 'text-text-secondary'
+              isSaved ? 'fill-red-500 text-red-500' : 'text-text-secondary'
             }`} 
           />
         </button>

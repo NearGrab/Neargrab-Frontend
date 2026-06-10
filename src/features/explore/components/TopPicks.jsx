@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, Plus, MapPin } from 'lucide-react';
 import Rating from '../../../shared/components/Rating';
 
 export default function TopPicks({ picks }) {
+  const navigate = useNavigate();
   const [wishlist, setWishlist] = useState({});
 
   const toggleWishlist = (id) => {
@@ -38,6 +40,7 @@ export default function TopPicks({ picks }) {
           return (
             <div
               key={pick.id}
+              onClick={() => navigate(`/product/${pick.id}`)}
               className="bg-white border border-neutral-100/80 p-3 rounded-2xl flex flex-col justify-between hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer group"
             >
               <div className="relative">
@@ -91,6 +94,10 @@ export default function TopPicks({ picks }) {
 
                   {/* Emerald round quick addition button */}
                   <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Quick addition to cart logic here if desired
+                    }}
                     className="w-6.5 h-6.5 rounded-lg bg-[#10B981] hover:bg-emerald-600 text-white flex items-center justify-center shadow-md cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all shrink-0 ml-1"
                     aria-label="Add to cart"
                   >

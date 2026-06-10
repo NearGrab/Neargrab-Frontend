@@ -8,11 +8,13 @@ export default function SoldByCard({ soldBy }) {
   const { productId } = useParams();
 
   const handleNavigate = () => {
-    navigate(`/product/${productId || 'prod-fortune-1l'}/map`);
+    navigate(`/product/${productId || 'prod-fortune-1l'}/map?shopId=${soldBy.id}`);
   };
 
   const handleCheckStore = () => {
-    alert(`Full shop catalog pages for "${soldBy.name}" coming soon!`);
+    if (soldBy.id) {
+      navigate(`/shops/${soldBy.id}`);
+    }
   };
 
   return (
