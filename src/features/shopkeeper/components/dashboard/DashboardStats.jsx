@@ -1,11 +1,10 @@
 import React from 'react';
 import { Eye, MapPin, MessageSquare, Users, Star, ArrowUpRight } from 'lucide-react';
 import MiniTrendChart from './MiniTrendChart';
-import Rating from '../../../../shared/components/Rating';
-import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function DashboardStats() {
-  const { stats } = dashboardMockData;
+  const { stats } = useShopkeeperDashboardStore();
 
   // Icon Map matching keys
   const iconMap = {
@@ -73,9 +72,11 @@ export default function DashboardStats() {
                 </div>
 
                 {/* Micro Trend Line Sparkline */}
-                <div className="w-full">
-                  <MiniTrendChart trendData={card.trendData} isPositive={card.isPositive} />
-                </div>
+                {card.trendData && (
+                  <div className="w-full">
+                    <MiniTrendChart trendData={card.trendData} isPositive={card.isPositive} />
+                  </div>
+                )}
               </div>
             )}
 

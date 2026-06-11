@@ -68,6 +68,24 @@ const initSession = async () => {
   }
 };
 
+export const loadCurrentUser = async () => {
+  setGlobalState({ isLoading: true });
+  try {
+    const user = await authService.getMe();
+    setGlobalState({
+      user,
+      isAuthenticated: true,
+      isLoading: false,
+      error: null
+    });
+    localStorage.setItem('neargrab_user', JSON.stringify(user));
+    return user;
+  } catch (err) {
+    setGlobalState({ isLoading: false });
+    throw err;
+  }
+};
+
 export function useAuthStore() {
   const [state, setState] = useState(globalState);
 
@@ -161,24 +179,6 @@ export function useAuthStore() {
       return data;
     } catch (err) {
       clearSession();
-      throw err;
-    }
-  };
-
-  const loadCurrentUser = async () => {
-    setGlobalState({ isLoading: true });
-    try {
-      const user = await authService.getMe();
-      setGlobalState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null
-      });
-      localStorage.setItem('neargrab_user', JSON.stringify(user));
-      return user;
-    } catch (err) {
-      setGlobalState({ isLoading: false });
       throw err;
     }
   };

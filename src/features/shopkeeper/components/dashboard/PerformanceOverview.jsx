@@ -9,10 +9,10 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function PerformanceOverview() {
-  const { performanceData } = dashboardMockData;
+  const { performanceData } = useShopkeeperDashboardStore();
   const [timeframe, setTimeframe] = useState('Last 7 Days');
 
   // Custom premium styled tooltip
@@ -100,6 +100,7 @@ export default function PerformanceOverview() {
               wrapperStyle={{
                 fontFamily: 'Poppins',
                 fontSize: '10px',
+                wrapperStyle: { display: 'none' },
                 fontWeight: 700,
                 color: '#6B7280'
               }}

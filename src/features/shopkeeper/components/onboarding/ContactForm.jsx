@@ -78,9 +78,11 @@ export default function ContactForm() {
     e.preventDefault();
     if (validate()) {
       updateContact(formData);
-      setCurrentStep(4); // Go to Business Info
+      setCurrentStep(4);
     }
   };
+
+  const combinedErrors = { ...errors };
 
   return (
     <form onSubmit={handleSubmit} className="text-left flex flex-col gap-6">
@@ -102,7 +104,7 @@ export default function ContactForm() {
           rightElement={<PhoneCall className="w-4 h-4 text-text-muted" />}
           value={formData.phone}
           onChange={(e) => handleFieldChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-          error={errors.phone}
+          error={combinedErrors.phone}
           helperText="Customers will call this number for orders"
         />
 
@@ -115,7 +117,7 @@ export default function ContactForm() {
           rightElement={<MessageSquare className="w-4 h-4 text-green-500 fill-green-100" />}
           value={formData.whatsapp}
           onChange={(e) => handleFieldChange('whatsapp', e.target.value.replace(/\D/g, '').slice(0, 10))}
-          error={errors.whatsapp}
+          error={combinedErrors.whatsapp}
           helperText="For receiving stock queries and catalog requests"
         />
       </div>
@@ -129,7 +131,7 @@ export default function ContactForm() {
           leftElement={<span className="text-xs font-bold text-text-muted">+91</span>}
           value={formData.alternatePhone}
           onChange={(e) => handleFieldChange('alternatePhone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-          error={errors.alternatePhone}
+          error={combinedErrors.alternatePhone}
         />
 
         <Input
@@ -139,7 +141,7 @@ export default function ContactForm() {
           placeholder="patelstore@gmail.com"
           value={formData.email}
           onChange={(e) => handleFieldChange('email', e.target.value.toLowerCase())}
-          error={errors.email}
+          error={combinedErrors.email}
         />
       </div>
 
@@ -160,15 +162,15 @@ export default function ContactForm() {
               value={formData.openingTime}
               onChange={(e) => handleFieldChange('openingTime', e.target.value)}
               className={`w-full bg-neutral-50 border ${
-                errors.openingTime ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
+                combinedErrors.openingTime ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
               } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter`}
             >
               {hoursList.map((h) => (
                 <option key={h} value={h}>{h}</option>
               ))}
             </select>
-            {errors.openingTime && (
-              <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{errors.openingTime}</p>
+            {combinedErrors.openingTime && (
+              <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{combinedErrors.openingTime}</p>
             )}
           </div>
 
@@ -181,15 +183,15 @@ export default function ContactForm() {
               value={formData.closingTime}
               onChange={(e) => handleFieldChange('closingTime', e.target.value)}
               className={`w-full bg-neutral-50 border ${
-                errors.closingTime ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
+                combinedErrors.closingTime ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
               } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter`}
             >
               {hoursList.map((h) => (
                 <option key={h} value={h}>{h}</option>
               ))}
             </select>
-            {errors.closingTime && (
-              <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{errors.closingTime}</p>
+            {combinedErrors.closingTime && (
+              <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{combinedErrors.closingTime}</p>
             )}
           </div>
         </div>
@@ -199,8 +201,8 @@ export default function ContactForm() {
           selectedDays={formData.weekdays}
           onChange={(days) => handleFieldChange('weekdays', days)}
         />
-        {errors.weekdays && (
-          <p className="mt-2 text-[10px] font-medium text-red-500 font-inter">{errors.weekdays}</p>
+        {combinedErrors.weekdays && (
+          <p className="mt-2 text-[10px] font-medium text-red-500 font-inter">{combinedErrors.weekdays}</p>
         )}
       </div>
 

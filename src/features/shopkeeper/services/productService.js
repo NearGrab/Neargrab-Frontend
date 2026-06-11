@@ -1,20 +1,17 @@
+import apiClient from '../../../shared/services/apiClient';
+
 /**
- * Simple asynchronous network client to manage Product API lifecycles.
- * Decouples form presentation layers from HTTP layers for easy, clean server migrations later.
+ * Service to manage Product API lifecycles, category list retrieval, and brand search.
  */
 export const productService = {
   /**
-   * Save product details as a draft.
-   * @param {Object} productData 
+   * Fetch single product details.
+   * @param {string} id
    * @returns {Promise<Object>}
    */
-  saveDraft: async (productData) => {
-    console.log('[API] Saving product draft...', productData);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true, message: 'Draft saved successfully' });
-      }, 600);
-    });
+  getProduct: async (id) => {
+    const res = await apiClient.get(`/shopkeeper/products/${id}`);
+    return res;
   },
 
   /**
@@ -22,13 +19,39 @@ export const productService = {
    * @param {Object} productData 
    * @returns {Promise<Object>}
    */
-  publishProduct: async (productData) => {
-    console.log('[API] Publishing product to catalog...', productData);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true, message: 'Product published successfully' });
-      }, 800);
-    });
+  createProduct: async (productData) => {
+    const res = await apiClient.post('/shopkeeper/products', productData);
+    return res;
+  },
+
+  /**
+   * Update product attributes, prices, tags, categories, or details.
+   * @param {string} id
+   * @param {Object} productData
+   * @returns {Promise<Object>}
+   */
+  updateProduct: async (id, productData) => {
+    const res = await apiClient.patch(`/shopkeeper/products/${id}`, productData);
+    return res;
+  },
+
+  /**
+   * Get active categories.
+   * @returns {Promise<Object>}
+   */
+  getCategories: async () => {
+    const res = await apiClient.get('/categories');
+    return res;
+  },
+
+  /**
+   * Get brands by query.
+   * @param {string} q
+   * @returns {Promise<Object>}
+   */
+  getBrands: async (q) => {
+    const res = await apiClient.get('/brands', { params: { q } });
+    return res;
   }
 };
 

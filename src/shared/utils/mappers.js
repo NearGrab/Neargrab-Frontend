@@ -77,3 +77,130 @@ export function mapBackendShopToFrontend(shop) {
     tags: shop.tags || []
   };
 }
+
+export function convert12hTo24h(timeStr) {
+  if (!timeStr) return '09:00';
+  const match = timeStr.trim().match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+  if (!match) return timeStr; // Fallback if already 24h
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && hours < 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  return `${hours.toString().padStart(2, '0')}:${minutes}`;
+}
+
+export function convert24hTo12h(timeStr) {
+  if (!timeStr) return '09:00 AM';
+  const match = timeStr.trim().match(/^(\d+):(\d+)$/);
+  if (!match) return timeStr; // Fallback if already 12h
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+  return `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+}
+
+export function mapBackendTimingsToFrontend(backendTimings) {
+  if (!Array.isArray(backendTimings) || backendTimings.length === 0) {
+    return {
+      isOpenNow: true,
+      displayHours: '08:00 AM - 10:00 PM',
+      openingTime: '08:00 AM',
+      closingTime: '10:00 PM',
+      schedule: [
+        { day: 'Mon', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Tue', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Wed', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Thu', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Fri', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Sat', hours: '08:00 AM - 10:00 PM', isOpen: true },
+        { day: 'Sun', hours: '08:00 AM - 10:00 PM', isOpen: false }
+      ],
+      openAll7Days: false
+    };
+  }
+
+  const WEEKDAY_NUM_TO_STR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const schedule = WEEKDAY_NUM_TO_STR.map((dayStr, idx) => {
+    const backendDay = backendTimings.find(t => t.weekday === idx);
+    const isOpen = backendDay ? !backendDay.isClosed : true;
+    const opensAt = backendDay ? backendDay.opensAt : '08:00';
+    const closesAt = backendDay ? backendDay.closesAt : '22:00';
+    const hours = `${convert24hTo12h(opensAt)} - ${convert24hTo12h(closesAt)}`;
+    return {
+      day: dayStr,
+      hours,
+      isOpen
+    };
+  });
+
+  const sortedSchedule = [];
+  const weekdaysStr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  weekdaysStr.forEach(d => {
+    const item = schedule.find(s => s.day === d);
+    if (item) sortedSchedule.push(item);
+  });
+
+  const firstOpenDay = backendTimings.find(t => !t.isClosed);
+  const displayHours = firstOpenDay 
+    ? `${convert24hTo12h(firstOpenDay.opensAt)} - ${convert24hTo12h(firstOpenDay.closesAt)}`
+    : '08:00 AM - 10:00 PM';
+
+  const openingTime = firstOpenDay ? convert24hTo12h(firstOpenDay.opensAt) : '08:00 AM';
+  const closingTime = firstOpenDay ? convert24hTo12h(firstOpenDay.closesAt) : '10:00 PM';
+
+  const openAll7Days = backendTimings.filter(t => !t.isClosed).length === 7;
+
+  return {
+    isOpenNow: true,
+    displayHours,
+    openingTime,
+    closingTime,
+    schedule: sortedSchedule,
+    openAll7Days
+  };
+}
+
+export function mapFrontendTimingsToBackend(timings) {
+  const opensAt = convert12hTo24h(timings.openingTime || '08:00 AM');
+  const closesAt = convert12hTo24h(timings.closingTime || '10:00 PM');
+
+  const backendTimings = [];
+  for (let i = 0; i < 7; i++) {
+    const WEEKDAY_NUM_TO_STR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayStr = WEEKDAY_NUM_TO_STR[i];
+    const schedItem = Array.isArray(timings.schedule) ? timings.schedule.find(s => s.day === dayStr) : null;
+    
+    let isClosed = false;
+    if (schedItem) {
+      isClosed = !schedItem.isOpen;
+    } else if (timings.weekdays) {
+      isClosed = !timings.weekdays.includes(dayStr);
+    } else if (dayStr === 'Sun' && !timings.openAll7Days) {
+      isClosed = true;
+    }
+
+    let dayOpens = opensAt;
+    let dayCloses = closesAt;
+
+    if (schedItem && schedItem.hours) {
+      const parts = schedItem.hours.split('-');
+      if (parts.length === 2) {
+        dayOpens = convert12hTo24h(parts[0].trim());
+        dayCloses = convert12hTo24h(parts[1].trim());
+      }
+    }
+
+    backendTimings.push({
+      weekday: i,
+      opensAt: dayOpens,
+      closesAt: dayCloses,
+      isClosed
+    });
+  }
+
+  return backendTimings;
+}
+

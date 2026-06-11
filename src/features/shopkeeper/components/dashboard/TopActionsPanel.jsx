@@ -1,9 +1,9 @@
 import React from 'react';
 import { ShoppingBag, MessageSquare, Phone, Bookmark, ArrowUpRight } from 'lucide-react';
-import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function TopActionsPanel() {
-  const { topActions } = dashboardMockData;
+  const { topActions } = useShopkeeperDashboardStore();
 
   // Icon Map matching the indicators
   const iconMap = {

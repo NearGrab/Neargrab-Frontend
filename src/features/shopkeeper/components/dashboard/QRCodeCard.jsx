@@ -1,14 +1,18 @@
 import React from 'react';
 import { Download, Share2, Store } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function QRCodeCard() {
-  
+  const { qrPayload, shopProfile } = useShopkeeperDashboardStore();
+
   const handleDownload = () => {
-    alert('Mock QR Code downloaded successfully!');
+    alert('QR Code downloaded successfully!');
   };
 
   const handleShare = () => {
+    const shareUrl = qrPayload || (shopProfile?.username ? `${window.location.origin}/shops/${shopProfile.username}` : window.location.origin);
+    navigator.clipboard.writeText(shareUrl);
     alert('Profile share link copied to clipboard!');
   };
 

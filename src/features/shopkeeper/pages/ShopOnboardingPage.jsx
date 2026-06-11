@@ -10,11 +10,16 @@ import AddressForm from '../components/onboarding/AddressForm';
 import ContactForm from '../components/onboarding/ContactForm';
 import BusinessInfoForm from '../components/onboarding/BusinessInfoForm';
 import VerificationReview from '../components/onboarding/VerificationReview';
-import { ChevronLeft, Store } from 'lucide-react';
+import { ChevronLeft, Store, Loader2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function ShopOnboardingPage() {
-  const { currentStep } = useShopOnboardingStore();
+  const { currentStep, fetchDraft, isLoading, error } = useShopOnboardingStore();
+
+  // Load draft state on mount
+  useEffect(() => {
+    fetchDraft();
+  }, [fetchDraft]);
 
   // Scroll to top on step transitions
   useEffect(() => {
@@ -42,6 +47,35 @@ export default function ShopOnboardingPage() {
   // Define sidebar and preview slots
   const sidebarSlot = <BenefitsSidebar step={currentStep} />;
   const previewSlot = <ShopPreviewCard />;
+
+  if (isLoading && currentStep === 1) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-10 h-10 text-brand-900 animate-spin" />
+        <span className="font-poppins font-bold text-sm text-text-secondary">Loading onboarding draft...</span>
+      </div>
+    );
+  }
+
+  if (error && currentStep === 1) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4 p-6 text-center max-w-md mx-auto">
+        <div className="w-14 h-14 bg-red-50 border border-red-200 rounded-full flex items-center justify-center text-red-600">
+          <AlertCircle className="w-6 h-6" />
+        </div>
+        <div>
+          <h2 className="font-poppins font-bold text-lg text-text-primary">Failed to load onboarding</h2>
+          <p className="text-xs text-text-secondary mt-1">{error}</p>
+        </div>
+        <button
+          onClick={() => fetchDraft()}
+          className="bg-brand-900 hover:bg-brand-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs font-poppins transition-all shadow-sm"
+        >
+          Retry Loading
+        </button>
+      </div>
+    );
+  }
 
   return (
     <OnboardingLayout sidebar={sidebarSlot} preview={previewSlot}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShopOnboardingStore } from '../../../../store/useShopOnboardingStore';
 import Input from '../../../../shared/components/ui/Input';
 import Button from '../../../../shared/components/ui/Button';
@@ -24,10 +24,19 @@ export default function BusinessInfoForm() {
     front: photos.front,
     inside: photos.inside,
     logo: photos.logo || '',
+    cover: photos.cover || '',
     additional: [...photos.additional]
   });
 
   const [errors, setErrors] = useState({});
+  const [objectUrls, setObjectUrls] = useState([]);
+
+  // Track object URLs for clean revoking
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [objectUrls]);
 
   const availableLanguages = ['English', 'Hindi', 'Gujarati', 'Marathi', 'Sanskrit'];
   const availablePriceRanges = ['Budget Friendly', 'Moderate', 'Premium / Luxury'];
@@ -82,14 +91,14 @@ export default function BusinessInfoForm() {
     handleFieldChange('tags', updated);
   };
 
-  const handleAddAdditionalPhoto = (base64) => {
+  const handleAddAdditionalPhoto = (file) => {
     if (photoData.additional.length >= 5) {
       alert('You can upload a maximum of 5 additional photos.');
       return;
     }
     setPhotoData((prev) => ({
       ...prev,
-      additional: [...prev.additional, base64]
+      additional: [...prev.additional, file]
     }));
   };
 
@@ -102,11 +111,6 @@ export default function BusinessInfoForm() {
 
   const validate = () => {
     const newErrors = {};
-
-    // Registration Doc is required (licensing)
-    if (!formData.registrationDoc) {
-      newErrors.registrationDoc = 'Shop registration license certificate is required';
-    }
 
     // Languages: must select at least one
     if (formData.languages.length === 0) {
@@ -135,9 +139,21 @@ export default function BusinessInfoForm() {
     if (validate()) {
       updateBusinessInfo(formData);
       updatePhotos(photoData);
-      setCurrentStep(5); // Go to Verification & Review
+      setCurrentStep(5);
     }
   };
+
+  const getPreviewSrc = (pic) => {
+    if (pic instanceof File) {
+      const url = URL.createObjectURL(pic);
+      // Save it to revoke later
+      setObjectUrls(prev => [...prev, url]);
+      return url;
+    }
+    return pic;
+  };
+
+  const combinedErrors = { ...errors };
 
   return (
     <form onSubmit={handleSubmit} className="text-left flex flex-col gap-6">
@@ -161,7 +177,7 @@ export default function BusinessInfoForm() {
             placeholder="24AABCDE1234F1Z5"
             value={formData.gstNumber}
             onChange={(e) => handleFieldChange('gstNumber', e.target.value.toUpperCase())}
-            error={errors.gstNumber}
+            error={combinedErrors.gstNumber}
           />
 
           <Input
@@ -170,7 +186,7 @@ export default function BusinessInfoForm() {
             placeholder="ABCDE1234F"
             value={formData.panNumber}
             onChange={(e) => handleFieldChange('panNumber', e.target.value.toUpperCase())}
-            error={errors.panNumber}
+            error={combinedErrors.panNumber}
           />
         </div>
 
@@ -181,7 +197,7 @@ export default function BusinessInfoForm() {
             accept="image/*,application/pdf"
             value={formData.registrationDoc}
             onChange={(val) => handleFieldChange('registrationDoc', val)}
-            error={errors.registrationDoc}
+            error={combinedErrors.registrationDoc}
             helperText="Upload Certificate (JPG, PNG or PDF Max 5MB)"
             aspectRatio="any"
           />
@@ -228,8 +244,8 @@ export default function BusinessInfoForm() {
                 );
               })}
             </div>
-            {errors.languages && (
-              <p className="mt-1.5 text-[10px] font-medium text-red-500 font-inter">{errors.languages}</p>
+            {combinedErrors.languages && (
+              <p className="mt-1.5 text-[10px] font-medium text-red-500 font-inter">{combinedErrors.languages}</p>
             )}
           </div>
 
@@ -372,7 +388,7 @@ export default function BusinessInfoForm() {
             }
             value={formData.upiId}
             onChange={(e) => handleFieldChange('upiId', e.target.value.toLowerCase().replace(/\s/g, ''))}
-            error={errors.upiId}
+            error={combinedErrors.upiId}
             disabled={!formData.digitalPayments}
           />
         </div>
@@ -389,8 +405,8 @@ export default function BusinessInfoForm() {
             label="Shop Front Photo"
             required
             value={photoData.front}
-            onChange={(base64) => handlePhotoChange('front', base64)}
-            error={errors.front}
+            onChange={(val) => handlePhotoChange('front', val)}
+            error={combinedErrors.front}
             aspectRatio="video"
           />
 
@@ -398,17 +414,17 @@ export default function BusinessInfoForm() {
             label="Inside Shop Photo"
             required
             value={photoData.inside}
-            onChange={(base64) => handlePhotoChange('inside', base64)}
-            error={errors.inside}
+            onChange={(val) => handlePhotoChange('inside', val)}
+            error={combinedErrors.inside}
             aspectRatio="video"
           />
 
           <ImageUploader
-            label="Shop Logo"
-            value={photoData.logo}
-            onChange={(base64) => handlePhotoChange('logo', base64)}
-            error={errors.logo}
-            aspectRatio="square"
+            label="Cover Photo"
+            value={photoData.cover}
+            onChange={(val) => handlePhotoChange('cover', val)}
+            error={combinedErrors.cover}
+            aspectRatio="video"
           />
         </div>
 
@@ -419,18 +435,21 @@ export default function BusinessInfoForm() {
           </label>
           
           <div className="flex flex-wrap gap-4 items-center">
-            {photoData.additional.map((pic, idx) => (
-              <div key={idx} className="w-20 h-20 border border-neutral-200 rounded-xl overflow-hidden relative group bg-neutral-50 shrink-0">
-                <img src={pic} alt="Additional" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAdditionalPhoto(idx)}
-                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity cursor-pointer duration-300"
-                >
-                  <Trash2 className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            ))}
+            {photoData.additional.map((pic, idx) => {
+              const srcUrl = getPreviewSrc(pic);
+              return (
+                <div key={idx} className="w-20 h-20 border border-neutral-200 rounded-xl overflow-hidden relative group bg-neutral-50 shrink-0">
+                  <img src={srcUrl} alt="Additional" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAdditionalPhoto(idx)}
+                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity cursor-pointer duration-300"
+                  >
+                    <Trash2 className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              );
+            })}
 
             {photoData.additional.length < 5 && (
               <label className="w-20 h-20 rounded-xl border-2 border-dashed border-neutral-300 hover:border-brand-900 bg-neutral-50 hover:bg-neutral-100/50 flex flex-col items-center justify-center cursor-pointer transition-colors shrink-0 select-none">
@@ -440,9 +459,7 @@ export default function BusinessInfoForm() {
                   accept="image/*"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => handleAddAdditionalPhoto(reader.result);
-                      reader.readAsDataURL(e.target.files[0]);
+                      handleAddAdditionalPhoto(e.target.files[0]);
                     }
                   }}
                 />
@@ -466,6 +483,7 @@ export default function BusinessInfoForm() {
             setCurrentStep(3); // Back to Contact
           }}
           leftIcon={<ArrowLeft className="w-4 h-4" />}
+          disabled={isLoading}
         >
           Back
         </Button>
@@ -473,6 +491,8 @@ export default function BusinessInfoForm() {
         <Button
           type="submit"
           rightIcon={<ArrowRight className="w-4 h-4" />}
+          isLoading={isLoading}
+          disabled={isLoading}
         >
           Save & Continue
         </Button>

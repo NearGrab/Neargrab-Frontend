@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShopOnboardingStore } from '../../../../store/useShopOnboardingStore';
 import Button from '../../../../shared/components/ui/Button';
-import { Edit2, ShieldCheck, Mail, MapPin, Phone, Clock, FileText, CheckCircle2, BadgeCheck, X } from 'lucide-react';
+import { Edit2, ShieldCheck, MapPin, Phone, Clock, FileText, CheckCircle2, BadgeCheck, X, Loader2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function VerificationReview() {
@@ -12,24 +12,47 @@ export default function VerificationReview() {
     businessInfo,
     photos,
     setCurrentStep,
+    submitOnboarding,
+    isLoading,
+    error,
     reset
   } = useShopOnboardingStore();
 
   const navigate = useNavigate();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [objectUrls, setObjectUrls] = useState([]);
+
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [objectUrls]);
+
+  const getImageSrc = (pic) => {
+    if (!pic) return '';
+    if (pic instanceof File) {
+      const url = URL.createObjectURL(pic);
+      setObjectUrls(prev => [...prev, url]);
+      return url;
+    }
+    return pic;
+  };
 
   const handleEdit = (stepNumber) => {
     setCurrentStep(stepNumber);
   };
 
-  const handlePublish = () => {
-    setShowSuccessModal(true);
+  const handlePublish = async () => {
+    const success = await submitOnboarding();
+    if (success) {
+      setShowSuccessModal(true);
+    }
   };
 
   const closeAndNavigate = () => {
     setShowSuccessModal(false);
     reset(); // Clear store
-    navigate('/explore'); // Go back to customer explore
+    navigate('/shopkeeper/dashboard'); // Go to new dashboard
   };
 
   return (
@@ -39,6 +62,16 @@ export default function VerificationReview() {
         <h2 className="text-lg md:text-xl font-bold text-brand-900 font-poppins">Review Your Shop Profile</h2>
         <p className="text-xs text-text-secondary mt-1">Please review all details carefully before publishing your shop to Neargrab search.</p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl flex items-start gap-3 text-xs font-poppins">
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <span className="font-bold">Submission Failed</span>
+            <p className="mt-1">{error}</p>
+          </div>
+        </div>
+      )}
 
       {/* Structured Review Panels */}
       <div className="flex flex-col gap-5">
@@ -54,6 +87,7 @@ export default function VerificationReview() {
               type="button"
               onClick={() => handleEdit(1)}
               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-brand-900 hover:text-brand-700 bg-brand-50 border border-brand-100/50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              disabled={isLoading}
             >
               <Edit2 className="w-3 h-3" />
               <span>Edit</span>
@@ -95,6 +129,7 @@ export default function VerificationReview() {
               type="button"
               onClick={() => handleEdit(2)}
               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-brand-900 hover:text-brand-700 bg-brand-50 border border-brand-100/50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              disabled={isLoading}
             >
               <Edit2 className="w-3 h-3" />
               <span>Edit</span>
@@ -110,12 +145,12 @@ export default function VerificationReview() {
             </div>
             <div>
               <span className="text-text-muted font-bold block">Delivery / Search Radius</span>
-              <span className="text-text-primary font-bold">{address.radius}</span>
+              <span className="text-text-primary font-bold">{address.radius} km</span>
             </div>
             <div>
               <span className="text-text-muted font-bold block">Coordinates</span>
               <span className="text-text-primary font-bold">
-                Lat: {address.coordinates.lat.toFixed(4)}, Lng: {address.coordinates.lng.toFixed(4)}
+                Lat: {address.coordinates.lat ? address.coordinates.lat.toFixed(4) : '0.0000'}, Lng: {address.coordinates.lng ? address.coordinates.lng.toFixed(4) : '0.0000'}
               </span>
             </div>
           </div>
@@ -132,6 +167,7 @@ export default function VerificationReview() {
               type="button"
               onClick={() => handleEdit(3)}
               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-brand-900 hover:text-brand-700 bg-brand-50 border border-brand-100/50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              disabled={isLoading}
             >
               <Edit2 className="w-3 h-3" />
               <span>Edit</span>
@@ -179,6 +215,7 @@ export default function VerificationReview() {
               type="button"
               onClick={() => handleEdit(4)}
               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-brand-900 hover:text-brand-700 bg-brand-50 border border-brand-100/50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              disabled={isLoading}
             >
               <Edit2 className="w-3 h-3" />
               <span>Edit</span>
@@ -236,6 +273,7 @@ export default function VerificationReview() {
               type="button"
               onClick={() => handleEdit(4)}
               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-brand-900 hover:text-brand-700 bg-brand-50 border border-brand-100/50 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+              disabled={isLoading}
             >
               <Edit2 className="w-3 h-3" />
               <span>Edit</span>
@@ -243,10 +281,10 @@ export default function VerificationReview() {
           </div>
 
           <div className="flex flex-wrap gap-3 mt-1">
-            {photos.logo && (
+            {shopDetails.logo && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-14 h-14 rounded-full border border-neutral-200 overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={photos.logo} alt="Logo" className="w-full h-full object-cover" />
+                  <img src={getImageSrc(shopDetails.logo)} alt="Logo" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Logo</span>
               </div>
@@ -254,7 +292,7 @@ export default function VerificationReview() {
             {photos.front && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={photos.front} alt="Front" className="w-full h-full object-cover" />
+                  <img src={getImageSrc(photos.front)} alt="Front" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Front Photo</span>
               </div>
@@ -262,15 +300,23 @@ export default function VerificationReview() {
             {photos.inside && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={photos.inside} alt="Inside" className="w-full h-full object-cover" />
+                  <img src={getImageSrc(photos.inside)} alt="Inside" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Inside Photo</span>
+              </div>
+            )}
+            {photos.cover && (
+              <div className="flex flex-col gap-1 items-center">
+                <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
+                  <img src={getImageSrc(photos.cover)} alt="Cover" className="w-full h-full object-cover" />
+                </div>
+                <span className="text-[9px] text-text-muted font-bold">Cover Photo</span>
               </div>
             )}
             {photos.additional.map((pic, idx) => (
               <div key={idx} className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={pic} alt="Additional" className="w-full h-full object-cover" />
+                  <img src={getImageSrc(pic)} alt="Additional" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Photo {idx + 1}</span>
               </div>
@@ -286,6 +332,7 @@ export default function VerificationReview() {
           type="button"
           variant="outline"
           onClick={() => handleEdit(4)}
+          disabled={isLoading}
         >
           Back
         </Button>
@@ -293,15 +340,9 @@ export default function VerificationReview() {
         <div className="flex gap-3">
           <Button
             type="button"
-            variant="secondary"
             onClick={handlePublish}
-          >
-            Preview Public Profile
-          </Button>
-
-          <Button
-            type="button"
-            onClick={handlePublish}
+            isLoading={isLoading}
+            disabled={isLoading}
           >
             Publish Shop 🚀
           </Button>
@@ -348,7 +389,7 @@ export default function VerificationReview() {
               onClick={closeAndNavigate}
               className="w-full mt-2"
             >
-              Go to Store Explorer
+              Go to Shopkeeper Dashboard
             </Button>
           </div>
         </div>

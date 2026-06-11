@@ -123,6 +123,7 @@ export default function AppRouter() {
       <Route path="/shopkeeper/dashboard" element={<ShopkeeperRoute><ShopkeeperDashboardPage /></ShopkeeperRoute>} />
       <Route path="/shopkeeper/products" element={<ShopkeeperRoute><ProductCatalogPage /></ShopkeeperRoute>} />
       <Route path="/shopkeeper/products/add" element={<ShopkeeperRoute><AddProductPage /></ShopkeeperRoute>} />
+      <Route path="/shopkeeper/products/:productId/edit" element={<ShopkeeperRoute><AddProductPage /></ShopkeeperRoute>} />
       <Route path="/shopkeeper/profile" element={<ShopkeeperRoute><ShopProfilePage /></ShopkeeperRoute>} />
 
       {/* Catch-all 404 */}

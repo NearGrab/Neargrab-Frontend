@@ -6,12 +6,12 @@ import ImageUploader from './ImageUploader';
 import { ArrowRight, Check } from 'lucide-react';
 
 export default function ShopDetailsForm() {
-  const { shopDetails, updateShopDetails, setCurrentStep } = useShopOnboardingStore();
+  const { shopDetails, updateShopDetails, setCurrentStep, categories: backendCategories } = useShopOnboardingStore();
 
   const [formData, setFormData] = useState({
     name: shopDetails.name,
     username: shopDetails.username,
-    category: shopDetails.category,
+    category: shopDetails.category || shopDetails.categoryId,
     type: shopDetails.type,
     establishedYear: shopDetails.establishedYear,
     gstNumber: shopDetails.gstNumber,
@@ -21,7 +21,7 @@ export default function ShopDetailsForm() {
 
   const [errors, setErrors] = useState({});
 
-  const categories = [
+  const categoriesList = backendCategories.length > 0 ? backendCategories : [
     'Grocery Store',
     'Kirana Store',
     'Supermarket',
@@ -50,11 +50,33 @@ export default function ShopDetailsForm() {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Shop name is required';
-    if (!formData.username.trim()) newErrors.username = 'Shop username is required';
-    if (!formData.category) newErrors.category = 'Please select a shop category';
-    if (!formData.type) newErrors.type = 'Please select a shop type';
-    
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Shop name is required';
+    }
+
+    if (!formData.username.trim()) {
+      newErrors.username = 'Shop username/handle is required';
+    } else if (!/^[a-z0-9-]+$/.test(formData.username)) {
+      newErrors.username = 'Username can only contain lowercase letters, numbers, and dashes';
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Category is required';
+    }
+
+    if (!formData.type) {
+      newErrors.type = 'Store type is required';
+    }
+
+    if (formData.establishedYear) {
+      const year = parseInt(formData.establishedYear, 10);
+      const currentYear = new Date().getFullYear();
+      if (isNaN(year) || year < 1900 || year > currentYear) {
+        newErrors.establishedYear = `Please enter a valid year (1900 - ${currentYear})`;
+      }
+    }
+
     if (!formData.description.trim()) {
       newErrors.description = 'Shop description is required';
     } else if (formData.description.length > 300) {
@@ -69,77 +91,70 @@ export default function ShopDetailsForm() {
     e.preventDefault();
     if (validate()) {
       updateShopDetails(formData);
-      setCurrentStep(2); // Go to Address
+      setCurrentStep(2);
     }
   };
 
   // Live username verification indicator
   const isUsernameValid = formData.username.trim().length >= 3;
 
+  const combinedErrors = { ...errors };
+
   return (
     <form onSubmit={handleSubmit} className="text-left flex flex-col gap-6">
       
-      {/* Form Title & Sub */}
-      <div>
-        <h2 className="text-lg md:text-xl font-bold text-brand-900 font-poppins">Basic Shop Information</h2>
-        <p className="text-xs text-text-secondary mt-1">Tell us about your shop. This information will be visible on your public profile.</p>
-      </div>
-
-      {/* Row 1: Name and Username */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Shop Name & Username Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label="Shop Name"
-          id="shop_name"
-          required
-          placeholder="Enter shop name"
+          placeholder="e.g. Patel Grocers"
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
-          error={errors.name}
-          helperText="Use real shop name (e.g., Patel General Store)"
+          error={combinedErrors.name}
+          required
         />
 
-        <Input
-          label="Shop Username"
-          id="shop_username"
-          required
-          placeholder="your-shop-name"
-          leftElement={<span className="text-[11px] font-bold text-text-muted">neargrab.com/</span>}
-          rightElement={
-            isUsernameValid ? (
-              <div className="w-5 h-5 bg-[#E6F4EA] rounded-full flex items-center justify-center">
-                <Check className="w-3.5 h-3.5 text-brand-900 stroke-[3px]" />
-              </div>
-            ) : null
-          }
-          value={formData.username}
-          onChange={(e) => handleChange('username', e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
-          error={errors.username}
-          helperText="Unique username for your shop profile"
-        />
+        <div className="flex flex-col relative">
+          <Input
+            label="Shop Handle (Username)"
+            placeholder="e.g. patel-grocers"
+            value={formData.username}
+            onChange={(e) => handleChange('username', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+            error={combinedErrors.username}
+            required
+            helperText="Used for your public URL (neargrab.in/shops/your-handle)"
+          />
+          {isUsernameValid && !combinedErrors.username && (
+            <span className="absolute right-3.5 top-8.5 text-[10px] md:text-xs font-bold text-brand-900 font-poppins flex items-center gap-0.5 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
+              <Check className="w-3.5 h-3.5" /> Available
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Row 2: Category and Type */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
+      {/* Category & Type Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Category Select */}
         <div className="flex flex-col text-left">
           <label className="block text-xs font-bold text-text-primary mb-1.5 font-poppins">
-            Shop Category <span className="text-red-500">*</span>
+            Category <span className="text-red-500">*</span>
           </label>
           <select
             value={formData.category}
             onChange={(e) => handleChange('category', e.target.value)}
             className={`w-full bg-neutral-50 border ${
-              errors.category ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
+              combinedErrors.category ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
             } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter`}
           >
             <option value="">Select shop category</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {categoriesList.map((c) => {
+              const val = typeof c === 'object' ? c.id : c;
+              const label = typeof c === 'object' ? c.name : c;
+              return <option key={val} value={val}>{label}</option>;
+            })}
           </select>
-          {errors.category ? (
-            <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{errors.category}</p>
+          {combinedErrors.category ? (
+            <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{combinedErrors.category}</p>
           ) : (
             <span className="text-[10px] text-text-secondary mt-1">Choose the category that best describes your shop</span>
           )}
@@ -148,13 +163,13 @@ export default function ShopDetailsForm() {
         {/* Type Select */}
         <div className="flex flex-col text-left">
           <label className="block text-xs font-bold text-text-primary mb-1.5 font-poppins">
-            Shop Type <span className="text-red-500">*</span>
+            Store Type <span className="text-red-500">*</span>
           </label>
           <select
             value={formData.type}
             onChange={(e) => handleChange('type', e.target.value)}
             className={`w-full bg-neutral-50 border ${
-              errors.type ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
+              combinedErrors.type ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
             } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter`}
           >
             <option value="">Select shop type</option>
@@ -162,82 +177,66 @@ export default function ShopDetailsForm() {
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
-          {errors.type ? (
-            <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{errors.type}</p>
+          {combinedErrors.type ? (
+            <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{combinedErrors.type}</p>
           ) : (
-            <span className="text-[10px] text-text-secondary mt-1">e.g., Kirana Store, Electronics, Medical, etc.</span>
+            <span className="text-[10px] text-text-secondary mt-1">Defines your business model (e.g. Retail vs Wholesale)</span>
           )}
         </div>
-
       </div>
 
-      {/* Row 3: Year Established and GST Optional */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Year Established */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label="Year Established"
-          id="shop_established"
+          label="Established Year"
+          placeholder="e.g. 2018"
           type="number"
-          placeholder="e.g., 2015"
           value={formData.establishedYear}
           onChange={(e) => handleChange('establishedYear', e.target.value)}
-          error={errors.establishedYear}
-        />
-
-        <Input
-          label="GST Number (Optional)"
-          id="shop_gst"
-          placeholder="Enter GST number if you have one"
-          value={formData.gstNumber}
-          onChange={(e) => handleChange('gstNumber', e.target.value.toUpperCase())}
-          error={errors.gstNumber}
+          error={combinedErrors.establishedYear}
+          helperText="Year you started this store (Optional)"
         />
       </div>
 
-      {/* Description Area */}
+      {/* Shop Description */}
       <div className="flex flex-col text-left">
-        <label htmlFor="shop_desc" className="block text-xs font-bold text-text-primary mb-1.5 font-poppins">
+        <label className="block text-xs font-bold text-text-primary mb-1.5 font-poppins">
           Shop Description <span className="text-red-500">*</span>
         </label>
-        <div className="relative">
-          <textarea
-            id="shop_desc"
-            rows="4"
-            placeholder="Tell customers about your shop, products, and what makes you special..."
-            value={formData.description}
-            onChange={(e) => handleChange('description', e.target.value)}
-            className={`w-full bg-neutral-50 border ${
-              errors.description ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
-            } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter resize-none pb-7`}
-          />
-          <span className="absolute bottom-2.5 right-4 text-[10px] text-text-muted font-bold">
-            {formData.description.length}/300
-          </span>
-        </div>
-        {errors.description ? (
-          <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{errors.description}</p>
+        <textarea
+          placeholder="Describe what you sell, your specialties, and why customers should visit your shop (Max 300 chars)..."
+          value={formData.description}
+          onChange={(e) => handleChange('description', e.target.value)}
+          rows={3}
+          className={`w-full bg-neutral-50 border ${
+            combinedErrors.description ? 'border-red-400 focus:ring-red-200' : 'border-neutral-200/80 focus:ring-brand-500/20'
+          } rounded-xl py-2.5 px-4 text-xs md:text-sm text-text-primary focus:outline-none focus:bg-white focus:ring-4 focus:border-brand-500 transition-all font-inter`}
+        />
+        {combinedErrors.description ? (
+          <p className="mt-1 text-[10px] md:text-xs font-medium text-red-500 font-inter">{combinedErrors.description}</p>
         ) : (
-          <span className="text-[10px] text-text-secondary mt-1">This will appear on your shop profile</span>
+          <span className="text-[10px] text-text-secondary mt-1 flex justify-between">
+            <span>Brief summary about your store.</span>
+            <span>{formData.description.length}/300</span>
+          </span>
         )}
       </div>
 
-      {/* Logo Image Uploader */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+      {/* Logo Upload Section */}
+      <div className="flex flex-col md:flex-row gap-6 p-5 bg-neutral-50/50 border border-neutral-150/60 rounded-2xl items-center">
         <ImageUploader
-          label="Shop Logo / Cover Photo"
+          label="Upload Shop Logo"
           value={formData.logo}
-          onChange={(url) => handleChange('logo', url)}
-          error={errors.logo}
+          onChange={(logoFile) => handleChange('logo', logoFile)}
+          error={combinedErrors.logo}
+          helperText="Supported formats: JPEG, PNG. Max 2MB."
+          aspectRatio="square"
+          className="max-w-[150px]"
         />
-
-        <div className="text-left flex flex-col gap-2.5 self-center bg-neutral-50 p-4 rounded-2xl border border-neutral-100 mt-4 md:mt-0">
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 rounded-full bg-brand-100 flex items-center justify-center shrink-0 mt-0.5">
-              <Check className="w-3 h-3 text-brand-900 stroke-[3px]" />
-            </div>
-            <span className="text-[10px] md:text-xs font-bold text-text-secondary leading-tight">
-              Logo helps customers recognize your shop
-            </span>
-          </div>
+        <div className="flex-grow flex flex-col gap-2.5 text-left">
+          <span className="font-poppins font-bold text-xs md:text-sm text-brand-900 block">
+            Logo Guidelines
+          </span>
           <div className="flex items-start gap-2">
             <div className="w-4 h-4 rounded-full bg-brand-100 flex items-center justify-center shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-brand-900 stroke-[3px]" />

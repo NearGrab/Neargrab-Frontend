@@ -1,15 +1,17 @@
 import React from 'react';
 import { Star, ShieldCheck, MapPin, Clock, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function ShopProfileCard() {
   const navigate = useNavigate();
-  const { shopProfile } = dashboardMockData;
+  const { shopProfile } = useShopkeeperDashboardStore();
 
   const handleEditProfile = () => {
     navigate('/shopkeeper/profile');
   };
+
+  if (!shopProfile) return null;
 
   return (
     <div className="w-full bg-white border border-neutral-100/80 rounded-2xl p-4 shadow-3xs text-left font-inter">
@@ -29,7 +31,7 @@ export default function ShopProfileCard() {
         {/* Cover Photo */}
         <div className="w-full h-24 relative bg-neutral-100">
           <img
-            src={shopProfile.coverImage}
+            src={shopProfile.coverImage || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600'}
             alt="Cover"
             className="w-full h-full object-cover"
           />
@@ -39,7 +41,7 @@ export default function ShopProfileCard() {
         <div className="px-4 pb-4 relative">
           {/* Logo overlapping */}
           <div className="absolute -top-7 left-4 w-14 h-14 rounded-xl border-2 border-white bg-white shadow-sm overflow-hidden flex items-center justify-center">
-            <img src={shopProfile.logo} alt="Logo" className="w-full h-full object-cover" />
+            <img src={shopProfile.logo || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150'} alt="Logo" className="w-full h-full object-cover" />
           </div>
 
           {/* Spacer */}
@@ -64,8 +66,8 @@ export default function ShopProfileCard() {
           <div className="flex items-center gap-2 flex-wrap mb-3">
             <div className="flex items-center gap-0.5 bg-amber-50 border border-amber-200/50 px-2 py-0.5 rounded-full">
               <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-              <span className="text-[9px] font-extrabold text-amber-900">{shopProfile.rating}</span>
-              <span className="text-[8px] text-amber-700">({shopProfile.reviewCount})</span>
+              <span className="text-[9px] font-extrabold text-amber-900">{shopProfile.rating || '0.0'}</span>
+              <span className="text-[8px] text-amber-700">({shopProfile.reviewCount || 0})</span>
             </div>
             
             {shopProfile.isVerified && (
@@ -78,13 +80,15 @@ export default function ShopProfileCard() {
 
           {/* Address & Timings */}
           <div className="flex flex-col gap-1.5 pt-3 border-t border-neutral-100 mb-3 text-[10px] font-bold text-text-secondary leading-none">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-text-muted shrink-0" />
-              <span>{shopProfile.distance}</span>
-            </div>
+            {shopProfile.distance && (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                <span>{shopProfile.distance}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-text-muted shrink-0" />
-              <span>{shopProfile.openingHours}</span>
+              <span>{shopProfile.openingHours || 'Configured'}</span>
             </div>
           </div>
 

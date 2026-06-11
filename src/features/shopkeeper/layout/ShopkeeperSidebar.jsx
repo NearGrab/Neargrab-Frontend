@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -18,11 +18,22 @@ import {
   X
 } from 'lucide-react';
 import { dashboardMockData } from '../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../store/useShopkeeperDashboardStore';
 
 export default function ShopkeeperSidebar({ onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { shopProfile, navigation } = dashboardMockData;
+  const { shopProfile, fetchDashboardData } = useShopkeeperDashboardStore();
+  const { navigation } = dashboardMockData;
+
+  useEffect(() => {
+    if (!shopProfile) {
+      fetchDashboardData();
+    }
+  }, [shopProfile, fetchDashboardData]);
+
+  // Fallback to mock profile if API hasn't loaded yet
+  const profile = shopProfile || dashboardMockData.shopProfile;
 
   // Map icon names to Lucide icons
   const iconMap = {
@@ -61,7 +72,7 @@ export default function ShopkeeperSidebar({ onClose }) {
         {/* Banner */}
         <div className="h-16 w-full relative bg-neutral-100">
           <img
-            src={shopProfile.coverImage}
+            src={profile.coverImage || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}
             alt="Cover"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -69,19 +80,19 @@ export default function ShopkeeperSidebar({ onClose }) {
         {/* Logo and store description */}
         <div className="px-4 pb-4 pt-0 relative flex flex-col">
           <div className="w-12 h-12 rounded-xl border-2 border-white bg-white overflow-hidden shadow-xs flex items-center justify-center -mt-6 mb-2">
-            <img src={shopProfile.logo} alt="Logo" className="w-full h-full object-cover" />
+            <img src={profile.logo || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'} alt="Logo" className="w-full h-full object-cover" />
           </div>
 
           <div className="flex items-center gap-1">
             <h3 className="font-poppins font-bold text-xs md:text-sm text-text-primary truncate max-w-[170px]">
-              {shopProfile.name}
+              {profile.name}
             </h3>
-            {shopProfile.isVerified && (
+            {profile.isVerified && (
               <ShieldCheck className="w-4 h-4 text-brand-900 shrink-0 fill-brand-100/50" />
             )}
           </div>
           <span className="text-[10px] text-text-muted font-semibold mt-0.5">
-            @{shopProfile.username}
+            @{profile.username}
           </span>
         </div>
       </div>

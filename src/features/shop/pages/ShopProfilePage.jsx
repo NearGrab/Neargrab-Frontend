@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../shared/components/layout/Navbar';
 
@@ -36,6 +36,10 @@ export default function ShopProfilePage() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  useEffect(() => {
+    store.fetchProfileData();
+  }, []);
+
   // Tab choices list
   const tabChoices = [
     { id: 'Overview', label: 'Overview', count: null },
@@ -45,10 +49,10 @@ export default function ShopProfilePage() {
     { id: 'Updates', label: 'Updates', count: store.updates.length }
   ];
 
-  const handleSaveProfile = (formData) => {
-    store.updateShopInfo(formData.shopInfo);
-    store.updateTimings(formData.timings);
-    store.updatePayments(formData.paymentMethods);
+  const handleSaveProfile = async (formData) => {
+    await store.updateShopInfo(formData.shopInfo);
+    await store.updateTimings(formData.timings);
+    await store.updatePayments(formData.paymentMethods);
     setIsEditModalOpen(false);
     alert('Shop profile successfully updated!');
   };

@@ -33,8 +33,7 @@ export default function AddressForm() {
     if (!formData.street.trim()) newErrors.street = 'Shop Address is required';
     if (!formData.landmark.trim()) newErrors.landmark = 'Area / Landmark is required';
     if (!formData.city.trim()) newErrors.city = 'City is required';
-    
-    // Pincode validation: 6 digit number
+
     if (!formData.pincode.trim()) {
       newErrors.pincode = 'Pincode is required';
     } else if (!/^\d{6}$/.test(formData.pincode.trim())) {
@@ -51,13 +50,13 @@ export default function AddressForm() {
     e.preventDefault();
     if (validate()) {
       updateAddress(formData);
-      setCurrentStep(3); // Go to Contact
+      setCurrentStep(3);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="text-left flex flex-col gap-6">
-      
+
       {/* Form Title & Sub */}
       <div>
         <h2 className="text-lg md:text-xl font-bold text-brand-900 font-poppins">Shop Address</h2>
@@ -132,7 +131,7 @@ export default function AddressForm() {
         </div>
       </div>
 
-      {/* Interactive Draggable Google Maps Picker */}
+      {/* Interactive Map Picker */}
       <MapLocationPicker
         value={formData.coordinates}
         radius={formData.radius}
@@ -152,7 +151,7 @@ export default function AddressForm() {
           variant="outline"
           onClick={() => {
             updateAddress(formData);
-            setCurrentStep(1); // Back to Shop Details
+            setCurrentStep(1);
           }}
           leftIcon={<ArrowLeft className="w-4 h-4" />}
         >
@@ -163,7 +162,7 @@ export default function AddressForm() {
           type="submit"
           rightIcon={<ArrowRight className="w-4 h-4" />}
         >
-          Save & Continue
+          Save &amp; Continue
         </Button>
       </div>
 

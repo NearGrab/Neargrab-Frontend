@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ReviewCard from '../../../../shared/components/ReviewCard';
-import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function RecentReviews() {
-  const { reviews } = dashboardMockData;
+  const { reviews } = useShopkeeperDashboardStore();
 
   return (
     <div className="w-full text-left font-inter flex flex-col justify-between h-full bg-white border border-neutral-100/80 rounded-2xl p-5 shadow-3xs">
@@ -23,17 +23,21 @@ export default function RecentReviews() {
 
       {/* Review Card List */}
       <div className="flex flex-col gap-3 flex-grow">
-        {reviews.map((rev) => (
-          <ReviewCard
-            key={rev.id}
-            avatar={rev.authorAvatar}
-            user={rev.authorName}
-            time={rev.date}
-            rating={rev.rating}
-            comment={rev.text}
-            verifiedPurchase={rev.isVerified}
-          />
-        ))}
+        {reviews.length === 0 ? (
+          <div className="text-center py-6 text-xs text-text-muted font-medium">No reviews received yet.</div>
+        ) : (
+          reviews.map((rev) => (
+            <ReviewCard
+              key={rev.id}
+              avatar={rev.authorAvatar}
+              user={rev.authorName}
+              time={rev.dateRelative || rev.createdAt}
+              rating={rev.rating}
+              comment={rev.comment}
+              verifiedPurchase={rev.verifiedPurchase}
+            />
+          ))
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { UploadCloud, Trash2, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function ImageUploader({
   label,
-  value, // String URL or base64
+  value, // String URL, base64, or File object
   onChange,
   error = '',
   helperText = '',
@@ -14,6 +14,19 @@ export default function ImageUploader({
 }) {
   const fileInputRef = useRef(null);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    if (value instanceof File) {
+      const url = URL.createObjectURL(value);
+      setPreviewUrl(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      setPreviewUrl(value || '');
+    }
+  }, [value]);
 
   const handleFile = (file) => {
     if (!file) return;
@@ -24,11 +37,7 @@ export default function ImageUploader({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      onChange(reader.result); // Base64 data URL passed back to store
-    };
-    reader.readAsDataURL(file);
+    onChange(file);
   };
 
   const handleDrag = (e) => {
@@ -63,7 +72,8 @@ export default function ImageUploader({
     }
   };
 
-  const isPDF = typeof value === 'string' && value.startsWith('data:application/pdf');
+  const isPDF = (typeof value === 'string' && value.startsWith('data:application/pdf')) ||
+    (value instanceof File && value.type === 'application/pdf');
 
   return (
     <div className={`w-full text-left ${className}`}>
@@ -85,7 +95,7 @@ export default function ImageUploader({
             </div>
           ) : aspectRatio === 'any' ? (
             <div className="flex items-center gap-3 w-full">
-              <img src={value} alt="Preview" className="w-12 h-12 object-cover rounded-lg border border-neutral-100" />
+              <img src={previewUrl} alt="Preview" className="w-12 h-12 object-cover rounded-lg border border-neutral-100" />
               <div className="flex-grow min-w-0">
                 <span className="text-[11px] font-bold text-text-primary block truncate">Uploaded Image</span>
                 <span className="text-[9px] text-brand-900 font-bold flex items-center gap-1">
@@ -95,7 +105,7 @@ export default function ImageUploader({
             </div>
           ) : (
             <img
-              src={value}
+              src={previewUrl}
               alt="Preview"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -135,7 +145,7 @@ export default function ImageUploader({
           <div className="w-10 h-10 bg-brand-50 rounded-full flex items-center justify-center text-brand-900 mb-2">
             <UploadCloud className="w-5 h-5 text-brand-900" />
           </div>
-          <span className="text-xs font-bold text-brand-900 font-poppins">Upload Shop Logo</span>
+          <span className="text-xs font-bold text-brand-900 font-poppins">{label || 'Upload File'}</span>
           <span className="text-[9px] text-text-muted mt-0.5">PNG, JPG up to {maxSizeMB}MB</span>
         </div>
       )}

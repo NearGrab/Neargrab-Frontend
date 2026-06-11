@@ -1,93 +1,70 @@
-import { productCatalogMockData } from '../data/productCatalogMockData';
+import apiClient from '../../../shared/services/apiClient';
 
 /**
- * Simple asynchronous network client to manage Product Catalog queries and filters.
- * Decouples presentation layers from backend networking for clean server migrations later.
+ * Service to manage Product Catalog queries, filters, deletions, and stock status updates.
  */
 export const productCatalogService = {
   /**
-   * Fetch all product entries.
-   * @returns {Promise<Array>}
+   * Fetch all product entries from the shopkeeper inventory.
+   * @param {Object} params
+   * @returns {Promise<Object>}
    */
-  getProducts: async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([...productCatalogMockData.products]);
-      }, 500);
-    });
-  },
+  getProducts: async ({ q, categoryId, stockStatus, page = 1, limit = 20 } = {}) => {
+    const params = {};
+    if (q) params.q = q;
+    if (categoryId && categoryId !== 'All Categories') params.categoryId = categoryId;
+    
+    if (stockStatus && stockStatus !== 'All') {
+      if (stockStatus === 'In Stock') params.stockStatus = 'IN_STOCK';
+      else if (stockStatus === 'Out Of Stock') params.stockStatus = 'OUT_OF_STOCK';
+      else if (stockStatus === 'Low Stock') params.stockStatus = 'LOW_STOCK';
+    }
+    
+    params.page = page;
+    params.limit = limit;
 
-  /**
-   * Perform search, filter, and sort queries on products dataset.
-   * @param {Object} queryOptions 
-   * @returns {Promise<Array>}
-   */
-  queryProducts: async ({ query, category, stockStatus, sortBy, productsList = [] }) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        let list = [...productsList];
-
-        // 1. Text Search matching name, SKU, category, brand
-        if (query) {
-          const lower = query.toLowerCase().trim();
-          list = list.filter(
-            (p) =>
-              p.name.toLowerCase().includes(lower) ||
-              p.sku.toLowerCase().includes(lower) ||
-              p.category.toLowerCase().includes(lower)
-          );
-        }
-
-        // 2. Category selection
-        if (category && category !== 'All Categories') {
-          list = list.filter((p) => p.category === category);
-        }
-
-        // 3. Stock Status filter
-        if (stockStatus && stockStatus !== 'All') {
-          if (stockStatus === 'In Stock') {
-            list = list.filter((p) => p.stockAvailable && p.stockCount > 10);
-          } else if (stockStatus === 'Out Of Stock') {
-            list = list.filter((p) => !p.stockAvailable || p.stockCount === 0);
-          } else if (stockStatus === 'Low Stock') {
-            list = list.filter((p) => p.stockAvailable && p.stockCount <= 10 && p.stockCount > 0);
-          }
-        }
-
-        // 4. Sort calculations
-        if (sortBy) {
-          if (sortBy === 'Newest') {
-            // Mock sort (keep array relative)
-          } else if (sortBy === 'Oldest') {
-            list = list.reverse();
-          } else if (sortBy === 'Highest Views') {
-            list = list.sort((a, b) => b.views - a.views);
-          } else if (sortBy === 'Lowest Views') {
-            list = list.sort((a, b) => a.views - b.views);
-          } else if (sortBy === 'Price High To Low') {
-            list = list.sort((a, b) => b.price - a.price);
-          } else if (sortBy === 'Price Low To High') {
-            list = list.sort((a, b) => a.price - b.price);
-          }
-        }
-
-        resolve(list);
-      }, 300);
-    });
+    const res = await apiClient.get('/shopkeeper/products', { params });
+    return res;
   },
 
   /**
    * Toggle stock availability status.
-   * @param {string} id 
+   * @param {string} id
+   * @param {Object} stockDetails
    * @returns {Promise<Object>}
    */
-  toggleStockStatus: async (id) => {
-    console.log(`[API] Toggling stock status for product ID: ${id}`);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 400);
+  toggleStockStatus: async (id, { stockAvailable, stockCount, stockStatus }) => {
+    const res = await apiClient.patch(`/shopkeeper/products/${id}/stock`, {
+      stockAvailable,
+      stockCount,
+      stockStatus
     });
+    return res;
+  },
+
+  /**
+   * Delete product entry.
+   * @param {string} id
+   * @returns {Promise<Object>}
+   */
+  deleteProduct: async (id) => {
+    const res = await apiClient.delete(`/shopkeeper/products/${id}`);
+    return res;
+  },
+
+  /**
+   * Perform bulk operation on multiple product IDs.
+   * @param {Object} bulkPayload
+   * @returns {Promise<Object>}
+   */
+  bulkOperation: async ({ productIds, action, stockAvailable, stockStatus }) => {
+    const res = await apiClient.post('/shopkeeper/products/bulk', {
+      productIds,
+      action,
+      stockAvailable,
+      stockStatus
+    });
+    return res;
   }
 };
 

@@ -210,11 +210,12 @@ async function parseSuccessResponse(response) {
   try {
     const resData = await response.json();
     return {
+      success: resData.success ?? true,
       data: resData.data,
       meta: resData.meta || {}
     };
   } catch (e) {
-    return { data: {}, meta: {} };
+    return { success: false, data: {}, meta: {} };
   }
 }
 

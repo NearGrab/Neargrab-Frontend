@@ -1,10 +1,12 @@
 import React from 'react';
 import { Menu, ShieldCheck, Bell, Settings } from 'lucide-react';
 import { dashboardMockData } from '../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../store/useShopkeeperDashboardStore';
 import { Link } from 'react-router-dom';
 
 export default function ShopkeeperHeader({ onMenuToggle }) {
-  const { shopProfile } = dashboardMockData;
+  const { shopProfile } = useShopkeeperDashboardStore();
+  const profile = shopProfile || dashboardMockData.shopProfile;
 
   return (
     <header className="w-full bg-white border border-neutral-100/80 rounded-2xl p-3 px-4 shadow-2xs flex lg:hidden items-center justify-between font-inter text-left">
@@ -22,15 +24,15 @@ export default function ShopkeeperHeader({ onMenuToggle }) {
         {/* Brand visual */}
         <div className="flex items-center gap-2">
           <img
-            src={shopProfile.logo}
+            src={profile.logo || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'}
             alt="Logo"
             className="w-7 h-7 rounded-lg object-cover border border-neutral-150 shadow-3xs"
           />
           <div className="flex items-center gap-0.5">
             <span className="font-poppins font-bold text-xs text-text-primary truncate max-w-[120px]">
-              {shopProfile.name}
+              {profile.name}
             </span>
-            {shopProfile.isVerified && (
+            {profile.isVerified && (
               <ShieldCheck className="w-3.5 h-3.5 text-brand-900 fill-brand-100/50 shrink-0" />
             )}
           </div>

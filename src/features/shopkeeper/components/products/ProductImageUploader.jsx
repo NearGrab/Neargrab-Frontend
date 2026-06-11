@@ -37,7 +37,8 @@ export default function ProductImageUploader({
       reader.onloadend = () => {
         onAddImage({
           src: reader.result,
-          isPrimary: images.length === 0 // automatically make first image primary
+          isPrimary: images.length === 0, // automatically make first image primary
+          file: file
         });
       };
       reader.readAsDataURL(file);

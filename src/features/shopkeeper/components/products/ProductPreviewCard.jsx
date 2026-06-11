@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { Heart, Star, ShieldCheck, MapPin } from 'lucide-react';
 import { dashboardMockData } from '../../data/dashboardMockData';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function ProductPreviewCard({ formData = {} }) {
-  const { shopProfile } = dashboardMockData;
+  const { shopProfile } = useShopkeeperDashboardStore();
+  const profile = shopProfile || dashboardMockData.shopProfile;
 
   // Extract variables with default fallbacks matching the mockup
   const {
@@ -89,23 +91,29 @@ export default function ProductPreviewCard({ formData = {} }) {
           {/* Shop profile connection */}
           <div className="flex items-center gap-1 mt-0.5">
             <span className="text-[10px] text-text-secondary font-bold truncate">
-              {shopProfile.name}
+              {profile.name}
             </span>
-            <ShieldCheck className="w-3.5 h-3.5 text-brand-900 shrink-0" />
+            {profile.isVerified && (
+              <ShieldCheck className="w-3.5 h-3.5 text-brand-900 shrink-0" />
+            )}
           </div>
 
           {/* Rating, reviews, and distance */}
           <div className="flex items-center gap-2 mt-1 flex-wrap text-[10px] font-bold text-text-secondary">
             <div className="flex items-center gap-0.5">
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span className="text-amber-900">{shopProfile.rating}</span>
-              <span className="text-text-muted font-medium">({shopProfile.reviewCount})</span>
+              <span className="text-amber-900">{profile.rating || '0.0'}</span>
+              <span className="text-text-muted font-medium">({profile.reviewCount || 0})</span>
             </div>
-            <span>•</span>
-            <div className="flex items-center gap-0.5">
-              <MapPin className="w-3.5 h-3.5 text-text-muted" />
-              <span>{shopProfile.distance}</span>
-            </div>
+            {profile.distance && (
+              <>
+                <span>•</span>
+                <div className="flex items-center gap-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-text-muted" />
+                  <span>{profile.distance}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
