@@ -6,6 +6,7 @@ import FAQAccordion from '../components/FAQ/FAQAccordion';
 import FAQContact from '../components/FAQ/FAQContact';
 import CTABanner from '../components/CTABanner';
 import Footer from '../components/Footer';
+import content from '../data/content.json';
 
 export default function FAQsPage() {
   const { faqs } = content;

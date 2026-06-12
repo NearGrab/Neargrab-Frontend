@@ -91,13 +91,14 @@ const apiClient = {
       }
       // Retry safe GET requests if network fails (idempotent retry)
       if (method === 'GET' && retrySafe) {
+        let retryId;
         try {
           const retryController = new AbortController();
-          const retryId = setTimeout(() => retryController.abort(), timeout);
+          retryId = setTimeout(() => retryController.abort(), timeout);
           response = await fetch(url, { ...fetchOptions, signal: retryController.signal });
           clearTimeout(retryId);
         } catch (retryError) {
-          clearTimeout(retryId);
+          if (retryId) clearTimeout(retryId);
           throw {
             status: 0,
             code: 'NETWORK_ERROR',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import content from '../../data/content.json';
+import {Link} from 'react-router-dom';
 
 export default function ForShopkeepers() {
   const { forShopkeepers } = content;
@@ -31,10 +32,11 @@ export default function ForShopkeepers() {
               </li>
             ))}
           </ul>
-
-          <button className="bg-white text-brand-900 px-8 py-4 rounded-xl font-medium flex items-center gap-2 hover:bg-gray-50 transition-all cursor-pointer">
-            <StoreIcon className="w-5 h-5 shrink-0" /> {forShopkeepers.button} <ArrowRight className="w-5 h-5 ml-2" />
-          </button>
+          <Link to='/shopkeeper/onboarding'>
+            <button className="bg-white text-brand-900 px-8 py-4 rounded-xl font-medium flex items-center gap-2 hover:bg-gray-50 transition-all cursor-pointer">
+              <StoreIcon className="w-5 h-5 shrink-0" /> {forShopkeepers.button} <ArrowRight className="w-5 h-5 ml-2" />
+            </button>
+          </Link>
         </div>
 
         <div className="lg:w-1/2 relative z-10 w-full h-[500px]">

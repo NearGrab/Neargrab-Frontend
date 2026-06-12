@@ -16,6 +16,7 @@ export default function ExplorePage() {
   const { location } = useLocationStore();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Query explore data asynchronously from the service layer reactively when location changes
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function ExplorePage() {
 
     const loadData = async () => {
       setLoading(true);
+      setError(null);
       try {
         const radiusKm = location?.radius ? parseInt(location.radius.replace(/[^0-9]/g, '')) : 10;
         const dashboardData = await exploreService.getExploreDashboardData({
@@ -34,6 +36,7 @@ export default function ExplorePage() {
         setData(dashboardData);
       } catch (err) {
         console.error('Failed to resolve explore dashboard data', err);
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -41,6 +44,10 @@ export default function ExplorePage() {
 
     loadData();
   }, [location]);
+
+  if (error) {
+    throw error;
+  }
 
   // Display highly polished brand loading state
   if (loading) {

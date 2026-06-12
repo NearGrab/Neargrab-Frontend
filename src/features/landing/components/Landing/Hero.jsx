@@ -25,9 +25,11 @@ export default function Hero() {
             <Link to="/explore" className="bg-brand-900 text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 hover:bg-opacity-90 transition-all cursor-pointer shadow-lg shadow-brand-900/20 whitespace-pre-line">
               {hero.primaryButton} <ArrowRight className="w-5 h-5" />
             </Link>
-            <button className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-medium flex items-center gap-3 hover:border-brand-900 hover:text-brand-900 transition-all cursor-pointer whitespace-pre-line text-left leading-tight">
-              <Store className="w-5 h-5 shrink-0" /> {hero.secondaryButton}
-            </button>
+            <Link to='/shopkeeper/onboarding'>
+              <button className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-medium flex items-center gap-3 hover:border-brand-900 hover:text-brand-900 transition-all cursor-pointer whitespace-pre-line text-left leading-tight">
+                <Store className="w-5 h-5 shrink-0" /> {hero.secondaryButton}
+              </button>
+            </Link>
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 border-t border-gray-200 pt-8">
