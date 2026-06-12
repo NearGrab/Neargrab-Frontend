@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '../shared/services/supabase';
 import { authService } from '../features/auth/services/authService';
 import apiClient from '../shared/services/apiClient';
 
@@ -20,6 +21,13 @@ const setGlobalState = (nextState) => {
 
 // Handle global 401 unauthorization events from apiClient
 apiClient.onUnauthorized = () => {
+  clearSession();
+  setGlobalState({
+    error: 'Session expired. Please log in again.'
+  });
+};
+
+const clearSession = () => {
   localStorage.removeItem('neargrab_access_token');
   localStorage.removeItem('neargrab_refresh_token');
   localStorage.removeItem('neargrab_user');
@@ -28,45 +36,47 @@ apiClient.onUnauthorized = () => {
     accessToken: null,
     refreshToken: null,
     isAuthenticated: false,
-    error: 'Session expired. Please log in again.',
+    isLoading: false,
+    error: null,
     hasHydrated: true
   });
 };
 
-const initSession = async () => {
-  const token = localStorage.getItem('neargrab_access_token');
-  if (!token) {
-    setGlobalState({ hasHydrated: true, isLoading: false, isAuthenticated: false });
-    return;
-  }
+// Singleton Supabase auth state listener
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    setGlobalState({ isLoading: true });
+    try {
+      // Store token immediately to avoid race conditions on initial api calls
+      localStorage.setItem('neargrab_access_token', session.access_token);
+      if (session.refresh_token) {
+        localStorage.setItem('neargrab_refresh_token', session.refresh_token);
+      }
 
-  setGlobalState({ isLoading: true });
-  try {
-    const user = await authService.getMe();
-    setGlobalState({
-      user,
-      accessToken: token,
-      refreshToken: localStorage.getItem('neargrab_refresh_token'),
-      isAuthenticated: true,
-      isLoading: false,
-      hasHydrated: true
-    });
-  } catch (err) {
-    console.error('Session boot verification failed:', err);
-    // Clear local storage and update state
-    localStorage.removeItem('neargrab_access_token');
-    localStorage.removeItem('neargrab_refresh_token');
-    localStorage.removeItem('neargrab_user');
-    setGlobalState({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      hasHydrated: true
-    });
+      // Sync or fetch profile details from our backend (token will be sent in headers by apiClient)
+      const user = await authService.getMe();
+      localStorage.setItem('neargrab_user', JSON.stringify(user));
+      
+      setGlobalState({
+        user,
+        accessToken: session.access_token,
+        refreshToken: session.refresh_token || localStorage.getItem('neargrab_refresh_token'),
+        isAuthenticated: true,
+        isLoading: false,
+        hasHydrated: true,
+        error: null
+      });
+    } catch (err) {
+      console.error('Session sync verification failed:', err);
+      clearSession();
+      setGlobalState({
+        error: 'Authentication synchronization failed. Please try again.'
+      });
+    }
+  } else {
+    clearSession();
   }
-};
+});
 
 export const loadCurrentUser = async () => {
   setGlobalState({ isLoading: true });
@@ -91,22 +101,24 @@ export function useAuthStore() {
 
   useEffect(() => {
     listeners.add(setState);
-
-    // Auto-boot session verification on first hook instantiation
-    if (!globalState.hasHydrated && !globalState.isLoading) {
-      initSession();
-    }
+    
+    // If Supabase has already determined the session is loaded, mark as hydrated
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session && !globalState.hasHydrated) {
+        setGlobalState({ hasHydrated: true });
+      }
+    });
 
     return () => {
       listeners.delete(setState);
     };
   }, []);
 
-  const login = async (usernameOrEmail, password) => {
+  const login = async (email, password) => {
     setGlobalState({ isLoading: true, error: null });
     try {
-      const data = await authService.login({ email: usernameOrEmail, password });
-      setSession(data);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
       return true;
     } catch (err) {
       setGlobalState({
@@ -120,9 +132,17 @@ export function useAuthStore() {
   const signup = async (fullName, username, email, password) => {
     setGlobalState({ isLoading: true, error: null });
     try {
-      // Map fullName to name required by backend signup schema
-      const data = await authService.signup({ name: fullName, username, email, password });
-      setSession(data);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            username: username
+          }
+        }
+      });
+      if (error) throw error;
       return true;
     } catch (err) {
       setGlobalState({
@@ -133,11 +153,16 @@ export function useAuthStore() {
     }
   };
 
-  const googleLogin = async (payload) => {
+  const googleLogin = async () => {
     setGlobalState({ isLoading: true, error: null });
     try {
-      const data = await authService.googleLogin(payload);
-      setSession(data);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/explore'
+        }
+      });
+      if (error) throw error;
       return true;
     } catch (err) {
       setGlobalState({
@@ -151,7 +176,7 @@ export function useAuthStore() {
   const logout = async () => {
     setGlobalState({ isLoading: true });
     try {
-      await authService.logout();
+      await supabase.auth.signOut();
     } catch (err) {
       console.error('Logout request failed:', err);
     } finally {
@@ -162,7 +187,7 @@ export function useAuthStore() {
   const logoutAll = async () => {
     setGlobalState({ isLoading: true });
     try {
-      await authService.logoutAll();
+      await supabase.auth.signOut({ scope: 'global' });
     } catch (err) {
       console.error('Logout all request failed:', err);
     } finally {
@@ -171,12 +196,10 @@ export function useAuthStore() {
   };
 
   const refreshSession = async () => {
-    const token = localStorage.getItem('neargrab_refresh_token');
-    if (!token) return null;
     try {
-      const data = await authService.refresh(token);
-      setSession(data);
-      return data;
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return session;
     } catch (err) {
       clearSession();
       throw err;
@@ -184,6 +207,7 @@ export function useAuthStore() {
   };
 
   const setSession = (data) => {
+    // Legacy support for manually setting session if needed (e.g. from local mocks)
     localStorage.setItem('neargrab_access_token', data.accessToken);
     if (data.refreshToken) {
       localStorage.setItem('neargrab_refresh_token', data.refreshToken);
@@ -194,21 +218,6 @@ export function useAuthStore() {
       accessToken: data.accessToken,
       refreshToken: data.refreshToken || localStorage.getItem('neargrab_refresh_token'),
       isAuthenticated: true,
-      isLoading: false,
-      error: null,
-      hasHydrated: true
-    });
-  };
-
-  const clearSession = () => {
-    localStorage.removeItem('neargrab_access_token');
-    localStorage.removeItem('neargrab_refresh_token');
-    localStorage.removeItem('neargrab_user');
-    setGlobalState({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
       isLoading: false,
       error: null,
       hasHydrated: true
@@ -236,4 +245,3 @@ export function useAuthStore() {
     updateUserLocally
   };
 }
-

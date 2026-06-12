@@ -7,7 +7,7 @@ import GoogleAuthButton from './GoogleAuthButton';
 
 export default function SignupForm() {
   const navigate = useNavigate();
-  const { signup, isLoading, error: authError } = useAuthStore();
+  const { signup, googleLogin, isLoading, error: authError } = useAuthStore();
 
   // Form local states
   const [fullName, setFullName] = useState('');
@@ -66,10 +66,7 @@ export default function SignupForm() {
   };
 
   const handleGoogleAuth = async () => {
-    const success = await signup('Rahul Patel', 'rahul_patel', 'rahul.patel@example.com', 'google_verified');
-    if (success) {
-      navigate('/explore');
-    }
+    await googleLogin();
   };
 
   return (

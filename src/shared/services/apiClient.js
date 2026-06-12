@@ -1,16 +1,6 @@
+import { supabase } from './supabase';
+
 const DEFAULT_TIMEOUT = 10000; // 10 seconds
-
-let isRefreshing = false;
-let refreshSubscribers = [];
-
-function subscribeTokenRefresh(cb) {
-  refreshSubscribers.push(cb);
-}
-
-function onRefreshed(token) {
-  refreshSubscribers.forEach((cb) => cb(token));
-  refreshSubscribers = [];
-}
 
 const apiClient = {
   onUnauthorized: null, // Registered by auth store to handle global logout
@@ -53,10 +43,18 @@ const apiClient = {
 
     const mergedHeaders = { ...headers };
 
-    // Attach accessToken if available
-    const accessToken = localStorage.getItem('neargrab_access_token');
-    if (accessToken && !mergedHeaders['Authorization']) {
-      mergedHeaders['Authorization'] = `Bearer ${accessToken}`;
+    // Attach Supabase accessToken dynamically if available
+    try {
+      let accessToken = localStorage.getItem('neargrab_access_token');
+      if (!accessToken) {
+        const { data: { session } } = await supabase.auth.getSession();
+        accessToken = session?.access_token;
+      }
+      if (accessToken && !mergedHeaders['Authorization']) {
+        mergedHeaders['Authorization'] = `Bearer ${accessToken}`;
+      }
+    } catch (err) {
+      console.error('Failed to retrieve active Supabase session:', err);
     }
 
     // Determine content type
@@ -120,66 +118,10 @@ const apiClient = {
 
     const requestId = response.headers.get('x-request-id');
 
-    // Handle token refresh on 401
+    // Handle unauthorized response (e.g. invalid/revoked Supabase token)
     if (response.status === 401) {
-      // If the request was the refresh request itself, do not retry
-      if (normalizedPath === '/api/v1/auth/refresh') {
-        clearTokensAndLogout();
-        throw await parseErrorResponse(response, requestId);
-      }
-
-      const refreshToken = localStorage.getItem('neargrab_refresh_token');
-      if (!refreshToken) {
-        clearTokensAndLogout();
-        throw await parseErrorResponse(response, requestId);
-      }
-
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          subscribeTokenRefresh((newToken) => {
-            fetchOptions.headers['Authorization'] = `Bearer ${newToken}`;
-            fetch(url, fetchOptions)
-              .then(res => resolve(parseSuccessResponse(res)))
-              .catch(err => reject(err));
-          });
-        });
-      }
-
-      isRefreshing = true;
-
-      try {
-        const refreshRes = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken })
-        });
-
-        if (!refreshRes.ok) {
-          throw new Error('Refresh failed');
-        }
-
-        const refreshData = await refreshRes.json();
-        const newAccessToken = refreshData.data.accessToken;
-        const newRefreshToken = refreshData.data.refreshToken;
-
-        localStorage.setItem('neargrab_access_token', newAccessToken);
-        if (newRefreshToken) {
-          localStorage.setItem('neargrab_refresh_token', newRefreshToken);
-        }
-
-        isRefreshing = false;
-        onRefreshed(newAccessToken);
-
-        // Retry original request
-        fetchOptions.headers['Authorization'] = `Bearer ${newAccessToken}`;
-        const retryRes = await fetch(url, fetchOptions);
-        return parseSuccessResponse(retryRes);
-
-      } catch (refreshErr) {
-        isRefreshing = false;
-        clearTokensAndLogout();
-        throw await parseErrorResponse(response, requestId);
-      }
+      clearTokensAndLogout();
+      throw await parseErrorResponse(response, requestId);
     }
 
     if (!response.ok) {
@@ -245,6 +187,8 @@ function clearTokensAndLogout() {
   localStorage.removeItem('neargrab_access_token');
   localStorage.removeItem('neargrab_refresh_token');
   localStorage.removeItem('neargrab_user');
+  // Trigger Supabase signOut just in case
+  supabase.auth.signOut().catch(() => {});
   if (apiClient.onUnauthorized) {
     apiClient.onUnauthorized();
   }
