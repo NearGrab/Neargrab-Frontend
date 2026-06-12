@@ -17,7 +17,10 @@ const apiClient = {
 
   async request(path, options = {}) {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-    let url = `${baseUrl}${path}`;
+    const normalizedPath = path.startsWith('/api/v1') 
+      ? path 
+      : (path.startsWith('/') ? `/api/v1${path}` : `/api/v1/${path}`);
+    let url = `${baseUrl}${normalizedPath}`;
 
     if (options.params) {
       const searchParams = new URLSearchParams();
@@ -119,7 +122,7 @@ const apiClient = {
     // Handle token refresh on 401
     if (response.status === 401) {
       // If the request was the refresh request itself, do not retry
-      if (path === '/api/v1/auth/refresh') {
+      if (normalizedPath === '/api/v1/auth/refresh') {
         clearTokensAndLogout();
         throw await parseErrorResponse(response, requestId);
       }

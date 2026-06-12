@@ -12,7 +12,7 @@ export default function VerificationReview() {
     businessInfo,
     photos,
     setCurrentStep,
-    submitOnboarding,
+    submitForReview,
     isLoading,
     error,
     reset
@@ -20,30 +20,46 @@ export default function VerificationReview() {
 
   const navigate = useNavigate();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [objectUrls, setObjectUrls] = useState([]);
+  const [previews, setPreviews] = useState({
+    logo: '',
+    front: '',
+    inside: '',
+    cover: '',
+    additional: []
+  });
 
   useEffect(() => {
-    return () => {
-      objectUrls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [objectUrls]);
+    const urlsToRevoke = [];
 
-  const getImageSrc = (pic) => {
-    if (!pic) return '';
-    if (pic instanceof File) {
-      const url = URL.createObjectURL(pic);
-      setObjectUrls(prev => [...prev, url]);
-      return url;
-    }
-    return pic;
-  };
+    const getUrl = (val) => {
+      if (!val) return '';
+      if (val instanceof File) {
+        const url = URL.createObjectURL(val);
+        urlsToRevoke.push(url);
+        return url;
+      }
+      return val;
+    };
+
+    setPreviews({
+      logo: getUrl(shopDetails.logo),
+      front: getUrl(photos.front),
+      inside: getUrl(photos.inside),
+      cover: getUrl(photos.cover),
+      additional: (photos.additional || []).map(getUrl)
+    });
+
+    return () => {
+      urlsToRevoke.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [shopDetails.logo, photos.front, photos.inside, photos.cover, photos.additional]);
 
   const handleEdit = (stepNumber) => {
     setCurrentStep(stepNumber);
   };
 
   const handlePublish = async () => {
-    const success = await submitOnboarding();
+    const success = await submitForReview();
     if (success) {
       setShowSuccessModal(true);
     }
@@ -281,42 +297,42 @@ export default function VerificationReview() {
           </div>
 
           <div className="flex flex-wrap gap-3 mt-1">
-            {shopDetails.logo && (
+            {previews.logo && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-14 h-14 rounded-full border border-neutral-200 overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={getImageSrc(shopDetails.logo)} alt="Logo" className="w-full h-full object-cover" />
+                  <img src={previews.logo} alt="Logo" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Logo</span>
               </div>
             )}
-            {photos.front && (
+            {previews.front && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={getImageSrc(photos.front)} alt="Front" className="w-full h-full object-cover" />
+                  <img src={previews.front} alt="Front" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Front Photo</span>
               </div>
             )}
-            {photos.inside && (
+            {previews.inside && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={getImageSrc(photos.inside)} alt="Inside" className="w-full h-full object-cover" />
+                  <img src={previews.inside} alt="Inside" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Inside Photo</span>
               </div>
             )}
-            {photos.cover && (
+            {previews.cover && (
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={getImageSrc(photos.cover)} alt="Cover" className="w-full h-full object-cover" />
+                  <img src={previews.cover} alt="Cover" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Cover Photo</span>
               </div>
             )}
-            {photos.additional.map((pic, idx) => (
+            {previews.additional.map((picUrl, idx) => (
               <div key={idx} className="flex flex-col gap-1 items-center">
                 <div className="w-20 h-14 border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 shadow-xs">
-                  <img src={getImageSrc(pic)} alt="Additional" className="w-full h-full object-cover" />
+                  <img src={picUrl} alt="Additional" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[9px] text-text-muted font-bold">Photo {idx + 1}</span>
               </div>

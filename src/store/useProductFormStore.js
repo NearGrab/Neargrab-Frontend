@@ -144,13 +144,19 @@ export const useProductFormStore = create((set, get) => ({
       }
 
       // 2. Map category name to backend category ID
-      const categoryName = get().category;
+      const categoryName = get().category || '';
       const matchedCat = get().categories.find(
         (c) => c.name.toLowerCase() === categoryName.toLowerCase()
       );
-      
-      // If we don't find a matching seeded category ID, fallback to category name itself or a default
-      const categoryId = matchedCat ? matchedCat.id : 'cat-grocery-cuid';
+
+      // If we don't find a matching seeded category ID, fallback to 'Grocery' category or the first available category in database
+      let categoryId = matchedCat?.id;
+      if (!categoryId) {
+        const fallbackCat = get().categories.find(
+          (c) => c.name.toLowerCase() === 'grocery'
+        );
+        categoryId = fallbackCat ? fallbackCat.id : (get().categories[0]?.id || null);
+      }
 
       // 3. Upload any new local images
       const imageMediaIds = [];
@@ -192,7 +198,7 @@ export const useProductFormStore = create((set, get) => ({
           { key: 'Minimum Order Qty', value: get().minimumOrderQty || '1' },
           { key: 'Returnable', value: get().returnable || 'Yes' },
           { key: 'Needs Refrigeration', value: get().needsRefrigeration ? 'Yes' : 'No' }
-        ]
+        ].filter(attr => attr.value && attr.value.trim() !== '')
       };
 
       if (get().brand) {

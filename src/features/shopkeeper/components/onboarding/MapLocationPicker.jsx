@@ -58,8 +58,24 @@ export default function MapLocationPicker({ value = { lat: 20.9467, lng: 72.9520
   }, [isDragging]);
 
   const snapToCurrent = () => {
-    setPinPos({ x: 50, y: 50 });
-    onChange({ lat: 20.9467, lng: 72.9520 });
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setPinPos({ x: 50, y: 50 });
+          onChange({ lat, lng });
+        },
+        (error) => {
+          console.warn('Error fetching geolocation, falling back to default:', error);
+          setPinPos({ x: 50, y: 50 });
+          onChange({ lat: 20.9467, lng: 72.9520 });
+        }
+      );
+    } else {
+      setPinPos({ x: 50, y: 50 });
+      onChange({ lat: 20.9467, lng: 72.9520 });
+    }
   };
 
   return (

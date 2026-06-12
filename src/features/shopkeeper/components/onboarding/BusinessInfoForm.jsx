@@ -483,7 +483,6 @@ export default function BusinessInfoForm() {
             setCurrentStep(3); // Back to Contact
           }}
           leftIcon={<ArrowLeft className="w-4 h-4" />}
-          disabled={isLoading}
         >
           Back
         </Button>
@@ -491,8 +490,6 @@ export default function BusinessInfoForm() {
         <Button
           type="submit"
           rightIcon={<ArrowRight className="w-4 h-4" />}
-          isLoading={isLoading}
-          disabled={isLoading}
         >
           Save & Continue
         </Button>

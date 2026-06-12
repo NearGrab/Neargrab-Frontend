@@ -12,11 +12,37 @@ export default function ShopPreviewCard() {
   const categoryStr = shopDetails.category || 'Grocery Store';
   const typeStr = shopDetails.type || 'Kirana Store';
   
-  // Choose logo preview
-  const logoSrc = photos.logo || shopDetails.logo || '';
-  
-  // Choose cover photo: front photo or fallback
-  const coverSrc = photos.front || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+  // Choose logo and cover preview safely using state + useEffect
+  const [previews, setPreviews] = React.useState({
+    logo: '',
+    front: ''
+  });
+
+  React.useEffect(() => {
+    const urlsToRevoke = [];
+
+    const getUrl = (val) => {
+      if (!val) return '';
+      if (val instanceof File) {
+        const url = URL.createObjectURL(val);
+        urlsToRevoke.push(url);
+        return url;
+      }
+      return val;
+    };
+
+    setPreviews({
+      logo: getUrl(photos.logo || shopDetails.logo),
+      front: getUrl(photos.front)
+    });
+
+    return () => {
+      urlsToRevoke.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [photos.logo, shopDetails.logo, photos.front]);
+
+  const logoSrc = previews.logo;
+  const coverSrc = previews.front || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
 
   // Compute open hours and response times
   const responseTimeText = 'Usually responds in 10 mins';
