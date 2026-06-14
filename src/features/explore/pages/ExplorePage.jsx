@@ -17,6 +17,7 @@ export default function ExplorePage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Query explore data asynchronously from the service layer reactively when location changes
   useEffect(() => {
@@ -43,11 +44,7 @@ export default function ExplorePage() {
     };
 
     loadData();
-  }, [location]);
-
-  if (error) {
-    throw error;
-  }
+  }, [location, retryCount]);
 
   // Display highly polished brand loading state
   if (loading) {
@@ -57,6 +54,34 @@ export default function ExplorePage() {
         <span className="font-poppins font-semibold text-text-primary text-sm tracking-wide">
           Connecting to Neargrab Neighborhood...
         </span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex flex-col selection:bg-brand-500 selection:text-white">
+        <Navbar user={user} />
+        <main className="flex-grow flex items-center justify-center px-4 py-16">
+          <div className="w-full max-w-md bg-white border border-neutral-100 rounded-3xl p-8 text-center shadow-sm">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">
+              <Loader2 className="h-7 w-7" />
+            </div>
+            <h1 className="font-poppins text-xl font-bold text-text-primary">
+              We could not load nearby shops yet
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-text-secondary">
+              The backend may still be waking up. Please try again in a moment.
+            </p>
+            <button
+              type="button"
+              onClick={() => setRetryCount((count) => count + 1)}
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-950"
+            >
+              Retry
+            </button>
+          </div>
+        </main>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { authService } from '../features/auth/services/authService';
 import apiClient from '../shared/services/apiClient';
 
 const listeners = new Set();
+const initialProvider = localStorage.getItem('neargrab_auth_provider');
 let globalState = {
   user: JSON.parse(localStorage.getItem('neargrab_user') || 'null'),
   accessToken: localStorage.getItem('neargrab_access_token') || null,
@@ -11,7 +12,7 @@ let globalState = {
   isAuthenticated: !!localStorage.getItem('neargrab_access_token'),
   isLoading: false,
   error: null,
-  hasHydrated: false
+  hasHydrated: initialProvider === 'local'
 };
 
 const setGlobalState = (nextState) => {
@@ -31,6 +32,7 @@ const clearSession = () => {
   localStorage.removeItem('neargrab_access_token');
   localStorage.removeItem('neargrab_refresh_token');
   localStorage.removeItem('neargrab_user');
+  localStorage.removeItem('neargrab_auth_provider');
   setGlobalState({
     user: null,
     accessToken: null,
@@ -47,6 +49,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   if (session) {
     setGlobalState({ isLoading: true });
     try {
+      localStorage.setItem('neargrab_auth_provider', 'google');
       // Store token immediately to avoid race conditions on initial api calls
       localStorage.setItem('neargrab_access_token', session.access_token);
       if (session.refresh_token) {
@@ -74,7 +77,10 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       });
     }
   } else {
-    clearSession();
+    const provider = localStorage.getItem('neargrab_auth_provider');
+    if (provider === 'google' || !provider) {
+      clearSession();
+    }
   }
 });
 
@@ -114,11 +120,11 @@ export function useAuthStore() {
     };
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (usernameOrEmail, password) => {
     setGlobalState({ isLoading: true, error: null });
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const response = await authService.login({ email: usernameOrEmail, password });
+      setSession(response);
       return true;
     } catch (err) {
       setGlobalState({
@@ -132,17 +138,13 @@ export function useAuthStore() {
   const signup = async (fullName, username, email, password) => {
     setGlobalState({ isLoading: true, error: null });
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const response = await authService.signup({
+        name: fullName,
+        username,
         email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            username: username
-          }
-        }
+        password
       });
-      if (error) throw error;
+      setSession(response);
       return true;
     } catch (err) {
       setGlobalState({
@@ -176,7 +178,12 @@ export function useAuthStore() {
   const logout = async () => {
     setGlobalState({ isLoading: true });
     try {
-      await supabase.auth.signOut();
+      const provider = localStorage.getItem('neargrab_auth_provider');
+      if (provider === 'google') {
+        await supabase.auth.signOut();
+      } else {
+        await authService.logout();
+      }
     } catch (err) {
       console.error('Logout request failed:', err);
     } finally {
@@ -187,7 +194,12 @@ export function useAuthStore() {
   const logoutAll = async () => {
     setGlobalState({ isLoading: true });
     try {
-      await supabase.auth.signOut({ scope: 'global' });
+      const provider = localStorage.getItem('neargrab_auth_provider');
+      if (provider === 'google') {
+        await supabase.auth.signOut({ scope: 'global' });
+      } else {
+        await authService.logoutAll();
+      }
     } catch (err) {
       console.error('Logout all request failed:', err);
     } finally {
@@ -197,9 +209,18 @@ export function useAuthStore() {
 
   const refreshSession = async () => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return session;
+      const provider = localStorage.getItem('neargrab_auth_provider');
+      if (provider === 'google') {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        return session;
+      } else {
+        const localRefreshToken = localStorage.getItem('neargrab_refresh_token');
+        if (!localRefreshToken) throw new Error('No refresh token');
+        const response = await authService.refresh(localRefreshToken);
+        setSession(response);
+        return { access_token: response.accessToken, refresh_token: response.refreshToken };
+      }
     } catch (err) {
       clearSession();
       throw err;
@@ -213,6 +234,7 @@ export function useAuthStore() {
       localStorage.setItem('neargrab_refresh_token', data.refreshToken);
     }
     localStorage.setItem('neargrab_user', JSON.stringify(data.user));
+    localStorage.setItem('neargrab_auth_provider', 'local');
     setGlobalState({
       user: data.user,
       accessToken: data.accessToken,

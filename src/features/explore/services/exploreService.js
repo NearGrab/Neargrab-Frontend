@@ -9,7 +9,8 @@ export const exploreService = {
    * Fetches explore dashboard data using coordinates and location filters.
    */
   async getExploreDashboardData(params = {}) {
-    const { data } = await apiClient.get('/api/v1/explore', { params });
+    const { data: responseData } = await apiClient.get('/api/v1/explore', { params });
+    const data = responseData || {};
     
     // Fallback constants/mocks for fields not supplied by backend
     const staticProps = {

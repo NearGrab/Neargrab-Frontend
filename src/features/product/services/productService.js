@@ -170,7 +170,7 @@ export const productService = {
   async trackProductView(productId, shopId) {
     try {
       await apiClient.post(`/api/v1/products/${productId}/view`, {
-        source: 'DETAIL',
+        source: 'PRODUCT_PAGE',
         shopId: shopId || undefined
       });
     } catch (err) {

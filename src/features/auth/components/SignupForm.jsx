@@ -42,8 +42,8 @@ export default function SignupForm() {
 
     if (!password) {
       tempErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      tempErrors.password = 'Password must be at least 6 characters';
+    } else if (password.length < 8) {
+      tempErrors.password = 'Password must be at least 8 characters';
     }
 
     if (!agreed) {

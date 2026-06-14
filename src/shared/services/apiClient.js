@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const DEFAULT_TIMEOUT = 10000; // 10 seconds
+const DEFAULT_TIMEOUT = 30000; // 30 seconds, enough for slow local or cold-started backends
 
 const apiClient = {
   onUnauthorized: null, // Registered by auth store to handle global logout
@@ -34,7 +34,7 @@ const apiClient = {
       headers = {},
       method = 'GET',
       body,
-      retrySafe = false,
+      retrySafe = method === 'GET',
       ...extraOptions
     } = options;
 
