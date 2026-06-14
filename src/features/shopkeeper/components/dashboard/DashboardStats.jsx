@@ -16,8 +16,13 @@ export default function DashboardStats() {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
       {stats.map((card) => {
+        // Temporarily disable the entire Inquiries card as requested
+        if (card.id === 'inquiries') {
+          return null;
+        }
+
         const IconComponent = iconMap[card.id] || Eye;
         const isRatingCard = card.id === 'rating';
 

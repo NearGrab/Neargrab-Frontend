@@ -64,11 +64,11 @@ export const shopProfileService = {
   },
 
   /**
-   * Track customer actions (Directions, Call, WhatsApp).
+   * Track customer actions (Directions, Call, WhatsApp, View).
    */
-  async trackLead(shopId, action) {
+  async trackLead(shopId, action, source = 'SHOP_PROFILE') {
     try {
-      await apiClient.post(`/api/v1/shops/${shopId}/lead`, { action });
+      await apiClient.post(`/api/v1/shops/${shopId}/lead`, { action, source });
     } catch (err) {
       console.error('Failed to log shop lead event:', err);
     }
@@ -82,6 +82,22 @@ export const shopProfileService = {
       rating: reviewData.rating,
       comment: reviewData.comment
     });
+    return data;
+  },
+
+  /**
+   * Follow a user (shop owner).
+   */
+  async followUser(userId) {
+    const { data } = await apiClient.post(`/api/v1/users/${userId}/follow`);
+    return data;
+  },
+
+  /**
+   * Unfollow a user (shop owner).
+   */
+  async unfollowUser(userId) {
+    const { data } = await apiClient.delete(`/api/v1/users/${userId}/follow`);
     return data;
   }
 };

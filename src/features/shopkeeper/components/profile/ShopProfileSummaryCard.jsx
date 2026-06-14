@@ -23,7 +23,8 @@ export default function ShopProfileSummaryCard({
     category = 'Grocery Store • Kirana Store',
     shopId = 'PGS12345',
     yearsOnPlatform = 9,
-    location = 'Navsari, Gujarat - 396445'
+    location = 'Navsari, Gujarat - 396445',
+    isFollowing = false
   } = shopInfo;
 
   return (
@@ -137,12 +138,12 @@ export default function ShopProfileSummaryCard({
         ) : (
           // Public user follow button
           <Button
-            variant="primary"
+            variant={isFollowing ? "outline" : "primary"}
             size="sm"
             onClick={onFollowClick}
-            className="w-full font-bold text-xs h-10 cursor-pointer shadow-3xs"
+            className={`w-full font-bold text-xs h-10 cursor-pointer shadow-3xs ${isFollowing ? 'border-brand-900 text-brand-900 bg-brand-50/20' : ''}`}
           >
-            Follow
+            {isFollowing ? 'Following' : 'Follow'}
           </Button>
         )}
 

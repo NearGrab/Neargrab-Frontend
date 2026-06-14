@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Search, Bell, ChevronDown, LogOut, User, Settings, Home, ShoppingCart, Sliders, X } from 'lucide-react';
+import { MapPin, Search, Bell, ChevronDown, LogOut, User, Settings, Home, ShoppingCart, Sliders, X, Store } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useLocationStore } from '../../../store/useLocationStore';
@@ -326,7 +326,7 @@ export default function Navbar() {
                 <div className="text-left leading-none pr-1">
                   <div className="flex items-center gap-1">
                     <span className="text-sm font-semibold text-text-primary group-hover:text-brand-900 transition-colors">
-                      {user?.name || "Guest Patel"}
+                      {user?.name || "Guest"}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
                   </div>
@@ -356,6 +356,16 @@ export default function Navbar() {
                         <Settings className="w-4 h-4 shrink-0 text-text-secondary" />
                         <span>Settings</span>
                       </Link>
+                      {user?.role?.toUpperCase() === "SHOPKEEPER" && (
+                        <Link
+                          to="/shopkeeper/dashboard"
+                          onClick={() => setShowProfileDropdown(false)}
+                          className="w-full text-left px-3.5 py-2 text-xs font-bold text-text-primary hover:bg-neutral-50 rounded-xl flex items-center gap-2 transition-colors"
+                        >
+                          <Store className="w-4 h-4 shrink-0 text-text-secondary" />
+                          <span>Switch to Shopkeeper</span>
+                        </Link>
+                      )}
                       <div className="my-1 border-t border-neutral-100"></div>
                       <button
                         onClick={() => {

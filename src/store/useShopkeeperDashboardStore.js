@@ -12,6 +12,10 @@ export const useShopkeeperDashboardStore = create((set) => ({
   qrPayload: '',
   isLoading: false,
   error: null,
+  isQRModalOpen: false,
+  setQRModalOpen: (isOpen) => set({ isQRModalOpen: isOpen }),
+  isReviewsModalOpen: false,
+  setReviewsModalOpen: (isOpen) => set({ isReviewsModalOpen: isOpen }),
 
   fetchDashboardData: async () => {
     set({ isLoading: true, error: null });

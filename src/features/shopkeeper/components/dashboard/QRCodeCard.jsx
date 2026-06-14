@@ -1,93 +1,122 @@
-import React from 'react';
-import { Download, Share2, Store } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Download, Share2, Store, ExternalLink } from 'lucide-react';
+import QRCode from 'qrcode';
 import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function QRCodeCard() {
-  const { qrPayload, shopProfile } = useShopkeeperDashboardStore();
+  const { shopProfile, setQRModalOpen } = useShopkeeperDashboardStore();
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
 
-  const handleDownload = () => {
-    alert('QR Code downloaded successfully!');
+  const shopId = shopProfile?.username || shopProfile?.slug || shopProfile?.id;
+  const shopUrl = shopId ? `${window.location.origin}/shops/${shopId}` : window.location.origin;
+
+  useEffect(() => {
+    if (shopUrl) {
+      QRCode.toDataURL(shopUrl, {
+        width: 256,
+        margin: 1,
+        color: {
+          dark: '#111827',
+          light: '#FFFFFF'
+        }
+      })
+        .then((url) => setQrCodeDataUrl(url))
+        .catch((err) => console.error('Failed to generate QR Code:', err));
+    }
+  }, [shopUrl]);
+
+  const handleDownload = (e) => {
+    e.stopPropagation();
+    if (!qrCodeDataUrl) return;
+    const link = document.createElement('a');
+    link.href = qrCodeDataUrl;
+    link.download = `${shopProfile?.username || 'shop'}-qr.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const handleShare = () => {
-    const shareUrl = qrPayload || (shopProfile?.username ? `${window.location.origin}/shops/${shopProfile.username}` : window.location.origin);
-    navigator.clipboard.writeText(shareUrl);
-    alert('Profile share link copied to clipboard!');
+  const handleShare = async (e) => {
+    e.stopPropagation();
+    try {
+      if (!qrCodeDataUrl) return;
+
+      const response = await fetch(qrCodeDataUrl);
+      const blob = await response.blob();
+      const file = new File(
+        [blob],
+        `${shopProfile?.username || 'shop'}-qr.png`,
+        { type: 'image/png' }
+      );
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `${shopProfile?.name || 'Shop'} QR Code`,
+          text: `Scan QR code to visit ${shopProfile?.name || 'our shop'} on Neargrab!`
+        });
+      } else if (navigator.share) {
+        await navigator.share({
+          title: `${shopProfile?.name || 'Shop'}`,
+          text: `Visit ${shopProfile?.name || 'our shop'} on Neargrab!`,
+          url: shopUrl
+        });
+      } else {
+        await navigator.clipboard.writeText(shopUrl);
+        alert('Profile link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Failed to share:', err);
+      try {
+        await navigator.clipboard.writeText(shopUrl);
+        alert('Profile link copied to clipboard!');
+      } catch (clipErr) {
+        console.error(clipErr);
+      }
+    }
   };
 
   return (
-    <div className="w-full bg-white border border-neutral-100/80 rounded-2xl p-4 shadow-3xs text-left font-inter">
+    <div
+      onClick={() => setQRModalOpen(true)}
+      className="w-full bg-white border border-neutral-100/80 hover:border-neutral-200 rounded-2xl p-4 shadow-3xs text-left font-inter transition-all duration-300 cursor-pointer group"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-3.5">
         <h4 className="font-poppins font-bold text-xs md:text-sm text-text-primary">
           Your Shop QR Code
         </h4>
-        <Link
-          to="/shopkeeper/qr"
-          className="text-[10px] font-bold text-brand-900 hover:text-brand-700 font-poppins transition-colors"
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setQRModalOpen(true);
+          }}
+          className="text-[10px] font-bold text-brand-900 hover:text-brand-700 font-poppins transition-colors flex items-center gap-0.5 cursor-pointer"
         >
-          Manage
-        </Link>
+        </button>
       </div>
 
       {/* Content wrapper */}
-      <div className="flex items-center gap-4 border border-neutral-150 p-3 rounded-xl shadow-3xs bg-white">
-        {/* SVG High-Fidelity QR Code */}
+      <div className="flex items-center gap-4 border border-neutral-150 p-3 rounded-xl shadow-3xs bg-white group-hover:bg-neutral-50/30 transition-all">
+        {/* QR Code Graphic container */}
         <div className="w-20 h-20 bg-white border border-neutral-150 rounded-xl p-1 shrink-0 flex items-center justify-center relative shadow-3xs">
-          <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            {/* QR Pattern Blocks */}
-            <rect x="5" y="5" width="25" height="25" fill="#111827" />
-            <rect x="10" y="10" width="15" height="15" fill="#FFFFFF" />
-            <rect x="13" y="13" width="9" height="9" fill="#111827" />
-
-            <rect x="70" y="5" width="25" height="25" fill="#111827" />
-            <rect x="75" y="10" width="15" height="15" fill="#FFFFFF" />
-            <rect x="78" y="13" width="9" height="9" fill="#111827" />
-
-            <rect x="5" y="70" width="25" height="25" fill="#111827" />
-            <rect x="10" y="75" width="15" height="15" fill="#FFFFFF" />
-            <rect x="13" y="78" width="9" height="9" fill="#111827" />
-
-            {/* Random Data Dots */}
-            <rect x="35" y="5" width="6" height="6" fill="#111827" />
-            <rect x="45" y="12" width="6" height="6" fill="#111827" />
-            <rect x="55" y="5" width="6" height="6" fill="#111827" />
-            <rect x="62" y="18" width="6" height="6" fill="#111827" />
-
-            <rect x="35" y="35" width="6" height="6" fill="#111827" />
-            <rect x="42" y="45" width="6" height="6" fill="#111827" />
-            <rect x="55" y="38" width="6" height="6" fill="#111827" />
-            <rect x="62" y="45" width="6" height="6" fill="#111827" />
-
-            <rect x="5" y="35" width="6" height="6" fill="#111827" />
-            <rect x="12" y="45" width="6" height="6" fill="#111827" />
-            <rect x="22" y="38" width="6" height="6" fill="#111827" />
-            <rect x="18" y="52" width="6" height="6" fill="#111827" />
-
-            <rect x="35" y="70" width="6" height="6" fill="#111827" />
-            <rect x="42" y="75" width="6" height="6" fill="#111827" />
-            <rect x="55" y="78" width="6" height="6" fill="#111827" />
-            <rect x="62" y="75" width="6" height="6" fill="#111827" />
-
-            <rect x="70" y="35" width="6" height="6" fill="#111827" />
-            <rect x="75" y="45" width="6" height="6" fill="#111827" />
-            <rect x="88" y="38" width="6" height="6" fill="#111827" />
-            <rect x="82" y="52" width="6" height="6" fill="#111827" />
-
-            <rect x="70" y="70" width="6" height="6" fill="#111827" />
-            <rect x="75" y="82" width="6" height="6" fill="#111827" />
-            <rect x="88" y="75" width="6" height="6" fill="#111827" />
-            <rect x="82" y="88" width="6" height="6" fill="#111827" />
-
-            {/* Central White Mask & Nest Icon */}
-            <circle cx="50" cy="50" r="16" fill="#FFFFFF" />
-            <circle cx="50" cy="50" r="13" fill="#E6F4EA" />
-          </svg>
-          {/* Nested Shopkeeper Indicator Icon in center */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-[#E6F4EA] rounded-md flex items-center justify-center border border-brand-100/50 shadow-3xs">
-            <Store className="w-3.5 h-3.5 text-brand-900" />
-          </div>
+          {qrCodeDataUrl ? (
+            <img
+              src={qrCodeDataUrl}
+              alt="Shop QR Code"
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <div className="w-5 h-5 border-2 border-brand-900/10 border-t-brand-900 rounded-full animate-spin" />
+          )}
+          {/* Central Nest Icon overlay */}
+          {qrCodeDataUrl && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-white border border-neutral-200 rounded-full flex items-center justify-center shadow-xs">
+              <div className="w-4 h-4 bg-brand-50 border border-brand-100 rounded-full flex items-center justify-center text-brand-900">
+                <Store className="w-2.5 h-2.5" />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Info & Action Buttons */}

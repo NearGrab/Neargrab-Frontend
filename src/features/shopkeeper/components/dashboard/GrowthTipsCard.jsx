@@ -26,12 +26,6 @@ export default function GrowthTipsCard() {
         <h4 className="font-poppins font-bold text-xs md:text-sm text-text-primary">
           Tips to grow your shop
         </h4>
-        <Link
-          to="/shopkeeper/analytics"
-          className="text-[10px] font-bold text-brand-900 hover:text-brand-700 font-poppins transition-colors"
-        >
-          View all
-        </Link>
       </div>
 
       {/* Tips List */}

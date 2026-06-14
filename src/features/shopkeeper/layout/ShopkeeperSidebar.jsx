@@ -23,7 +23,7 @@ import { useShopkeeperDashboardStore } from '../../../store/useShopkeeperDashboa
 export default function ShopkeeperSidebar({ onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { shopProfile, fetchDashboardData } = useShopkeeperDashboardStore();
+  const { shopProfile, fetchDashboardData, setQRModalOpen, setReviewsModalOpen } = useShopkeeperDashboardStore();
   const { navigation } = dashboardMockData;
 
   useEffect(() => {
@@ -101,6 +101,55 @@ export default function ShopkeeperSidebar({ onClose }) {
       <nav className="flex flex-col gap-1 overflow-y-auto scrollbar-none flex-grow max-h-[420px] lg:max-h-none">
         {navigation.map((item) => {
           const IconComponent = iconMap[item.icon] || LayoutDashboard;
+          const isQRItem = item.icon === 'QRCode';
+
+          if (isQRItem) {
+            return (
+              <button
+                key={item.title}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setQRModalOpen(true);
+                  if (onClose) onClose(); // Close drawer
+                }}
+                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-poppins text-text-secondary hover:bg-neutral-50 hover:text-text-primary border-none bg-transparent cursor-pointer text-left w-full transition-all duration-300"
+              >
+                <div className="flex items-center gap-3">
+                  <IconComponent className="w-4 h-4 shrink-0 text-text-muted" />
+                  <span>{item.title}</span>
+                </div>
+              </button>
+            );
+          }
+
+          const isReviewsItem = item.icon === 'Reviews';
+
+          if (isReviewsItem) {
+            return (
+              <button
+                key={item.title}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setReviewsModalOpen(true);
+                  if (onClose) onClose(); // Close drawer
+                }}
+                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold font-poppins text-text-secondary hover:bg-neutral-50 hover:text-text-primary border-none bg-transparent cursor-pointer text-left w-full transition-all duration-300"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3">
+                    <IconComponent className="w-4 h-4 shrink-0 text-text-muted" />
+                    <span>{item.title}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-neutral-100 text-text-muted">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          }
+
           const isActive = location.pathname === item.path || (item.path === '/shopkeeper/dashboard' && location.pathname === '/shopkeeper/dashboard');
 
           return (

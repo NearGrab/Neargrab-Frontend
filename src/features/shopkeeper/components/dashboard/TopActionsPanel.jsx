@@ -8,8 +8,6 @@ export default function TopActionsPanel() {
   // Icon Map matching the indicators
   const iconMap = {
     'Product Views': ShoppingBag,
-    'Chat Messages': MessageSquare,
-    'Calls Received': Phone,
     'Saved by Users': Bookmark
   };
 

@@ -50,6 +50,7 @@ export default function PublicShopProfilePage() {
       try {
         const info = await shopProfileService.getShopProfile(shopId);
         setShopInfo(info);
+        setIsFollowing(info.stats?.isFollowing || false);
 
         const prods = await shopProfileService.getProducts(shopId);
         setProducts(prods);
@@ -59,6 +60,9 @@ export default function PublicShopProfilePage() {
 
         const upds = await shopProfileService.getUpdates(shopId);
         setUpdates(upds);
+
+        // Track profile view
+        shopProfileService.trackLead(shopId, 'SHOP_PROFILE_VIEW', 'SHOP_PROFILE');
       } catch (err) {
         console.error('Failed to load public shop profile:', err);
       } finally {
@@ -71,7 +75,7 @@ export default function PublicShopProfilePage() {
   }, [shopId]);
 
   const handleContactAction = async (actionType) => {
-    let action = 'DIRECTIONS_OPEN';
+    let action = 'MAP_OPEN';
     if (actionType === 'call') {
       action = 'CALL_CLICK';
     } else if (actionType === 'whatsapp') {
@@ -79,7 +83,7 @@ export default function PublicShopProfilePage() {
     }
     
     // Log the analytics lead action non-blocking
-    shopProfileService.trackLead(shopId, action);
+    shopProfileService.trackLead(shopId, action, 'SHOP_PROFILE');
   };
 
   const handleReviewSubmit = async ({ rating, comment }) => {
@@ -114,14 +118,36 @@ export default function PublicShopProfilePage() {
     });
   };
 
-  const handleFollowClick = () => {
+  const handleFollowClick = async () => {
     if (!isAuthenticated) {
       if (confirm('You must be logged in to follow shops. Would you like to log in now?')) {
         navigate('/login', { state: { from: window.location.pathname } });
       }
       return;
     }
-    setIsFollowing(prev => !prev);
+    const targetState = !isFollowing;
+    try {
+      if (targetState) {
+        await shopProfileService.followUser(shopInfo.ownerId);
+      } else {
+        await shopProfileService.unfollowUser(shopInfo.ownerId);
+      }
+      setIsFollowing(targetState);
+      setShopInfo(prev => {
+        if (!prev) return null;
+        const currentCount = prev.stats?.followersCount || 0;
+        return {
+          ...prev,
+          stats: {
+            ...prev.stats,
+            followersCount: targetState ? currentCount + 1 : Math.max(0, currentCount - 1),
+            isFollowing: targetState
+          }
+        };
+      });
+    } catch (err) {
+      console.error('Failed to update follow status:', err);
+    }
   };
 
   const tabChoices = [
@@ -178,7 +204,8 @@ export default function PublicShopProfilePage() {
               <ShopProfileSummaryCard
                 shopInfo={{
                   ...shopInfo,
-                  followersCount: isFollowing ? '15.3K' : '15.2K'
+                  followersCount: shopInfo.stats?.followersCount ?? 0,
+                  isFollowing
                 }}
                 isManageMode={false}
                 onFollowClick={handleFollowClick}

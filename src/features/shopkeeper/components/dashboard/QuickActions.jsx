@@ -4,15 +4,15 @@ import {
   PlusCircle,
   Edit,
   Package,
-  MessageSquare,
   Star,
   QrCode,
-  Megaphone,
-  BarChart3
+  Megaphone
 } from 'lucide-react';
+import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function QuickActions() {
   const navigate = useNavigate();
+  const { setQRModalOpen } = useShopkeeperDashboardStore();
 
   const actions = [
     {
@@ -37,13 +37,6 @@ export default function QuickActions() {
       color: 'text-brand-900 bg-brand-50 border-brand-100/50'
     },
     {
-      title: 'Orders / Inquiries',
-      desc: 'View & reply',
-      icon: MessageSquare,
-      path: '/shopkeeper/orders',
-      color: 'text-brand-900 bg-brand-50 border-brand-100/50'
-    },
-    {
       title: 'Reviews',
       desc: 'See customer reviews',
       icon: Star,
@@ -63,18 +56,15 @@ export default function QuickActions() {
       icon: Megaphone,
       path: '/shopkeeper/promotions',
       color: 'text-brand-900 bg-brand-50 border-brand-100/50'
-    },
-    {
-      title: 'Analytics',
-      desc: 'View detailed insights',
-      icon: BarChart3,
-      path: '/shopkeeper/analytics',
-      color: 'text-brand-900 bg-brand-50 border-brand-100/50'
     }
   ];
 
-  const handleActionClick = (path) => {
-    navigate(path);
+  const handleActionClick = (title, path) => {
+    if (title === 'QR Code') {
+      setQRModalOpen(true);
+    } else {
+      navigate(path);
+    }
   };
 
   return (
@@ -84,15 +74,15 @@ export default function QuickActions() {
         Quick Actions
       </h3>
 
-      {/* Grid: 2 cols on mobile, 4 cols on desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+      {/* Grid: 2 cols on mobile, 3 on tablet, 6 on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
         {actions.map((act) => {
           const IconComponent = act.icon;
 
           return (
             <div
               key={act.title}
-              onClick={() => handleActionClick(act.path)}
+              onClick={() => handleActionClick(act.title, act.path)}
               className="flex items-center gap-3.5 p-3.5 bg-white border border-neutral-150/70 hover:border-brand-900 rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-2xs active:scale-97 select-none group"
             >
               {/* Icon Container */}

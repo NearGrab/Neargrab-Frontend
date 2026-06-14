@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import ReviewCard from '../../../../shared/components/ReviewCard';
 import { useShopkeeperDashboardStore } from '../../../../store/useShopkeeperDashboardStore';
 
 export default function RecentReviews() {
-  const { reviews } = useShopkeeperDashboardStore();
+  const { reviews, setReviewsModalOpen } = useShopkeeperDashboardStore();
 
   return (
     <div className="w-full text-left font-inter flex flex-col justify-between h-full bg-white border border-neutral-100/80 rounded-2xl p-5 shadow-3xs">
@@ -13,12 +12,12 @@ export default function RecentReviews() {
         <h3 className="font-poppins font-bold text-sm md:text-base text-brand-900 leading-none">
           Recent Reviews
         </h3>
-        <Link
-          to="/shopkeeper/reviews"
-          className="text-[11px] font-bold text-brand-900 hover:text-brand-700 font-poppins transition-colors"
+        <button
+          onClick={() => setReviewsModalOpen(true)}
+          className="text-[11px] font-bold text-brand-900 hover:text-brand-700 font-poppins transition-colors border-none bg-transparent cursor-pointer"
         >
-          View all
-        </Link>
+          view all
+        </button>
       </div>
 
       {/* Review Card List */}

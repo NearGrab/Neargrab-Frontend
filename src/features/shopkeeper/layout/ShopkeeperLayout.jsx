@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import Navbar from '../../../shared/components/layout/Navbar';
 import ShopkeeperSidebar from './ShopkeeperSidebar';
 import ShopkeeperHeader from './ShopkeeperHeader';
+import { useShopkeeperDashboardStore } from '../../../store/useShopkeeperDashboardStore';
+import QRCodeModal from '../components/dashboard/QRCodeModal';
+import ReviewsModal from '../components/dashboard/ReviewsModal';
 
 export default function ShopkeeperLayout({ children, rightSidebar }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isQRModalOpen, setQRModalOpen, isReviewsModalOpen, setReviewsModalOpen, shopProfile } = useShopkeeperDashboardStore();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -63,6 +67,17 @@ export default function ShopkeeperLayout({ children, rightSidebar }) {
 
         </div>
       </div>
+
+      <QRCodeModal
+        isOpen={isQRModalOpen}
+        onClose={() => setQRModalOpen(false)}
+        shopProfile={shopProfile}
+      />
+
+      <ReviewsModal
+        isOpen={isReviewsModalOpen}
+        onClose={() => setReviewsModalOpen(false)}
+      />
     </div>
   );
 }

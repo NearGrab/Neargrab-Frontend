@@ -10,7 +10,7 @@ import PerformanceOverview from '../components/dashboard/PerformanceOverview';
 import TopActionsPanel from '../components/dashboard/TopActionsPanel';
 import QuickActions from '../components/dashboard/QuickActions';
 import RecentReviews from '../components/dashboard/RecentReviews';
-import LowStockAlerts from '../components/dashboard/LowStockAlerts';
+import OutOfStockAlerts from '../components/dashboard/OutOfStockAlerts';
 
 // Right sidebar widgets
 import ShopProfileCard from '../components/dashboard/ShopProfileCard';
@@ -123,7 +123,7 @@ export default function ShopkeeperDashboardPage() {
         {/* 5. Feedback Reviews & Inventory Alarms */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
           <RecentReviews />
-          <LowStockAlerts />
+          <OutOfStockAlerts />
         </section>
 
       </div>

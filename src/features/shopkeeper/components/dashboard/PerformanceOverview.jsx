@@ -126,7 +126,8 @@ export default function PerformanceOverview() {
               activeDot={{ r: 6, strokeWidth: 0 }}
               animationDuration={1000}
             />
-            <Line
+            {/* Temporarily disable Inquiries line chart as requested */}
+            {/* <Line
               type="monotone"
               dataKey="Inquiries"
               stroke="#F59E0B"
@@ -134,7 +135,7 @@ export default function PerformanceOverview() {
               dot={{ r: 4, strokeWidth: 1 }}
               activeDot={{ r: 6, strokeWidth: 0 }}
               animationDuration={1000}
-            />
+            /> */}
             <Line
               type="monotone"
               dataKey="Followers"
