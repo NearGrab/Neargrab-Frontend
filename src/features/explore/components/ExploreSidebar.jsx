@@ -1,8 +1,11 @@
 import React from 'react';
 import { ShoppingCart, ArrowRight, Store, Star, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import ReviewCard from '../../../shared/components/ReviewCard';
 
 export default function ExploreSidebar({ offers, listShop, reviews }) {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full flex flex-col gap-8">
       
@@ -129,7 +132,13 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
               comment={rev.comment}
               storeName={rev.storeName}
               showStoreLink={true}
-              onClickStore={() => alert(`Redirecting to shop profile for ${rev.storeName}! (Coming soon)`)}
+              onClickStore={() => {
+                if (rev.shopId) {
+                  navigate(`/shops/${rev.shopId}`);
+                } else {
+                  alert(`Redirecting to shop profile for ${rev.storeName}!`);
+                }
+              }}
             />
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Star, Check, Sparkles } from 'lucide-react';
 import Button from '../../../shared/components/ui/Button';
+import { productService } from '../services/productService';
 
 export default function ReviewProductModal({ isOpen, onClose, product, initialRating = 0, onSubmitSuccess }) {
   const [rating, setRating] = useState(initialRating);
@@ -11,7 +12,7 @@ export default function ReviewProductModal({ isOpen, onClose, product, initialRa
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0) {
       alert('Please select a star rating first!');
@@ -23,20 +24,21 @@ export default function ReviewProductModal({ isOpen, onClose, product, initialRa
     }
 
     setIsSubmitting(true);
-    // Simulate API request timing
-    setTimeout(() => {
+    try {
+      const result = await productService.createProductReview(product.id, { rating, comment });
       setIsSubmitting(false);
       setIsSubmitted(true);
+      
       setTimeout(() => {
-        // Return values up to page callback
         if (onSubmitSuccess) {
           onSubmitSuccess({
-            rating,
-            comment,
-            user: 'You',
-            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
+            id: result.id,
+            rating: result.rating,
+            comment: result.comment,
+            user: result.user?.name || 'You',
+            avatar: result.user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
             time: 'Just now',
-            verifiedPurchase: true
+            verifiedPurchase: result.verifiedPurchase ?? true
           });
         }
         setIsSubmitted(false);
@@ -45,7 +47,11 @@ export default function ReviewProductModal({ isOpen, onClose, product, initialRa
         onClose();
         alert('Thank you! Your product review has been submitted successfully.');
       }, 1200);
-    }, 1500);
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error('Failed to submit product review:', err);
+      alert(err.message || 'Failed to submit review. You might have already reviewed this product, or you need to be logged in.');
+    }
   };
 
   return (

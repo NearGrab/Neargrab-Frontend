@@ -3,9 +3,11 @@ import { Menu, ShieldCheck, Bell, Settings } from 'lucide-react';
 import { dashboardMockData } from '../data/dashboardMockData';
 import { useShopkeeperDashboardStore } from '../../../store/useShopkeeperDashboardStore';
 import { Link } from 'react-router-dom';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 
 export default function ShopkeeperHeader({ onMenuToggle }) {
   const { shopProfile } = useShopkeeperDashboardStore();
+  const { unreadCount } = useNotificationStore();
   const profile = shopProfile || dashboardMockData.shopProfile;
 
   return (
@@ -46,7 +48,9 @@ export default function ShopkeeperHeader({ onMenuToggle }) {
           className="p-2 hover:bg-neutral-50 rounded-xl text-text-secondary hover:text-text-primary transition-all relative border border-neutral-200/40"
         >
           <Bell className="w-4 h-4 text-text-secondary" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+          )}
         </Link>
         <Link
           to="/shopkeeper/settings"

@@ -180,8 +180,17 @@ export const useShopProfileStore = create((set, get) => ({
       let reviewList = [];
       try {
         const revRes = await apiClient.get('/shopkeeper/reviews');
-        if (revRes.data?.success) {
-          reviewList = revRes.data.data || [];
+        if (revRes.success) {
+          const rawReviews = revRes.data || [];
+          reviewList = rawReviews.map(r => ({
+            id: r.id,
+            reviewerName: r.authorName || 'Anonymous',
+            avatar: r.authorAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80',
+            rating: r.rating || 0,
+            comment: r.comment || '',
+            dateRelative: r.dateRelative || 'Recent',
+            isVerified: r.verifiedPurchase ?? false
+          }));
         }
       } catch (err) {
         console.warn('Reviews endpoint failed, fallback to mock reviews.', err);

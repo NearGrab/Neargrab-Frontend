@@ -48,21 +48,6 @@ export default function ProductShopHeaderCard({ product }) {
             <Clock className="w-3.5 h-3.5 text-text-muted" />
             <span>Open till {soldBy.timings?.split(' - ')[1] || '10:00 PM'}</span>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="w-1.8 h-1.8 rounded-full bg-emerald-500" />
-            <span className="text-emerald-700">In Stock</span>
-          </div>
-        </div>
-
-        {/* Green verified stocking banner strip */}
-        <div className="w-full bg-[#E6F4EA] border border-[#12634B]/10 p-3 rounded-2xl flex items-center gap-2.5">
-          <div className="w-6 h-6 rounded-full bg-[#0B3B2C] text-white flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-3.5 h-3.5 text-white" />
-          </div>
-          <div className="flex flex-col text-left leading-tight">
-            <span className="text-[10px] sm:text-xs font-extrabold text-[#0B3B2C]">Verified in stock 12 mins ago</span>
-            <span className="text-[8px] sm:text-[9px] text-[#0B3B2C]/75 font-semibold">Information provided by the shop</span>
-          </div>
         </div>
       </div>
     </div>

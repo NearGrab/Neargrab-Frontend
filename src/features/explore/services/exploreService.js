@@ -104,8 +104,13 @@ export const exploreService = {
     // Top Offers (can use popularNearby, or from top products list)
     const topOffers = (data.sections?.popularNearby || data.topProducts || []).map(mapBackendProductToFrontend);
 
+    const realReviews = Array.isArray(data.realReviews) && data.realReviews.length > 0
+      ? data.realReviews
+      : staticProps.realReviews;
+
     return {
       ...staticProps,
+      realReviews,
       heroBanner,
       categories,
       stores,

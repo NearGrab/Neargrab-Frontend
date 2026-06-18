@@ -5,67 +5,43 @@ import Footer from '../../landing/components/Footer';
 import NotificationTabs from '../components/NotificationTabs';
 import NotificationPreferences from '../components/NotificationPreferences';
 import NotificationItem from '../components/NotificationItem';
-import { notificationService } from '../services/notificationService';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import { cn } from '../../../shared/utils/cn';
 
 export default function NotificationsPage() {
   const { user } = useAuthStore();
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
-  
-  // State elements
-  const [notifications, setNotifications] = useState([]);
-  const [preferences, setPreferences] = useState({});
-  const [recommended, setRecommended] = useState([]);
+  const {
+    notifications,
+    preferences,
+    recommended,
+    loading,
+    fetchNotifications,
+    markAllAsRead,
+    togglePreference,
+    followToggle
+  } = useNotificationStore();
 
   // Load notifications data asynchronously on mount
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    const loadNotifications = async () => {
-      try {
-        const data = await notificationService.getNotificationsData();
-        setNotifications(data.notifications);
-        setPreferences(data.preferences);
-        setRecommended(data.recommended);
-      } catch (err) {
-        console.error('Failed to load notifications data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadNotifications();
+    fetchNotifications(true); // Force fetch on mount
   }, []);
 
   // Mark all unread items as read
   const handleMarkAllAsRead = async () => {
-    try {
-      const updatedList = await notificationService.markAllAsRead();
-      setNotifications(updatedList);
-    } catch (err) {
-      console.error('Failed to mark notifications as read', err);
-    }
+    await markAllAsRead();
   };
 
   // Toggle user preference switches
   const handleTogglePreference = async (key) => {
-    try {
-      const updatedPrefs = await notificationService.togglePreference(key);
-      setPreferences(updatedPrefs);
-    } catch (err) {
-      console.error('Failed to toggle notification preference', err);
-    }
+    await togglePreference(key);
   };
 
   // Toggle dynamic follow/following states on sidebar recommendations
   const handleFollowToggle = (id) => {
-    setRecommended(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, following: !item.following } : item
-      )
-    );
+    followToggle(id);
   };
 
   if (loading) {

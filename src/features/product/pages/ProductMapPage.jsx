@@ -11,7 +11,7 @@ import ReviewCard from '../../../shared/components/ReviewCard';
 import Button from '../../../shared/components/ui/Button';
 import { productService } from '../services/productService';
 import { shopProfileService } from '../../shop/services/shopProfileService';
-import { ChevronLeft, Star, Store, ShieldCheck, Info } from 'lucide-react';
+import { ChevronLeft, Star, Store, ShieldCheck, Info, X } from 'lucide-react';
 
 export default function ProductMapPage() {
   const { productId } = useParams();
@@ -25,6 +25,23 @@ export default function ProductMapPage() {
   const [loading, setLoading] = useState(true);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [initialReviewRating, setInitialReviewRating] = useState(0);
+  const [isAllReviewsOpen, setIsAllReviewsOpen] = useState(false);
+  const [allReviews, setAllReviews] = useState([]);
+  const [loadingAllReviews, setLoadingAllReviews] = useState(false);
+
+  const handleOpenAllReviews = async () => {
+    setIsAllReviewsOpen(true);
+    setLoadingAllReviews(true);
+    try {
+      const idToFetch = productId || 'prod-fortune-1l';
+      const fetched = await productService.getTopReviews(idToFetch, 100);
+      setAllReviews(fetched);
+    } catch (err) {
+      console.error('Failed to fetch all reviews:', err);
+    } finally {
+      setLoadingAllReviews(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -214,6 +231,7 @@ export default function ProductMapPage() {
               rating={product.rating} 
               reviewsCount={product.reviewsCount} 
               storeName={activeStore.name} 
+              reviewSummary={product.reviewSummary}
             />
 
             {/* 2. REUSABLE THUMBNAIL-RICH RECENT REVIEWS FEED */}
@@ -242,7 +260,7 @@ export default function ProductMapPage() {
 
               {/* View all reviews outliner */}
               <button
-                onClick={() => alert('Full reviews listing database panel coming soon!')}
+                onClick={handleOpenAllReviews}
                 className="w-full py-2.5 border border-neutral-200 hover:bg-neutral-50 text-text-primary rounded-full font-poppins font-bold text-xs cursor-pointer select-none transition-colors mt-2 text-center font-inter"
               >
                 View all reviews
@@ -284,13 +302,94 @@ export default function ProductMapPage() {
         onClose={() => setIsReviewModalOpen(false)}
         product={product}
         initialRating={initialReviewRating}
-        onSubmitSuccess={(newReview) => {
+        onSubmitSuccess={async (newReview) => {
           setReviews((prev) => [newReview, ...prev]);
+          try {
+            const idToFetch = productId || 'prod-fortune-1l';
+            const updatedProd = await productService.getProductDetails(idToFetch);
+            setProduct(updatedProd);
+          } catch (err) {
+            console.error('Failed to sync updated product reviews info:', err);
+          }
         }}
+      />
+
+      {/* All reviews overlay modal */}
+      <AllReviewsModal
+        isOpen={isAllReviewsOpen}
+        onClose={() => setIsAllReviewsOpen(false)}
+        reviews={allReviews}
+        loading={loadingAllReviews}
+        productName={product.name}
       />
 
       {/* Layout footer component */}
       <Footer />
+    </div>
+  );
+}
+
+// Sub-component: AllReviewsModal
+function AllReviewsModal({ isOpen, onClose, reviews, loading, productName }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+      ></div>
+
+      {/* Modal Box */}
+      <div className="bg-white border border-neutral-100 w-full max-w-2xl rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] z-10 animate-in fade-in zoom-in-95 duration-200">
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b border-neutral-100">
+          <div>
+            <h3 className="font-poppins font-extrabold text-text-primary text-base sm:text-lg">
+              All Customer Reviews
+            </h3>
+            <p className="text-[10px] sm:text-xs text-text-muted font-medium mt-0.5">
+              Showing reviews for {productName}
+            </p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-neutral-50 hover:bg-neutral-100 text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <X className="w-4.5 h-4.5" />
+          </button>
+        </div>
+
+        {/* Scrollable List */}
+        <div className="flex-grow overflow-y-auto p-5 space-y-4">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <div className="w-8 h-8 border-3 border-brand-900/10 border-t-brand-900 rounded-full animate-spin"></div>
+              <span className="text-xs text-text-muted font-bold font-inter">Loading reviews...</span>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-sm text-text-secondary font-medium font-inter">No reviews yet for this product.</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {reviews.map((rev) => (
+                <ReviewCard
+                  key={rev.id}
+                  avatar={rev.avatar}
+                  user={rev.user}
+                  time={rev.time}
+                  rating={rev.rating}
+                  comment={rev.comment}
+                  verifiedPurchase={rev.verifiedPurchase}
+                  thumbnail={rev.thumbnail}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

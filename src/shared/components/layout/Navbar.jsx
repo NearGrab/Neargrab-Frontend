@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useLocationStore } from '../../../store/useLocationStore';
 import { useCartStore } from '../../../store/useCartStore';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import { searchService } from '../../../features/search/services/searchService';
 import CitySelectionModal from './CitySelectionModal';
 
@@ -16,6 +17,7 @@ export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuthStore();
   const { location: userLoc, setRadius } = useLocationStore();
   const { totalQuantity: cartCount } = useCartStore();
+  const { unreadCount } = useNotificationStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -264,9 +266,11 @@ export default function Navbar() {
               className="relative w-10 h-10 rounded-full bg-neutral-50 border border-neutral-200/40 hover:bg-neutral-100 flex items-center justify-center text-text-secondary cursor-pointer transition-colors group"
             >
               <Bell className="w-5 h-5 text-text-secondary group-hover:text-brand-900 transition-colors" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white scale-90">
-                3
-              </span>
+              {isAuthenticated && unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white scale-90">
+                  {unreadCount}
+                </span>
+              )}
             </button>
 
             {/* Cart Trigger */}
@@ -492,9 +496,11 @@ export default function Navbar() {
         >
           <div className="relative">
             <Bell className={`w-5 h-5 ${location.pathname === '/notifications' ? 'text-brand-900 fill-brand-900/10' : 'text-text-secondary'}`} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
-              3
-            </span>
+            {isAuthenticated && unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
+                {unreadCount}
+              </span>
+            )}
           </div>
           <span className="text-[10px] font-poppins tracking-wide">Alerts</span>
         </Link>

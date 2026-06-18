@@ -1,15 +1,15 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 
-export default function ProductReviewsBreakdown({ rating = 4.6, reviewsCount = 152, storeName = 'Patel General Store' }) {
-  // Star count ratios matching Patel General Store mockup exactly
-  const distribution = [
-    { stars: 5, count: 102, percent: 67 },
-    { stars: 4, count: 34, percent: 22 },
-    { stars: 3, count: 10, percent: 6 },
-    { stars: 2, count: 3, percent: 2 },
-    { stars: 1, count: 3, percent: 2 }
-  ];
+export default function ProductReviewsBreakdown({ rating = 0, reviewsCount = 0, storeName = 'Local Store', reviewSummary }) {
+  const breakdown = reviewSummary?.breakdown || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  const total = reviewsCount || reviewSummary?.count || 0;
+
+  const distribution = [5, 4, 3, 2, 1].map((stars) => {
+    const count = breakdown[stars] || 0;
+    const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+    return { stars, count, percent };
+  });
 
   return (
     <div className="w-full bg-white border border-neutral-100 p-5 rounded-3xl shadow-sm text-left flex flex-col gap-4">

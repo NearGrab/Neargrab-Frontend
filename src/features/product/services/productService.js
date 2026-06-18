@@ -16,8 +16,8 @@ export const productService = {
       name: shop.name,
       slug: shop.slug || shop.username,
       verified: shop.verificationStatus === 'VERIFIED',
-      rating: shop.ratingAvg || 4.5,
-      reviewsCount: shop.ratingCount || 10,
+      rating: shop.ratingAvg || 0,
+      reviewsCount: shop.ratingCount || 0,
       category: 'Grocery, Daily Needs',
       status: 'Open now',
       timings: 'Closes 10:00 PM',
@@ -45,8 +45,8 @@ export const productService = {
       category: data.category?.name || 'Grocery',
       size: data.size ? `${data.size} ${data.unit || ''}`.trim() : '1 Unit',
       specs,
-      rating: data.ratingAvg || 4.2,
-      reviewsCount: data.reviewCount || 2,
+      rating: data.ratingAvg || 0,
+      reviewsCount: data.reviewCount || 0,
       boughtThisWeek: data.viewCount > 50 ? `${data.viewCount}+ viewed recently` : '100+ viewed recently',
       price: typeof data.pricePaise === 'number' ? data.pricePaise / 100 : 0,
       originalPrice: typeof data.mrpPaise === 'number' ? data.mrpPaise / 100 : null,
@@ -58,7 +58,12 @@ export const productService = {
       images,
       uspBadges: ['100% Original', 'Best Quality', 'Trusted by Locals', 'Secure Info'],
       soldBy,
-      isSaved: data.isSaved || false
+      isSaved: data.isSaved || false,
+      reviewSummary: data.reviewSummary || {
+        average: data.ratingAvg || 0,
+        count: data.reviewCount || 0,
+        breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      }
     };
   },
 
@@ -81,8 +86,8 @@ export const productService = {
       verified: item.shop.verificationStatus === 'VERIFIED',
       distance: typeof item.distanceKm === 'number' ? Number(item.distanceKm.toFixed(1)) : 0.5,
       price: typeof item.pricePaise === 'number' ? item.pricePaise / 100 : 0,
-      rating: item.shop.ratingAvg || 4.5,
-      reviewsCount: item.shop.ratingCount || 10,
+      rating: item.shop.ratingAvg || 0,
+      reviewsCount: item.shop.ratingCount || 0,
       inStock: item.stockStatus === 'IN_STOCK',
       category: 'Grocery, Daily Needs',
       image: item.shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80',
@@ -94,18 +99,18 @@ export const productService = {
   /**
    * Return top-rated customer reviews for this specific product.
    */
-  async getTopReviews(productId) {
+  async getTopReviews(productId, limit = 10) {
     const { data } = await apiClient.get(`/api/v1/products/${productId}/reviews`, {
-      params: { limit: 10, sort: 'newest' }
+      params: { limit, sort: 'newest' }
     });
 
     return (data || []).map(rev => ({
       id: rev.id,
       user: rev.user?.name || 'Anonymous User',
       avatar: rev.user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
-      rating: rev.rating || 5,
-      time: rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : '2 days ago',
-      verifiedPurchase: rev.verifiedPurchase ?? true,
+      rating: rev.rating || 0,
+      time: rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Recent',
+      verifiedPurchase: rev.verifiedPurchase ?? false,
       comment: rev.comment || ''
     }));
   },
@@ -133,10 +138,10 @@ export const productService = {
       user: rev.user?.name || 'Anonymous User',
       avatar: rev.user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80',
       time: rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Recent',
-      rating: rev.rating || 5,
+      rating: rev.rating || 0,
       comment: rev.comment || '',
-      verifiedPurchase: rev.verifiedPurchase ?? true,
-      thumbnail: rev.media?.[0]?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=120&q=80'
+      verifiedPurchase: rev.verifiedPurchase ?? false,
+      thumbnail: rev.media?.[0]?.url || null
     }));
   },
 

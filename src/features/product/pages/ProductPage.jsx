@@ -101,7 +101,7 @@ export default function ProductPage() {
   };
 
   const handleOpenReviews = () => {
-    alert('Full customer reviews and testimonials panel coming soon!');
+    navigate(`/product/${product.id}/map?shopId=${product.soldBy?.id}`);
   };
 
   if (loading) {
