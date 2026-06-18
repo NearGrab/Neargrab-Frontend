@@ -3,6 +3,7 @@ import { shopkeeperProfileService } from '../features/shopkeeper/services/shopke
 import { productCatalogService } from '../features/shopkeeper/services/productCatalogService';
 import apiClient from '../shared/services/apiClient';
 import { shopProfileMockData } from '../features/shop/data/shopProfileMockData';
+import { mapBackendShopToFrontend, mapBackendTimingsToFrontend } from '../shared/utils/mappers';
 
 const mapBackendProductToFrontend = (p) => ({
   id: p.id,
@@ -14,7 +15,10 @@ const mapBackendProductToFrontend = (p) => ({
   stockCount: p.stockCount || 0,
   stockAvailable: p.stockAvailable ?? (p.stockCount > 0),
   image: p.images?.[0]?.url || p.images?.[0]?.media?.url || p.imageUrl || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=150',
-  views: p.views || p.clicks || 0
+  views: p.views || p.clicks || 0,
+  description: p.description || '',
+  tags: Array.isArray(p.tags) ? p.tags.map(t => typeof t === 'string' ? t : t.name || t.tag?.name) : [],
+  unit: p.unit || 'Piece'
 });
 
 // Helper to clean phone numbers to 10 digits
@@ -93,21 +97,7 @@ export const useShopProfileStore = create((set, get) => ({
         origAddr = d.address || {};
         origContact = d.contact || {};
         
-        info = {
-          name: d.name || '',
-          username: d.username || d.slug || '',
-          logo: d.logo?.url || d.logoUrl || shopProfileMockData.shopInfo.logo,
-          coverImage: d.coverImage?.url || d.coverImageUrl || shopProfileMockData.shopInfo.coverImage,
-          rating: d.ratingAvg || d.rating || 4.5,
-          reviewCount: d.reviewCount || 0,
-          isVerified: d.verificationStatus === 'VERIFIED',
-          distance: '0.8 km',
-          description: d.description || '',
-          phone: origContact.phone || '',
-          whatsapp: origContact.whatsapp || '',
-          email: origContact.email || '',
-          location: `${origAddr.street || ''}, ${origAddr.city || ''} - ${origAddr.pincode || ''}`.replace(/^,\s*/, '').trim()
-        };
+        info = mapBackendShopToFrontend(d);
 
         if (d.paymentMethods) {
           const hasUPI = d.paymentMethods.some(pm => pm.method === 'UPI' && pm.enabled);
@@ -135,30 +125,7 @@ export const useShopProfileStore = create((set, get) => ({
       try {
         const timingsRes = await shopkeeperProfileService.getTimings();
         if (timingsRes.success && Array.isArray(timingsRes.data) && timingsRes.data.length > 0) {
-          const t = timingsRes.data;
-          
-          const convert24hTo12h = (timeStr) => {
-            if (!timeStr) return '';
-            const [hoursStr, minutesStr] = timeStr.split(':');
-            let hours = parseInt(hoursStr, 10);
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            if (hours === 0) hours = 12;
-            return `${hours.toString().padStart(2, '0')}:${minutesStr} ${ampm}`;
-          };
-          
-          const firstOpenDay = t.find((item) => !item.isClosed) || t[0];
-          const displayHours = firstOpenDay 
-            ? `${convert24hTo12h(firstOpenDay.opensAt)} - ${convert24hTo12h(firstOpenDay.closesAt)}`
-            : '08:00 AM - 10:00 PM';
-            
-          const openAll7Days = t.length >= 7 && t.every((item) => !item.isClosed);
-          
-          timingData = {
-            isOpenNow: t.every((item) => !item.isClosed),
-            displayHours,
-            openAll7Days
-          };
+          timingData = mapBackendTimingsToFrontend(timingsRes.data);
         }
       } catch (err) {
         console.warn('Timings endpoint failed or empty, utilizing default mock timing structure.', err);

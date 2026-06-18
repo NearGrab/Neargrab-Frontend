@@ -7,13 +7,15 @@ import Footer from '../../landing/components/Footer';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { shopProfileService } from '../services/shopProfileService';
 
+import { Info, Package, MessageSquare, Camera, Bell } from 'lucide-react';
+
 // Left Side Components
-import ShopProfileSummaryCard from '../../shopkeeper/components/profile/ShopProfileSummaryCard';
+import ShopProfileSidebar from '../components/ShopProfileSidebar';
 import ContactActionsCard from '../../shopkeeper/components/profile/ContactActionsCard';
 import SocialLinksCard from '../../shopkeeper/components/profile/SocialLinksCard';
 
 // Shared Storefront Components
-import ShopCoverBanner from '../components/ShopCoverBanner';
+import ShopProfileHeader from '../components/ShopProfileHeader';
 import ShopOverviewSection from '../components/ShopOverviewSection';
 import ShopProductsGrid from '../components/ShopProductsGrid';
 import ShopReviewsManager from '../components/ShopReviewsManager';
@@ -21,7 +23,7 @@ import ShopPhotosGallery from '../components/ShopPhotosGallery';
 import ShopUpdatesManager from '../components/ShopUpdatesManager';
 
 // Right Side Components
-import ShopTrustCard from '../../shopkeeper/components/profile/ShopTrustCard';
+import ShopLocationCard from '../components/ShopLocationCard';
 import ShopTimingsCard from '../../shopkeeper/components/profile/ShopTimingsCard';
 import PaymentMethodsCard from '../../shopkeeper/components/profile/PaymentMethodsCard';
 import LatestShopUpdatesCard from '../../shopkeeper/components/profile/LatestShopUpdatesCard';
@@ -151,11 +153,11 @@ export default function PublicShopProfilePage() {
   };
 
   const tabChoices = [
-    { id: 'Overview', label: 'Overview', count: null },
-    { id: 'Products', label: 'Products', count: products.length },
-    { id: 'Reviews', label: 'Reviews', count: reviews.length },
-    { id: 'Photos', label: 'Photos', count: shopInfo?.photos?.length || 0 },
-    { id: 'Updates', label: 'Updates', count: updates.length }
+    { id: 'Overview', label: 'Overview', icon: <Info className="w-4 h-4" />, count: null },
+    { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: products.length },
+    { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: reviews.length },
+    { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: shopInfo?.photos?.length || 0 },
+    { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: updates.length }
   ];
 
   if (loading) {
@@ -196,19 +198,17 @@ export default function PublicShopProfilePage() {
       <div>
         <Navbar />
 
-        <main className="w-full px-4 sm:px-6 mt-6 max-w-7xl mx-auto">
+        <main className="flex-grow max-w-[115rem] w-full mx-auto px-4 md:px-8 py-6 md:py-10 mb-24">
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 w-full text-left relative">
             
             {/* LEFT COLUMN: Profile summaries */}
             <div className="lg:col-span-3 flex flex-col gap-5">
-              <ShopProfileSummaryCard
-                shopInfo={{
-                  ...shopInfo,
-                  followersCount: shopInfo.stats?.followersCount ?? 0,
-                  isFollowing
-                }}
+              <ShopProfileSidebar
+                shopInfo={shopInfo}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                tabChoices={tabChoices}
                 isManageMode={false}
-                onFollowClick={handleFollowClick}
               />
               <ContactActionsCard 
                 shopInfo={shopInfo} 
@@ -221,10 +221,11 @@ export default function PublicShopProfilePage() {
             <div className="lg:col-span-6 flex flex-col gap-5">
               
               {/* Cover Banner hero */}
-              <ShopCoverBanner
-                coverImage={shopInfo.coverImage}
-                photosCount={shopInfo.photos?.length || 0}
+              <ShopProfileHeader
+                shopInfo={shopInfo}
                 isManageMode={false}
+                isFollowing={isFollowing}
+                onFollowToggle={handleFollowClick}
                 onViewPhotos={() => setActiveTab('Photos')}
               />
 
@@ -266,6 +267,7 @@ export default function PublicShopProfilePage() {
                 {activeTab === 'Products' && (
                   <ShopProductsGrid
                     products={products}
+                    shopInfo={shopInfo}
                     isManageMode={false}
                     onViewAll={() => setActiveTab('Products')}
                   />
@@ -317,7 +319,7 @@ export default function PublicShopProfilePage() {
 
             {/* RIGHT COLUMN: Business parameters sidebar */}
             <div className="lg:col-span-3 flex flex-col gap-5">
-              <ShopTrustCard />
+              <ShopLocationCard shopInfo={shopInfo} />
               <ShopTimingsCard
                 timings={shopInfo.timings}
                 isManageMode={false}
@@ -332,6 +334,9 @@ export default function PublicShopProfilePage() {
           </div>
         </main>
       </div>
+
+      {/* Spacer container to offset the overlap of footer's CTA card */}
+      <div className="h-28 md:h-36"></div>
 
       <Footer />
 

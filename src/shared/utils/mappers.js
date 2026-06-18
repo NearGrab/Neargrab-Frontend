@@ -24,6 +24,7 @@ export function mapBackendProductToFrontend(prod) {
     name: prod.name,
     discount,
     price,
+    mrp: originalPrice && originalPrice > price ? originalPrice : null,
     originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
     rating: prod.ratingAvg !== undefined && prod.ratingAvg !== null ? Number(prod.ratingAvg) : 0,
     reviewsCount: prod.reviewCount || 0,
@@ -35,9 +36,37 @@ export function mapBackendProductToFrontend(prod) {
     store: prod.shop?.name || 'Local Store',
     verified: prod.shop?.verificationStatus === 'VERIFIED',
     inStock: prod.stockStatus === 'IN_STOCK' || prod.stockAvailable,
+    stockAvailable: prod.stockStatus === 'IN_STOCK' || prod.stockAvailable,
     shopId: prod.shop?.id || prod.shopId || null,
-    shopSlug: prod.shop?.slug || prod.shopSlug || null
+    shopSlug: prod.shop?.slug || prod.shopSlug || null,
+    description: prod.description || '',
+    tags: Array.isArray(prod.tags) ? prod.tags.map(t => typeof t === 'string' ? t : t.name || t.tag?.name) : [],
+    unit: prod.unit || 'Piece'
   };
+}
+
+export function checkIfOpenNow(timings) {
+  if (!Array.isArray(timings) || timings.length === 0) return true;
+  const now = new Date();
+  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const timing = timings.find(t => t.weekday === currentDay);
+  if (!timing || timing.isClosed) return false;
+  
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+  const currentTimeVal = currentHours * 60 + currentMinutes;
+  
+  const [openH, openM] = timing.opensAt.split(':').map(Number);
+  const [closeH, closeM] = timing.closesAt.split(':').map(Number);
+  
+  const openTimeVal = openH * 60 + openM;
+  const closeTimeVal = closeH * 60 + closeM;
+  
+  if (closeTimeVal < openTimeVal) {
+    // Overnight case
+    return currentTimeVal >= openTimeVal || currentTimeVal <= closeTimeVal;
+  }
+  return currentTimeVal >= openTimeVal && currentTimeVal <= closeTimeVal;
 }
 
 /**
@@ -49,8 +78,19 @@ export function mapBackendShopToFrontend(shop) {
   const address = shop.address || {};
   const contact = shop.contact || {};
 
+  const isCurrentlyOpen = checkIfOpenNow(shop.timings);
+  const currentDay = new Date().getDay();
+  const todayTiming = Array.isArray(shop.timings) ? shop.timings.find(t => t.weekday === currentDay) : null;
+  const openStatus = isCurrentlyOpen 
+    ? `Open Now • Closes at ${todayTiming ? convert24hTo12h(todayTiming.closesAt) : '10:00 PM'}`
+    : 'Closed Now';
+
+  const establishedYear = shop.establishedYear || (shop.createdAt ? new Date(shop.createdAt).getFullYear() : new Date().getFullYear());
+  const yearsOnPlatform = Math.max(1, new Date().getFullYear() - establishedYear);
+
   return {
     id: shop.id,
+    ownerId: shop.ownerId,
     name: shop.name,
     username: shop.username,
     slug: shop.slug || shop.username,
@@ -59,22 +99,27 @@ export function mapBackendShopToFrontend(shop) {
     coverImage: shop.cover?.url || 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80',
     isVerified: shop.verificationStatus === 'VERIFIED',
     rating: shop.ratingAvg !== undefined && shop.ratingAvg !== null ? Number(shop.ratingAvg) : 0,
-    reviewCount: shop.ratingCount || 0,
+    reviewCount: shop.stats?.reviewCount || shop.ratingCount || 0,
     distance: shop.distanceKm !== undefined && shop.distanceKm !== null ? `${shop.distanceKm.toFixed(1)} km away` : 'Nearby',
-    openStatus: 'Open now', // Default fallback
-    followersCount: '0',
-    followingCount: '0',
+    openStatus,
+    followersCount: shop.stats?.followersCount ?? 0,
+    followingCount: shop.stats?.followingCount ?? 0,
+    productCount: shop.stats?.productCount ?? 0,
     category: shop.category?.name || 'Store',
     shopId: shop.id.slice(0, 8).toUpperCase(),
-    yearsOnPlatform: 1,
-    location: `${address.street || ''}, ${address.city || ''} - ${address.pincode || ''}`.replace(/^,\s*/, ''),
+    yearsOnPlatform,
+    location: `${address.street || ''}, ${address.city || ''} - ${address.pincode || ''}`.replace(/^,\s*/, '').replace(/^- /, '').trim(),
     phone: contact.phone || '',
     whatsapp: contact.whatsapp || '',
     acceptCalls: contact.acceptCalls ?? true,
+    googleMapsUrl: shop.googleMapsUrl || null,
     timings: shop.timings || [],
     paymentMethods: shop.paymentMethods || [],
     languages: shop.languages || [],
-    tags: shop.tags || []
+    tags: shop.tags || [],
+    stats: shop.stats || null,
+    viewCount: shop.viewCount || 0,
+    leadCount: shop.leadCount || 0
   };
 }
 
@@ -154,7 +199,7 @@ export function mapBackendTimingsToFrontend(backendTimings) {
   const openAll7Days = backendTimings.filter(t => !t.isClosed).length === 7;
 
   return {
-    isOpenNow: true,
+    isOpenNow: checkIfOpenNow(backendTimings),
     displayHours,
     openingTime,
     closingTime,

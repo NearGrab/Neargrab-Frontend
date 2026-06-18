@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../shared/components/layout/Navbar';
+import { Info, Package, MessageSquare, Camera, Bell } from 'lucide-react';
 
 // Zustand store
 import useShopProfileStore from '../../../store/useShopProfileStore';
 
 // Left Side Components
-import ShopProfileSummaryCard from '../../shopkeeper/components/profile/ShopProfileSummaryCard';
+import ShopProfileSidebar from '../components/ShopProfileSidebar';
 import ContactActionsCard from '../../shopkeeper/components/profile/ContactActionsCard';
 import SocialLinksCard from '../../shopkeeper/components/profile/SocialLinksCard';
 
 // Shared Storefront Components
-import ShopCoverBanner from '../components/ShopCoverBanner';
+import ShopProfileHeader from '../components/ShopProfileHeader';
 import ShopOverviewSection from '../components/ShopOverviewSection';
 import ShopProductsGrid from '../components/ShopProductsGrid';
 import ShopReviewsManager from '../components/ShopReviewsManager';
@@ -19,7 +20,7 @@ import ShopPhotosGallery from '../components/ShopPhotosGallery';
 import ShopUpdatesManager from '../components/ShopUpdatesManager';
 
 // Right Side Components
-import ShopTrustCard from '../../shopkeeper/components/profile/ShopTrustCard';
+import ShopAnalyticsSummary from '../components/ShopAnalyticsSummary';
 import ShopTimingsCard from '../../shopkeeper/components/profile/ShopTimingsCard';
 import PaymentMethodsCard from '../../shopkeeper/components/profile/PaymentMethodsCard';
 import LatestShopUpdatesCard from '../../shopkeeper/components/profile/LatestShopUpdatesCard';
@@ -42,11 +43,11 @@ export default function ShopProfilePage() {
 
   // Tab choices list
   const tabChoices = [
-    { id: 'Overview', label: 'Overview', count: null },
-    { id: 'Products', label: 'Products', count: store.products.length },
-    { id: 'Reviews', label: 'Reviews', count: store.reviews.length },
-    { id: 'Photos', label: 'Photos', count: store.photos.length },
-    { id: 'Updates', label: 'Updates', count: store.updates.length }
+    { id: 'Overview', label: 'Overview', icon: <Info className="w-4 h-4" />, count: null },
+    { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: store.products.length },
+    { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: store.reviews.length },
+    { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: store.photos.length },
+    { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: store.updates.length }
   ];
 
   const handleSaveProfile = async (formData) => {
@@ -68,13 +69,16 @@ export default function ShopProfilePage() {
       <Navbar />
 
       {/* 2. Main Page Grid container */}
-      <main className="w-full px-6 mt-6">
+      <main className="flex-grow max-w-[115rem] w-full mx-auto px-4 md:px-8 py-6 md:py-10 mb-24">
         <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 w-full text-left relative">
           
           {/* LEFT COLUMN: Profile summaries (span 3 on desktop) */}
           <div className="lg:col-span-3 flex flex-col gap-5">
-            <ShopProfileSummaryCard
+            <ShopProfileSidebar
               shopInfo={store.shopInfo}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              tabChoices={tabChoices}
               isManageMode={true}
               onEditClick={() => setIsEditModalOpen(true)}
             />
@@ -86,10 +90,10 @@ export default function ShopProfilePage() {
           <div className="lg:col-span-6 flex flex-col gap-5">
             
             {/* Cover Banner hero */}
-            <ShopCoverBanner
-              coverImage={store.shopInfo.coverImage}
-              photosCount={store.photos.length}
+            <ShopProfileHeader
+              shopInfo={store.shopInfo}
               isManageMode={true}
+              onEditClick={() => setIsEditModalOpen(true)}
               onCoverChange={(src) => store.addPhoto(src, 'cover')}
               onViewPhotos={() => setActiveTab('Photos')}
             />
@@ -132,6 +136,7 @@ export default function ShopProfilePage() {
               {activeTab === 'Products' && (
                 <ShopProductsGrid
                   products={store.products}
+                  shopInfo={store.shopInfo}
                   isManageMode={true}
                   onEditProduct={handleEditProductRedirect}
                   onToggleStock={store.toggleProductStock}
@@ -166,7 +171,7 @@ export default function ShopProfilePage() {
 
           {/* RIGHT COLUMN: Business parameters sidebar (span 3 on desktop) */}
           <div className="lg:col-span-3 flex flex-col gap-5">
-            <ShopTrustCard />
+            <ShopAnalyticsSummary shopInfo={store.shopInfo} />
             <ShopTimingsCard
               timings={store.timings}
               isManageMode={true}

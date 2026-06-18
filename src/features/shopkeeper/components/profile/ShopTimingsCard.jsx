@@ -11,25 +11,38 @@ export default function ShopTimingsCard({
     isOpenNow = true,
     displayHours = '08:00 AM - 10:00 PM',
     schedule = [],
-    openAll7Days = true
+    openAll7Days = true,
+    openingTime = '08:00 AM',
+    closingTime = '10:00 PM'
   } = timings;
 
+  const displayOpenStatus = isOpenNow
+    ? `Open Now • Closes at ${closingTime || '10:00 PM'}`
+    : `Closed Now • Opens at ${openingTime || '08:00 AM'}`;
+
+  const closedDays = Array.isArray(schedule) ? schedule.filter(s => !s.isOpen).map(s => s.day) : [];
+  const daysString = openAll7Days
+    ? 'Open all 7 days'
+    : closedDays.length > 0
+      ? `Open (Closed: ${closedDays.join(', ')})`
+      : 'Open Mon - Sat';
+
   return (
-    <div className="w-full bg-white border border-neutral-100/85 rounded-2xl p-4 shadow-3xs text-left font-inter flex flex-col gap-3.5 select-none">
+    <div className="w-full bg-white border border-neutral-200/50 rounded-3xl p-5 shadow-sm text-left font-inter flex flex-col gap-3.5 select-none">
       
       {/* Header */}
-      <h3 className="font-poppins font-bold text-xs md:text-sm text-text-primary uppercase tracking-wider">
+      <h3 className="font-poppins font-bold text-xs md:text-sm text-text-primary">
         Shop Timings
       </h3>
 
       {/* Status Row */}
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-[#E6F4EA] flex items-center justify-center border border-[#12634B]/10 text-brand-900 shrink-0 shadow-3xs">
-          <Clock className="w-4 h-4 text-brand-900" />
+        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-brand-900 shrink-0">
+          <Clock className="w-4 h-4 text-emerald-700" />
         </div>
         <div className="min-w-0">
-          <span className="text-[10px] md:text-xs font-extrabold text-brand-900 block uppercase tracking-wide">
-            {isOpenNow ? 'Open Open Now • Closes 10:00 PM' : 'Closed Now • Opens 08:00 AM'}
+          <span className={`text-[10px] md:text-xs font-bold block uppercase tracking-wide ${isOpenNow ? 'text-emerald-700' : 'text-rose-700'}`}>
+            {displayOpenStatus}
           </span>
           <span className="text-[10px] text-text-secondary font-bold block mt-0.5">
             {displayHours}
@@ -39,12 +52,12 @@ export default function ShopTimingsCard({
 
       {/* Calendar Week List */}
       <div className="flex items-start gap-2.5 pt-1">
-        <div className="w-8 h-8 rounded-lg bg-[#E6F4EA] flex items-center justify-center border border-[#12634B]/10 text-brand-900 shrink-0 shadow-3xs">
-          <Calendar className="w-4 h-4 text-brand-900" />
+        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-brand-900 shrink-0">
+          <Calendar className="w-4 h-4 text-emerald-700" />
         </div>
         <div className="min-w-0">
           <span className="text-[10px] md:text-xs font-bold text-text-primary block leading-normal pr-1">
-            {openAll7Days ? 'Open all 7 days' : 'Mon - Sat (Sunday Closed)'}
+            {daysString}
           </span>
           <span className="text-[8px] text-text-muted font-bold block mt-0.5 uppercase tracking-wide">
             Daily Delivery Schedule
