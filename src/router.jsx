@@ -27,6 +27,7 @@ const ProductCatalogPage = React.lazy(() => import('./features/shopkeeper/pages/
 const ShopProfilePage = React.lazy(() => import('./features/shop/pages/ShopProfilePage'));
 const PublicShopProfilePage = React.lazy(() => import('./features/shop/pages/PublicShopProfilePage'));
 const PromotionsPage = React.lazy(() => import('./features/shopkeeper/pages/PromotionsPage'));
+const ShopkeeperSettingsPage = React.lazy(() => import('./features/shopkeeper/pages/ShopkeeperSettingsPage'));
 
 // A lightweight, premium loading screen for session boot
 function LoadingScreen() {
@@ -129,6 +130,7 @@ export default function AppRouter() {
           <Route path="/shopkeeper/products/add" element={<ShopkeeperRoute><AddProductPage /></ShopkeeperRoute>} />
           <Route path="/shopkeeper/products/:productId/edit" element={<ShopkeeperRoute><AddProductPage /></ShopkeeperRoute>} />
           <Route path="/shopkeeper/profile" element={<ShopkeeperRoute><ShopProfilePage /></ShopkeeperRoute>} />
+          <Route path="/shopkeeper/settings" element={<ShopkeeperRoute><ShopkeeperSettingsPage /></ShopkeeperRoute>} />
           <Route path="/shopkeeper/promotions" element={<ShopkeeperRoute><PromotionsPage /></ShopkeeperRoute>} />
 
           {/* Catch-all 404 */}

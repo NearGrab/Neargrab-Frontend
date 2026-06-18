@@ -5,6 +5,7 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { useLocationStore } from '../../../store/useLocationStore';
 import { useCartStore } from '../../../store/useCartStore';
 import { searchService } from '../../../features/search/services/searchService';
+import CitySelectionModal from './CitySelectionModal';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -22,6 +23,13 @@ export default function Navbar() {
   const [showLocationMenu, setShowLocationMenu] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [isCityModalOpen, setIsCityModalOpen] = useState(!userLoc.city);
+
+  useEffect(() => {
+    if (!userLoc.city) {
+      setIsCityModalOpen(true);
+    }
+  }, [userLoc.city]);
 
   const containerRef = useRef(null);
   const locationRef = useRef(null);
@@ -138,12 +146,10 @@ export default function Navbar() {
             </Link>
             
             {/* Interactive Location Selector Popover */}
-            <div 
-              ref={locationRef} 
-              className="relative"
-            >
-              <div 
-                onClick={() => setShowLocationMenu(!showLocationMenu)}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsCityModalOpen(true)}
                 className="flex items-center gap-2 px-3 py-1.5 bg-neutral-50 rounded-full border border-neutral-200/50 hover:bg-neutral-100 transition-colors cursor-pointer group"
               >
                 <div className="w-7 h-7 bg-brand-50 rounded-full flex items-center justify-center shrink-0">
@@ -152,46 +158,13 @@ export default function Navbar() {
                 <div className="text-left leading-none pr-1">
                   <div className="flex items-center gap-1">
                     <span className="text-xs font-bold text-text-primary group-hover:text-brand-900 transition-colors">
-                      {userLoc.city}, {userLoc.state}
+                      {userLoc.city || 'Select City'}, {userLoc.state}
                     </span>
                     <ChevronDown className="w-3 h-3 text-text-muted group-hover:text-brand-900 transition-colors" />
                   </div>
-                  <span className="text-[10px] text-text-muted font-medium">{userLoc.radius}</span>
+                  <span className="text-[10px] text-text-muted font-medium">Gujarat</span>
                 </div>
-              </div>
-
-              {/* Radius Switch Popover Menu */}
-              {showLocationMenu && (
-                <div className="absolute left-0 mt-2 w-48 bg-white border border-neutral-100 rounded-2xl shadow-xl p-2 z-50 text-left">
-                  <div className="px-3 py-1.5 text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                    Search Radius
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    {activeRadiusOptions.map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => {
-                          setRadius(opt);
-                          setShowLocationMenu(false);
-                          // Trigger new search query with updated radius if already on Search screen
-                          if (location.pathname === '/search') {
-                            const newParams = new URLSearchParams(location.search);
-                            newParams.set('distance', opt);
-                            navigate(`/search?${newParams.toString()}`);
-                          }
-                        }}
-                        className={`w-full text-left px-3 py-2 text-xs font-bold rounded-xl transition-colors cursor-pointer ${
-                          userLoc.radius === opt 
-                            ? 'bg-brand-50 text-brand-900' 
-                            : 'text-text-primary hover:bg-neutral-50'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              </button>
             </div>
           </div>
 
@@ -406,19 +379,17 @@ export default function Navbar() {
               <span className="font-poppins font-bold text-base text-brand-900 tracking-tight">Neargrab</span>
             </Link>
             
-            <div 
-              onClick={() => {
-                const limit = userLoc.radius === 'Within 1 km' ? 'Within 3 km' : userLoc.radius === 'Within 3 km' ? 'Within 5 km' : 'Within 1 km';
-                setRadius(limit);
-              }}
+            <button 
+              type="button"
+              onClick={() => setIsCityModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 rounded-full border border-neutral-200/50 hover:bg-neutral-100 transition-colors cursor-pointer shrink-0 max-w-[50%]"
             >
               <MapPin className="w-3.5 h-3.5 text-brand-900 shrink-0" />
               <span className="text-[11px] font-bold text-text-primary truncate">
-                {userLoc.city} ({userLoc.radius.replace('Within ', '')})
+                {userLoc.city || 'Select City'}
               </span>
               <ChevronDown className="w-3 h-3 text-text-muted shrink-0" />
-            </div>
+            </button>
           </div>
 
           {/* Row 3: Mobile Search Input with suggestions */}
@@ -554,6 +525,11 @@ export default function Navbar() {
           <span className="text-[10px] font-poppins tracking-wide">Profile</span>
         </Link>
       </nav>
+      <CitySelectionModal
+        isOpen={isCityModalOpen}
+        onClose={() => setIsCityModalOpen(false)}
+        forceSelect={!userLoc.city}
+      />
     </header>
   );
 }

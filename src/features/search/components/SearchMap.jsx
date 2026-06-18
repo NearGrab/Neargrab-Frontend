@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { MapPin, Compass } from 'lucide-react';
 import { useLocationStore } from '../../../store/useLocationStore';
+import CitySelectionModal from '../../../shared/components/layout/CitySelectionModal';
 
 export default function SearchMap() {
   const { location } = useLocationStore();
   const [hoveredPin, setHoveredPin] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Mock store pins plotted on coordinate grids
   const storePins = [
@@ -19,7 +21,7 @@ export default function SearchMap() {
       
       {/* Title */}
       <h3 className="font-poppins font-bold text-sm text-text-primary mb-3">
-        Search in this area
+        Search in {location.city || 'your city'}
       </h3>
 
       {/* Stylized Animated Map visual */}
@@ -50,8 +52,8 @@ export default function SearchMap() {
 
           {/* Circular Garden representation */}
           <circle cx="230" cy="50" r="24" fill="rgba(16, 185, 129, 0.1)" stroke="rgba(16, 185, 129, 0.2)" strokeWidth="1" />
-          <text x="212" y="52" className="text-[7px] font-bold fill-emerald-800">Navsari</text>
-          <text x="214" y="60" className="text-[6px] fill-emerald-800/80">Garden</text>
+          <text x="212" y="52" className="text-[7.5px] font-bold fill-emerald-800">{location.city || 'Navsari'}</text>
+          <text x="214" y="60" className="text-[6px] fill-emerald-800/80">Center</text>
 
           {/* Search radius green circle boundary */}
           <circle cx="150" cy="112" r="75" fill="rgba(16, 185, 129, 0.04)" stroke="rgba(16, 185, 129, 0.22)" strokeDasharray="3, 3" strokeWidth="1.5" />
@@ -83,7 +85,7 @@ export default function SearchMap() {
                   <rect x={pin.x - 50} y={pin.y - 28} width="100" height="20" rx="4" fill="#0B3B2C" />
                   <polygon points={`${pin.x},${pin.y-6} ${pin.x-4},${pin.y-10} ${pin.x+4},${pin.y-10}`} fill="#0B3B2C" />
                   <text x={pin.x} y={pin.y - 15} className="text-[6.5px] font-bold fill-white text-center" textAnchor="middle">
-                    {pin.name} ({pin.dist})
+                    {pin.name}
                   </text>
                 </g>
               )}
@@ -100,16 +102,20 @@ export default function SearchMap() {
       {/* Footer radius details */}
       <div className="flex items-center justify-between mt-3 text-xs">
         <span className="text-text-secondary font-semibold">
-          Showing results {location.radius.toLowerCase()}
+          Showing shops in {location.city || 'your city'}
         </span>
         <button
-          onClick={() => alert("To change search boundaries, use the location selector in the top navigation bar!")}
+          onClick={() => setIsModalOpen(true)}
           className="font-bold text-brand-900 hover:text-brand-800 transition-colors cursor-pointer"
         >
           Change
         </button>
       </div>
 
+      <CitySelectionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 }

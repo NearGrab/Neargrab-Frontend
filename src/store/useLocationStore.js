@@ -1,12 +1,27 @@
 import { useState, useEffect } from 'react';
+import apiClient from '../shared/services/apiClient';
 
 const listeners = new Set();
+
+const getInitialCity = () => {
+  const localCity = localStorage.getItem('neargrab_preferred_city');
+  if (localCity) return localCity;
+  try {
+    const user = JSON.parse(localStorage.getItem('neargrab_user') || 'null');
+    if (user?.preferredCity) {
+      localStorage.setItem('neargrab_preferred_city', user.preferredCity);
+      return user.preferredCity;
+    }
+  } catch (e) {}
+  return '';
+};
+
 let globalState = {
   location: {
-    city: 'Navsari',
+    city: getInitialCity(),
     state: 'Gujarat',
     radius: 'Within 3 km',
-    coordinates: { lat: 20.9467, lng: 72.9520 } // Coordinates of Navsari
+    coordinates: { lat: 20.9467, lng: 72.9520 } // default coordinates
   }
 };
 
@@ -15,10 +30,6 @@ const setGlobalState = (nextState) => {
   listeners.forEach((listener) => listener(globalState));
 };
 
-/**
- * A professional reactive Location Store hook.
- * Allows components to reactively read/write current location settings.
- */
 export function useLocationStore() {
   const [state, setState] = useState(globalState);
 
@@ -38,7 +49,9 @@ export function useLocationStore() {
     });
   };
 
-  const setLocation = (city, stateName, radius = 'Within 3 km') => {
+  const setLocation = async (city, stateName = 'Gujarat', radius = 'Within 3 km') => {
+    localStorage.setItem('neargrab_preferred_city', city);
+    
     setGlobalState({
       location: {
         city,
@@ -49,6 +62,21 @@ export function useLocationStore() {
           : { lat: 21.1702, lng: 72.8311 } // fallback/Surat coordinates
       }
     });
+
+    // Synchronize to the backend if logged in
+    try {
+      const accessToken = localStorage.getItem('neargrab_access_token');
+      if (accessToken) {
+        const response = await apiClient.patch('/api/v1/me', {
+          preferredCity: city
+        });
+        if (response.data) {
+          localStorage.setItem('neargrab_user', JSON.stringify(response.data));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to sync preferredCity to backend:', error);
+    }
   };
 
   return {

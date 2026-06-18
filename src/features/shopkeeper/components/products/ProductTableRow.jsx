@@ -98,26 +98,35 @@ export default function ProductTableRow({
       <td className="px-4 py-3.5 align-middle text-left min-w-[150px] select-none">
         <div className="flex items-center gap-2">
           {/* Status Badge */}
-          <span
-            className={`font-extrabold text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-              product.stockAvailable
-                ? 'bg-[#E6F4EA] text-brand-900 border border-[#12634B]/10'
-                : 'bg-red-50 text-red-700 border border-red-100/50'
-            }`}
-          >
-            {product.stockAvailable ? 'In Stock' : 'Out of Stock'}
-          </span>
+          {product.status === 'INACTIVE' ? (
+            <span className="font-extrabold text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200/30">
+              Archived
+            </span>
+          ) : (
+            <span
+              className={`font-extrabold text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                product.stockAvailable
+                  ? 'bg-[#E6F4EA] text-brand-900 border border-[#12634B]/10'
+                  : 'bg-red-50 text-red-700 border border-red-100/50'
+              }`}
+            >
+              {product.stockAvailable ? 'In Stock' : 'Out of Stock'}
+            </span>
+          )}
           {/* Toggle */}
           <StockToggle
-            checked={product.stockAvailable}
+            checked={product.status === 'INACTIVE' ? false : product.stockAvailable}
             onChange={() => onToggleStock(product.id)}
           />
         </div>
       </td>
 
-      {/* 6. Product Views count Column */}
-      <td className="px-4 py-3.5 align-middle text-left font-extrabold text-xs text-text-primary font-poppins">
-        {product.views.toLocaleString()}
+      {/* 6. Product Views / Clicks count Column */}
+      <td className="px-4 py-3.5 align-middle text-left text-xs text-text-primary font-poppins">
+        <div className="flex flex-col text-left">
+          <span className="font-extrabold">👁️ {product.views.toLocaleString()}</span>
+          <span className="text-[10px] text-text-muted font-bold">🎯 {product.clicks.toLocaleString()} clicks</span>
+        </div>
       </td>
 
       {/* 7. Last Updated relative date Column */}

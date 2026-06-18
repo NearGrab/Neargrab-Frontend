@@ -31,7 +31,8 @@ const initialStoreState = {
     pincode: '',
     state: 'Gujarat',
     coordinates: { lat: 20.9467, lng: 72.9520 },
-    radius: '1 km'
+    radius: '1 km',
+    googleMapsUrl: ''
   },
   contact: {
     phone: '',
@@ -230,7 +231,8 @@ export const useShopOnboardingStore = create((set, get) => ({
               lat: shop.address?.latitude || 20.9467,
               lng: shop.address?.longitude || 72.9520
             },
-            radius: shop.address?.radius || '1 km'
+            radius: shop.address?.radius || '1 km',
+            googleMapsUrl: shop.googleMapsUrl || ''
           },
           contact: {
             phone: shop.contact?.phone || '',
@@ -332,7 +334,8 @@ export const useShopOnboardingStore = create((set, get) => ({
         state: address.state,
         pincode: address.pincode,
         coordinates: address.coordinates,
-        serviceRadiusKm: parseFloat(address.radius) || 1.0
+        serviceRadiusKm: parseFloat(address.radius) || 1.0,
+        googleMapsUrl: address.googleMapsUrl
       });
       if (!addressRes.success) throw new Error('Failed to save address');
 

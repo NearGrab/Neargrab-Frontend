@@ -16,5 +16,13 @@ export const shopkeeperDashboardService = {
   createPromotion: async (data) => {
     const res = await apiClient.post('/shopkeeper/promotions', data);
     return res;
+  },
+  getShopProfile: async () => {
+    const res = await apiClient.get('/shop/me');
+    return res;
+  },
+  updateShopProfile: async (data) => {
+    const res = await apiClient.patch('/shop/me', data);
+    return res;
   }
 };

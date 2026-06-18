@@ -57,7 +57,8 @@ export default function ProductMapPage() {
     rating: product.soldBy?.rating,
     reviewsCount: product.soldBy?.reviewsCount,
     address: product.soldBy?.address,
-    image: product.soldBy?.image
+    image: product.soldBy?.image,
+    googleMapsUrl: product.soldBy?.googleMapsUrl
   } : null;
 
   const activeStore = (shopId === product?.soldBy?.id)
@@ -68,10 +69,14 @@ export default function ProductMapPage() {
     if (!activeStore) return;
     
     // Non-blocking trackLead event
-    shopProfileService.trackLead(activeStore.id, 'DIRECTIONS_OPEN');
+    shopProfileService.trackLead(activeStore.id, 'MAP_OPEN', 'PRODUCT_MAP');
     
-    const query = encodeURIComponent(`${activeStore.name}, ${activeStore.address}`);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    if (activeStore.googleMapsUrl) {
+      window.open(activeStore.googleMapsUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      const query = encodeURIComponent(`${activeStore.name}, ${activeStore.address}`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank', 'noopener,noreferrer');
+    }
   };
 
   if (loading) {

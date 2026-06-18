@@ -24,7 +24,8 @@ export const productService = {
       distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,
       delivery: 'Not available',
       address: `${address.street || ''}, ${address.city || ''} - ${address.pincode || ''}`.replace(/^,\s*/, ''),
-      image: shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
+      image: shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80',
+      googleMapsUrl: shop.googleMapsUrl || ''
     };
 
     const specs = [
@@ -84,7 +85,9 @@ export const productService = {
       reviewsCount: item.shop.ratingCount || 10,
       inStock: item.stockStatus === 'IN_STOCK',
       category: 'Grocery, Daily Needs',
-      image: item.shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
+      image: item.shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80',
+      address: `${item.shop.address?.street || ''}, ${item.shop.address?.city || ''} - ${item.shop.address?.pincode || ''}`.replace(/^,\s*/, ''),
+      googleMapsUrl: item.shop.googleMapsUrl || ''
     }));
   },
 
@@ -175,6 +178,17 @@ export const productService = {
       });
     } catch (err) {
       console.error('Failed to log product view:', err);
+    }
+  },
+
+  /**
+   * Track product click count.
+   */
+  async trackProductClick(productId) {
+    try {
+      await apiClient.post(`/api/v1/products/${productId}/click`);
+    } catch (err) {
+      console.error('Failed to log product click:', err);
     }
   },
 

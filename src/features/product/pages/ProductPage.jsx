@@ -51,6 +51,7 @@ export default function ProductPage() {
 
         if (prodData) {
           productService.trackProductView(idToFetch, prodData.soldBy?.id);
+          productService.trackProductClick(idToFetch);
         }
       } catch (err) {
         console.error('Failed to load product details:', err);

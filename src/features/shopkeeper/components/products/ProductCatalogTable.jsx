@@ -57,7 +57,7 @@ export default function ProductCatalogTable({
                 Stock
               </th>
               <th className="px-4 py-3.5 text-left font-poppins font-bold text-[10px] md:text-xs text-text-secondary uppercase tracking-wider">
-                Views
+                Views / Clicks
               </th>
               <th className="px-4 py-3.5 text-left font-poppins font-bold text-[10px] md:text-xs text-text-secondary uppercase tracking-wider">
                 Updated

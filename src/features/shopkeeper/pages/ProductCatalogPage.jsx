@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, Trash2, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { Package, Archive, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import ShopkeeperLayout from '../layout/ShopkeeperLayout';
 import Button from '../../../shared/components/ui/Button';
 
@@ -51,17 +51,17 @@ export default function ProductCatalogPage() {
 
   const handleDeleteProduct = async (id) => {
     const prod = store.products.find((p) => p.id === id);
-    if (window.confirm(`Are you sure you want to permanently delete "${prod?.name}" from your catalog?`)) {
+    if (window.confirm(`Are you sure you want to archive "${prod?.name}"? This will hide it from customers but preserve its historical analytics.`)) {
       await store.deleteSingleProduct(id);
-      alert('Product deleted successfully.');
+      alert('Product archived successfully.');
     }
   };
 
   // Bulk actions handlers
   const handleBulkDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete ${store.selectedProducts.length} selected products?`)) {
+    if (window.confirm(`Are you sure you want to archive the ${store.selectedProducts.length} selected products? This will hide them from customers but preserve their analytics.`)) {
       await store.bulkDelete();
-      alert('Selected products deleted successfully.');
+      alert('Selected products archived successfully.');
     }
   };
 
@@ -158,11 +158,11 @@ export default function ProductCatalogPage() {
                 variant="primary"
                 size="sm"
                 onClick={handleBulkDelete}
-                leftIcon={<Trash2 className="w-3.5 h-3.5 text-white" />}
-                className="font-bold text-[10px] md:text-xs h-8 bg-red-600 hover:bg-red-700 border-transparent text-white cursor-pointer"
+                leftIcon={<Archive className="w-3.5 h-3.5 text-white" />}
+                className="font-bold text-[10px] md:text-xs h-8 bg-amber-600 hover:bg-amber-700 border-transparent text-white cursor-pointer"
                 disabled={store.isLoading}
               >
-                Delete Selected
+                Archive Selected
               </Button>
             </div>
           </div>

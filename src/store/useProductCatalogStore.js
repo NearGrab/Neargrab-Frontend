@@ -12,7 +12,9 @@ const mapBackendProductToFrontend = (p) => ({
   stockCount: p.stockCount || 0,
   stockAvailable: p.stockAvailable ?? (p.stockCount > 0),
   image: p.images?.[0]?.url || p.images?.[0]?.media?.url || p.imageUrl || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=150',
-  views: p.views || p.clicks || 0
+  views: p.views || p.viewCount || 0,
+  clicks: p.clicks || 0,
+  status: p.status || 'ACTIVE'
 });
 
 const initialCatalogState = {

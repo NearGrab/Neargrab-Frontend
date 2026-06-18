@@ -159,14 +159,10 @@ export default function VerificationReview() {
                 {address.street}, {address.landmark}, {address.city}, {address.state} - {address.pincode}
               </span>
             </div>
-            <div>
-              <span className="text-text-muted font-bold block">Delivery / Search Radius</span>
-              <span className="text-text-primary font-bold">{address.radius} km</span>
-            </div>
-            <div>
-              <span className="text-text-muted font-bold block">Coordinates</span>
-              <span className="text-text-primary font-bold">
-                Lat: {address.coordinates.lat ? address.coordinates.lat.toFixed(4) : '0.0000'}, Lng: {address.coordinates.lng ? address.coordinates.lng.toFixed(4) : '0.0000'}
+            <div className="md:col-span-2">
+              <span className="text-text-muted font-bold block">Google Maps Link</span>
+              <span className="text-text-primary font-bold break-all">
+                {address.googleMapsUrl || 'None provided'}
               </span>
             </div>
           </div>
