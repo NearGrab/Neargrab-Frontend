@@ -8,5 +8,13 @@ export const shopkeeperDashboardService = {
   getReviews: async (page = 1, limit = 20) => {
     const res = await apiClient.get(`/shopkeeper/reviews?page=${page}&limit=${limit}`);
     return res;
+  },
+  getPromotions: async () => {
+    const res = await apiClient.get('/shopkeeper/promotions');
+    return res;
+  },
+  createPromotion: async (data) => {
+    const res = await apiClient.post('/shopkeeper/promotions', data);
+    return res;
   }
 };
