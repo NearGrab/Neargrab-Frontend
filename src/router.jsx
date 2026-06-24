@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
 import ErrorBoundary from './shared/components/ErrorBoundary';
@@ -94,6 +94,42 @@ function ShopkeeperRoute({ children }) {
 }
 
 export default function AppRouter() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const getPageName = (pathname) => {
+      if (pathname === '/') return 'Welcome';
+      if (pathname === '/explore') return 'Explore';
+      if (pathname === '/search') return 'Search';
+      if (pathname === '/login') return 'Login';
+      if (pathname === '/signup') return 'Sign Up';
+      if (pathname === '/profile') return 'Profile';
+      if (pathname.startsWith('/profile/')) return 'User Profile';
+      if (pathname === '/notifications') return 'Notifications';
+      if (pathname === '/settings') return 'Settings';
+      if (pathname === '/cart') return 'Cart';
+      if (pathname === '/about') return 'About Us';
+      if (pathname === '/faqs') return 'FAQs';
+      if (pathname === '/privacy') return 'Privacy Policy';
+      if (pathname === '/terms') return 'Terms of Service';
+      if (pathname.startsWith('/product/') && pathname.endsWith('/map')) return 'Product Map';
+      if (pathname.startsWith('/product/')) return 'Product Detail';
+      if (pathname.startsWith('/shops/')) return 'Shop Profile';
+      if (pathname === '/shopkeeper/onboarding') return 'Shopkeeper Onboarding';
+      if (pathname === '/shopkeeper/dashboard') return 'Shopkeeper Dashboard';
+      if (pathname === '/shopkeeper/products') return 'Product Catalog';
+      if (pathname === '/shopkeeper/products/add') return 'Add Product';
+      if (pathname.includes('/shopkeeper/products/') && pathname.endsWith('/edit')) return 'Edit Product';
+      if (pathname === '/shopkeeper/profile') return 'Manage Shop Profile';
+      if (pathname === '/shopkeeper/settings') return 'Shopkeeper Settings';
+      if (pathname === '/shopkeeper/promotions') return 'Promotions';
+      return '';
+    };
+
+    const pageName = getPageName(location.pathname);
+    document.title = pageName ? `Neargrab | ${pageName}` : 'Neargrab';
+  }, [location]);
+
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingScreen />}>
