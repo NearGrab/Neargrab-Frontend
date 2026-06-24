@@ -73,7 +73,7 @@ export const exploreService = {
       headingLine2: "Strengthen Community.",
       description: "Discover trusted local shops and find everything you need nearby.",
       buttonText: "Explore Now",
-      image: "/src/assets/Explore/explore_hero.webp"
+      image: "/assets/Explore/explore_hero.webp"
     };
 
     // Categories

@@ -2,7 +2,7 @@ import React from 'react';
 import { ShieldCheck, Compass, MessageSquare, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
-import authLoginConcept from '../../../assets/auth/auth_login_concept.png'
+const authLoginConcept = '/assets/auth/auth_login_concept.png';
 
 export default function LoginPage() {
   return (

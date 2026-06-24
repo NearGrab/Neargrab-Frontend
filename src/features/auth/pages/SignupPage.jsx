@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SignupForm from '../components/SignupForm';
-import authSignupConcept from '../../../assets/auth/auth_signup_concept.png'
+const authSignupConcept = '/assets/auth/auth_signup_concept.png';
 
 export default function SignupPage() {
   return (

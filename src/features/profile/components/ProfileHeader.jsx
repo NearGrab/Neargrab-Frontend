@@ -28,7 +28,7 @@ export default function ProfileHeader({
       {/* Visual banner banner with Speech bubble Overlay */}
       <div className="relative w-full h-36 md:h-48 rounded-2xl overflow-hidden bg-neutral-100 mb-6 group">
         <img
-          src="/src/assets/Profile/profile-customer-banner.webp"
+          src="/assets/Profile/profile-customer-banner.webp"
           alt="Neargrab Neighborhood Banner"
           className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-500"
         />
