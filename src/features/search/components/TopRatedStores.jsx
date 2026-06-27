@@ -23,7 +23,7 @@ export default function TopRatedStores({ stores }) {
         {stores.map((store) => (
           <div
             key={store.id}
-            onClick={() => navigate(`/shops/${store.id}`)}
+            onClick={() => navigate(`/shops/${store.slug || store.id}`)}
             className="flex items-center gap-3 cursor-pointer p-1.5 rounded-2xl hover:bg-neutral-50 transition-colors group"
           >
             <img

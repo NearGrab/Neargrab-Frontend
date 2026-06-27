@@ -133,8 +133,9 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
               storeName={rev.storeName}
               showStoreLink={true}
               onClickStore={() => {
-                if (rev.shopId) {
-                  navigate(`/shops/${rev.shopId}`);
+                const targetShop = rev.shopSlug || rev.shopId;
+                if (targetShop) {
+                  navigate(`/shops/${targetShop}`);
                 } else {
                   alert(`Redirecting to shop profile for ${rev.storeName}!`);
                 }

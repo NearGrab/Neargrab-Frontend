@@ -12,8 +12,9 @@ export default function ProductCard({ product, compact = false }) {
   const formatPrice = (p) => `₹${p}`;
 
   const handleViewStore = () => {
-    if (product.shopId) {
-      navigate(`/shops/${product.shopId}`);
+    const targetShop = product.shopSlug || product.shopId;
+    if (targetShop) {
+      navigate(`/shops/${targetShop}`);
     } else {
       navigate(`/explore`);
     }

@@ -12,8 +12,9 @@ export default function SoldByCard({ soldBy }) {
   };
 
   const handleCheckStore = () => {
-    if (soldBy.id) {
-      navigate(`/shops/${soldBy.id}`);
+    const targetShop = soldBy.slug || soldBy.id;
+    if (targetShop) {
+      navigate(`/shops/${targetShop}`);
     }
   };
 

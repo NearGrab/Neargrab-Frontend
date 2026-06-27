@@ -30,6 +30,7 @@ import LatestShopUpdatesCard from '../../shopkeeper/components/profile/LatestSho
 
 // Review modal
 import SubmitShopReviewModal from '../components/SubmitShopReviewModal';
+import { mapBackendTimingsToFrontend } from '../../../shared/utils/mappers';
 
 export default function PublicShopProfilePage() {
   const { shopId } = useParams();
@@ -52,19 +53,21 @@ export default function PublicShopProfilePage() {
       try {
         const info = await shopProfileService.getShopProfile(shopId);
         setShopInfo(info);
-        setIsFollowing(info.stats?.isFollowing || false);
+        setIsFollowing(info?.stats?.isFollowing || false);
 
-        const prods = await shopProfileService.getProducts(shopId);
-        setProducts(prods);
+        if (info?.id) {
+          const prods = await shopProfileService.getProducts(info.id);
+          setProducts(prods);
 
-        const revs = await shopProfileService.getReviews(shopId);
-        setReviews(revs);
+          const revs = await shopProfileService.getReviews(info.id);
+          setReviews(revs);
 
-        const upds = await shopProfileService.getUpdates(shopId);
-        setUpdates(upds);
+          const upds = await shopProfileService.getUpdates(info.id);
+          setUpdates(upds);
 
-        // Track profile view
-        shopProfileService.trackLead(shopId, 'SHOP_PROFILE_VIEW', 'SHOP_PROFILE');
+          // Track profile view
+          shopProfileService.trackLead(info.id, 'SHOP_PROFILE_VIEW', 'SHOP_PROFILE');
+        }
       } catch (err) {
         console.error('Failed to load public shop profile:', err);
       } finally {
@@ -321,7 +324,7 @@ export default function PublicShopProfilePage() {
             <div className="lg:col-span-3 flex flex-col gap-5">
               <ShopLocationCard shopInfo={shopInfo} />
               <ShopTimingsCard
-                timings={shopInfo.timings}
+                timings={mapBackendTimingsToFrontend(shopInfo.timings)}
                 isManageMode={false}
               />
               <PaymentMethodsCard paymentMethods={shopInfo.paymentMethods} />

@@ -37,7 +37,7 @@ export default function NearbyStores({ stores }) {
           {stores.map((store) => (
             <div
               key={store.id}
-              onClick={() => navigate(`/shops/${store.id}`)}
+              onClick={() => navigate(`/shops/${store.slug || store.id}`)}
               className="bg-white border border-neutral-100 p-3 rounded-2xl w-64 snap-start shrink-0 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer group/card flex flex-col justify-between"
             >
               <div>

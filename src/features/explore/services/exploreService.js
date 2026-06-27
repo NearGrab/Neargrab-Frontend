@@ -90,6 +90,7 @@ export const exploreService = {
     // Nearby Stores
     const stores = (data.nearbyShops || []).map(shop => ({
       id: shop.id,
+      slug: shop.slug || null,
       name: shop.name,
       tags: ['Grocery', 'Local'],
       distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,

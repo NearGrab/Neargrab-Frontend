@@ -82,6 +82,7 @@ export const productService = {
 
     return (data || []).map(item => ({
       id: item.shop.id,
+      slug: item.shop.slug || item.shop.username || null,
       name: item.shop.name,
       verified: item.shop.verificationStatus === 'VERIFIED',
       distance: typeof item.distanceKm === 'number' ? Number(item.distanceKm.toFixed(1)) : 0.5,

@@ -67,6 +67,7 @@ export default function ProductMapPage() {
 
   const mainStore = product ? {
     id: product.soldBy?.id,
+    slug: product.soldBy?.slug || null,
     name: product.soldBy?.name,
     verified: product.soldBy?.verified,
     distance: product.soldBy?.distance,
@@ -207,8 +208,9 @@ export default function ProductMapPage() {
               {/* Action trigger button */}
               <Button
                 onClick={() => {
-                  if (activeStore.id) {
-                    navigate(`/shops/${activeStore.id}`);
+                  const targetShop = activeStore.slug || activeStore.id;
+                  if (targetShop) {
+                    navigate(`/shops/${targetShop}`);
                   }
                 }}
                 variant="outline"

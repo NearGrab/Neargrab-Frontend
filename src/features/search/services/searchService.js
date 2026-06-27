@@ -196,6 +196,7 @@ export const searchService = {
       });
       return (data.nearbyShops || []).slice(0, 3).map(shop => ({
         id: shop.id,
+        slug: shop.slug || null,
         name: shop.name,
         rating: shop.ratingAvg || 4.5,
         reviewsCount: shop.reviewCount || 10,
