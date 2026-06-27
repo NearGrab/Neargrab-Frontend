@@ -13,8 +13,8 @@ export default function Hero() {
         {/* Left Column (Text) */}
         <div className="max-w-2xl order-last lg:order-first">
           <h1 className="text-5xl lg:text-7xl font-poppins font-bold text-brand-900 leading-[1.1] mb-6">
-            {hero.headingLine1}<br />
-            <span className="text-amber-500">{hero.headingLine2}</span>
+            Find Products at <br />
+            <span className="text-amber-500">Local Shops Near You</span>
           </h1>
 
           <p className="text-gray-600 text-lg mb-10 max-w-lg leading-relaxed">

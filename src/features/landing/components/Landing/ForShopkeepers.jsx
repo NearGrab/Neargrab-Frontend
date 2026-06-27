@@ -43,8 +43,8 @@ export default function ForShopkeepers() {
           {/* Shopkeeper and Phone UI layout */}
           <div className="absolute inset-0 flex items-center justify-center">
             {/* We position the shopkeeper image and float the UI over it */}
-            <img src={forShopkeepers.images.shopkeeper} alt="Shopkeeper" className="h-[120%] object-cover absolute bottom-0 -left-10 z-10" />
-            <img src={forShopkeepers.images.shopUI} alt="Shop UI" className="w-[60%] absolute right-0 top-1/2 -translate-y-1/2 rounded-2xl shadow-2xl z-20 border-4 border-white/10 bg-white" />
+            <img src={forShopkeepers.images.shopkeeper} alt="Shopkeeper" width="903" height="662" loading="lazy" className="h-[120%] object-cover absolute bottom-0 -left-10 z-10" />
+            <img src={forShopkeepers.images.shopUI} alt="Shop UI" width="1174" height="1340" loading="lazy" className="w-[60%] absolute right-0 top-1/2 -translate-y-1/2 rounded-2xl shadow-2xl z-20 border-4 border-white/10 bg-white" />
           </div>
         </div>
 

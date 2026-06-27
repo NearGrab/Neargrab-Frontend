@@ -35,7 +35,7 @@ function LoadingScreen() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#FFFBEB]/10 via-[#E6F4EA]/10 to-white">
       <div className="relative flex items-center justify-center mb-4">
         <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-700 rounded-full animate-spin"></div>
-        <img src="/nobg-Logo.png" alt="Neargrab" className="absolute w-6 h-6 object-contain pointer-events-none" />
+        <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="absolute w-6 h-6 object-contain pointer-events-none" />
       </div>
       <p className="text-xs md:text-sm font-semibold text-brand-900 font-poppins animate-pulse">Loading Neargrab...</p>
     </div>
@@ -127,7 +127,9 @@ export default function AppRouter() {
     };
 
     const pageName = getPageName(location.pathname);
-    document.title = pageName ? `Neargrab | ${pageName}` : 'Neargrab';
+    if (location.pathname !== '/') {
+      document.title = pageName ? `Neargrab | ${pageName}` : 'Neargrab';
+    }
   }, [location]);
 
   return (

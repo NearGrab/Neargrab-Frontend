@@ -14,7 +14,7 @@ export default function CTABanner() {
 
         {/* Shop Icon Illustration */}
         <div className="hidden lg:flex relative z-10 items-center justify-center w-40 h-40 shrink-0">
-          <img src={footer.cta.image} alt="Shop Illustration" className="w-full h-full object-contain drop-shadow-lg" />
+          <img src={footer.cta.image} alt="Shop Illustration" width="1536" height="1024" loading="lazy" className="w-full h-full object-contain drop-shadow-lg" />
         </div>
 
         <div className="relative z-10 lg:max-w-xl text-center lg:text-left flex-1">

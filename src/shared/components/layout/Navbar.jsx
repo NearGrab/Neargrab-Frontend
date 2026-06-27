@@ -143,7 +143,7 @@ export default function Navbar() {
           {/* Left Side: Brand Logo & Interactive Location Selector */}
           <div className="flex items-center gap-6 shrink-0">
             <Link to="/explore" className="flex items-center gap-2">
-              <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-10 h-10 object-contain" />
+              <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="w-10 h-10 object-contain" />
               <span className="font-poppins font-bold text-lg text-brand-900 tracking-tight">Neargrab</span>
             </Link>
             
@@ -379,7 +379,7 @@ export default function Navbar() {
           {/* Row 1: Logo & Elevated Compact Location Selector */}
           <div className="flex items-center justify-between w-full">
             <Link to="/explore" className="flex items-center gap-1.5">
-              <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-9 h-9 object-contain" />
+              <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="w-9 h-9 object-contain" />
               <span className="font-poppins font-bold text-base text-brand-900 tracking-tight">Neargrab</span>
             </Link>
             

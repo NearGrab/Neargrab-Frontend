@@ -12,7 +12,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-4 md:px-8 max-w-[90rem] mx-auto py-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src="/nobg-Logo.png" alt="Logo" className="w-16 h-16" />
+          <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="w-16 h-16" />
           <span className="font-poppins font-bold text-xl text-gray-900">{navbar.brand}</span>
         </Link>
 

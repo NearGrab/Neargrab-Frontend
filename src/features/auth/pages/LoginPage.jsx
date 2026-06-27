@@ -13,7 +13,7 @@ export default function LoginPage() {
           {/* Responsive Header for Mobile logo (hidden on desktop) */}
           <div className="flex lg:hidden justify-center mb-6">
             <Link to="/" className="flex items-center gap-1.5">
-              <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-8 h-8 object-contain" />
+              <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="w-8 h-8 object-contain" />
               <span className="font-poppins font-extrabold text-base text-brand-900 tracking-tight">Neargrab</span>
             </Link>
           </div>
@@ -30,7 +30,7 @@ export default function LoginPage() {
           {/* 1. Header Row Logo */}
           <div className="relative z-10 text-right flex justify-end">
             <Link to="/" className="flex items-center gap-2 group">
-              <img src="/nobg-Logo.png" alt="Neargrab Logo" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform" />
+              <img src="/nobg-logo.png" alt="Neargrab logo — local shop discovery platform" width="663" height="663" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform" />
               <span className="font-poppins font-extrabold text-xl text-brand-900 tracking-tight">Neargrab</span>
             </Link>
           </div>
