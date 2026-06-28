@@ -3,6 +3,7 @@ import { UserPlus, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/components/ui';
 import { profileService } from '../services/profileService';
+import InitialsAvatar from '../../../shared/components/ui/InitialsAvatar';
 
 export default function WhoToFollow({ initialUsers }) {
   const [users, setUsers] = useState(initialUsers);
@@ -52,10 +53,10 @@ export default function WhoToFollow({ initialUsers }) {
             {/* User profile avatar info */}
             <Link to={`/profile/${user.username}`} className="flex items-center gap-3 cursor-pointer group/link">
               <div className="w-10 h-10 rounded-full overflow-hidden border border-neutral-200/40 shrink-0 shadow-sm">
-                <img 
-                  src={user.avatar} 
-                  alt={user.name} 
-                  className="w-full h-full object-cover group-hover/link:scale-105 transition-transform duration-300"
+                <InitialsAvatar 
+                  avatarUrl={user.avatar} 
+                  name={user.name || user.username || "User"} 
+                  className="w-full h-full text-xs group-hover/link:scale-105 transition-transform duration-300"
                 />
               </div>
               

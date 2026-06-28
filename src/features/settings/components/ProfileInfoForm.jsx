@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Camera } from 'lucide-react';
 import { Button, Input } from '../../../shared/components/ui';
+import InitialsAvatar from '../../../shared/components/ui/InitialsAvatar';
 
 export default function ProfileInfoForm({ user, onUpdateUser }) {
   const [fullName, setFullName] = useState(user?.name || 'Meet Patel');
@@ -27,10 +28,10 @@ export default function ProfileInfoForm({ user, onUpdateUser }) {
         <div className="flex items-center gap-5">
           <div className="relative group w-20 h-20">
             <div className="w-full h-full rounded-full overflow-hidden border-2 border-brand-50 shadow-sm bg-neutral-100">
-              <img
-                src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80"}
-                alt="Profile"
-                className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+              <InitialsAvatar
+                avatarUrl={user?.avatar}
+                name={user?.name || user?.username || "User"}
+                className="w-full h-full text-xl group-hover:opacity-90 transition-opacity"
               />
             </div>
             <button

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Store, Check } from 'lucide-react';
+import InitialsAvatar from './ui/InitialsAvatar';
 
 /**
  * Reusable, premium ReviewCard primitive. Supports verified badges and right-aligned media thumbnails.
@@ -27,10 +28,10 @@ export default function ReviewCard({
           {/* Row 1: Identity & Time Metadata */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">
-              <img
-                src={avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"}
-                alt={user}
-                className="w-8 h-8 rounded-full object-cover border border-neutral-200/80 shadow-sm shrink-0"
+              <InitialsAvatar
+                avatarUrl={avatar}
+                name={user || "Customer"}
+                className="w-8 h-8 text-[10px]"
               />
               <div className="leading-tight">
                 <div className="flex items-center gap-1.5 flex-wrap">

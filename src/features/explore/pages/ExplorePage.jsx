@@ -10,6 +10,7 @@ import ExploreSidebar from '../components/ExploreSidebar';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useLocationStore } from '../../../store/useLocationStore';
 import { Loader2 } from 'lucide-react';
+import ExploreSkeleton from '../components/ExploreSkeleton';
 
 export default function ExplorePage() {
   const { user } = useAuthStore();
@@ -48,14 +49,7 @@ export default function ExplorePage() {
 
   // Display highly polished brand loading state
   if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-10 h-10 text-brand-900 animate-spin" />
-        <span className="font-poppins font-semibold text-text-primary text-sm tracking-wide">
-          Connecting to Neargrab Neighborhood...
-        </span>
-      </div>
-    );
+    return <ExploreSkeleton />;
   }
 
   if (error) {

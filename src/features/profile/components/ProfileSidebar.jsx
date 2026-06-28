@@ -1,6 +1,7 @@
 import React from 'react';
 import { Edit } from 'lucide-react';
 import { Button, Badge } from '../../../shared/components/ui';
+import InitialsAvatar from '../../../shared/components/ui/InitialsAvatar';
 
 export default function ProfileSidebar({
   user,
@@ -17,10 +18,10 @@ export default function ProfileSidebar({
         {/* Profile Image with Pencil Edit button */}
         <div className="relative w-28 h-28 mx-auto mb-4">
           <div className="w-full h-full rounded-full overflow-hidden border-4 border-brand-50 shadow-md">
-            <img
-              src={user.avatar}
-              alt={user.fullName}
-              className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+            <InitialsAvatar
+              avatarUrl={user.avatar}
+              name={user.name || user.fullName || "User"}
+              className="w-full h-full text-2xl group-hover:scale-102 transition-transform duration-300"
             />
           </div>
           

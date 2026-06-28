@@ -235,6 +235,7 @@ export default function VerificationReview() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            {/*
             <div>
               <span className="text-text-muted font-bold block">GST Number</span>
               <span className="text-text-primary font-bold">{businessInfo.gstNumber || 'N/A'}</span>
@@ -243,6 +244,7 @@ export default function VerificationReview() {
               <span className="text-text-muted font-bold block">PAN Number</span>
               <span className="text-text-primary font-bold">{businessInfo.panNumber || 'N/A'}</span>
             </div>
+            */}
             <div>
               <span className="text-text-muted font-bold block">Languages Spoken</span>
               <span className="text-text-primary font-bold">{businessInfo.languages.join(', ')}</span>

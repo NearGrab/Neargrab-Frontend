@@ -65,6 +65,17 @@ export default function PublicShopProfilePage() {
           const upds = await shopProfileService.getUpdates(info.id);
           setUpdates(upds);
 
+          // Recalculate average rating and review count from revs to avoid contradictions
+          if (revs.length > 0) {
+            const totalRating = revs.reduce((acc, r) => acc + r.rating, 0);
+            info.rating = totalRating / revs.length;
+            info.reviewCount = revs.length;
+          } else {
+            info.rating = 0;
+            info.reviewCount = 0;
+          }
+          setShopInfo({ ...info });
+
           // Track profile view
           shopProfileService.trackLead(info.id, 'SHOP_PROFILE_VIEW', 'SHOP_PROFILE');
         }
@@ -160,7 +171,7 @@ export default function PublicShopProfilePage() {
     { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: products.length },
     { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: reviews.length },
     { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: shopInfo?.photos?.length || 0 },
-    { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: updates.length }
+    // { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: updates.length }
   ];
 
   if (loading) {
@@ -217,7 +228,7 @@ export default function PublicShopProfilePage() {
                 shopInfo={shopInfo} 
                 onAction={handleContactAction}
               />
-              <SocialLinksCard socialLinks={shopInfo.socialLinks} />
+              {/* <SocialLinksCard socialLinks={shopInfo.socialLinks} /> */}
             </div>
 
             {/* CENTER COLUMN: Tabs view feed */}
@@ -328,10 +339,10 @@ export default function PublicShopProfilePage() {
                 isManageMode={false}
               />
               <PaymentMethodsCard paymentMethods={shopInfo.paymentMethods} />
-              <LatestShopUpdatesCard
+              {/* <LatestShopUpdatesCard
                 updates={updates}
                 onViewAll={() => setActiveTab('Updates')}
-              />
+              /> */}
             </div>
 
           </div>

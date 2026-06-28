@@ -1,6 +1,6 @@
 import React from 'react';
-import { ShoppingCart, ArrowRight, Store, Star, MapPin } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, ArrowRight, Store, Star, MapPin, Link } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import ReviewCard from '../../../shared/components/ReviewCard';
 
 export default function ExploreSidebar({ offers, listShop, reviews }) {
@@ -93,10 +93,12 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
 
         <div className="flex items-end justify-between gap-2 mt-auto">
           {/* Pill Button */}
+          <NavLink to="/shopkeeper/onboarding">
           <button className="bg-white text-[#0B3B2C] px-4 py-2 rounded-full font-bold text-[10px] flex items-center gap-1.5 hover:bg-brand-50 active:scale-95 transition-all shadow-md cursor-pointer whitespace-nowrap">
             <span>{listShop.buttonText}</span>
             <ArrowRight className="w-3 h-3" />
           </button>
+          </NavLink>
           
           {/* Store Graphic Icon */}
           <div className="w-14 h-14 shrink-0">

@@ -76,7 +76,7 @@ export const useShopProfileStore = create((set, get) => ({
   reviews: [],
   updates: [...shopProfileMockData.updates],
   photos: [],
-  isLoading: false,
+  isLoading: true,
   error: null,
   originalAddress: null,
   originalContact: null,
@@ -171,6 +171,16 @@ export const useShopProfileStore = create((set, get) => ({
             ...(info.coverImage ? [{ id: 'cover', src: info.coverImage, type: 'cover' }] : [])
           ]
         : [...shopProfileMockData.photos];
+
+      // Recalculate average rating and review count from reviewList to avoid contradictions
+      if (reviewList.length > 0) {
+        const totalRating = reviewList.reduce((acc, r) => acc + r.rating, 0);
+        info.rating = totalRating / reviewList.length;
+        info.reviewCount = reviewList.length;
+      } else {
+        info.rating = 0;
+        info.reviewCount = 0;
+      }
 
       set({
         shopInfo: info,

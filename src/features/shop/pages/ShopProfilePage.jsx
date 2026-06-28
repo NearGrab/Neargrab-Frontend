@@ -47,7 +47,7 @@ export default function ShopProfilePage() {
     { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: store.products.length },
     { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: store.reviews.length },
     { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: store.photos.length },
-    { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: store.updates.length }
+    // { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: store.updates.length }
   ];
 
   const handleSaveProfile = async (formData) => {
@@ -61,6 +61,96 @@ export default function ShopProfilePage() {
   const handleEditProductRedirect = (id) => {
     navigate('/shopkeeper/products/add');
   };
+
+  if (store.isLoading) {
+    return (
+      <div className="bg-[#F9FAFB] min-h-screen text-text-primary font-inter flex flex-col pb-28 relative">
+        {/* Navbar */}
+        <Navbar />
+
+        {/* Skeleton Grid Loader */}
+        <main className="flex-grow max-w-[115rem] w-full mx-auto px-4 md:px-8 py-6 md:py-10 mb-24 animate-pulse">
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 w-full text-left relative">
+            
+            {/* LEFT COLUMN SKELETON */}
+            <div className="lg:col-span-3 flex flex-col gap-5">
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-6 flex flex-col items-center">
+                <div className="w-24 h-24 rounded-2xl bg-neutral-200 mb-4"></div>
+                <div className="h-5 w-3/4 bg-neutral-200 rounded-md mb-2"></div>
+                <div className="h-3.5 w-1/2 bg-neutral-100 rounded-md mb-4"></div>
+                <div className="flex gap-2 mb-4">
+                  <div className="h-6 w-16 bg-neutral-100 rounded-full"></div>
+                  <div className="h-6 w-16 bg-neutral-100 rounded-full"></div>
+                </div>
+                <div className="w-full border-t border-neutral-100 pt-4 flex flex-col gap-2">
+                  <div className="h-3 w-full bg-neutral-100 rounded-md"></div>
+                  <div className="h-3 w-2/3 bg-neutral-100 rounded-md"></div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-4 hidden lg:flex flex-col gap-2">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="h-11 w-full bg-neutral-100 rounded-2xl" />
+                ))}
+              </div>
+
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-4 flex flex-col gap-3">
+                <div className="h-11 w-full bg-neutral-100 rounded-xl" />
+                <div className="h-11 w-full bg-neutral-100 rounded-xl" />
+              </div>
+            </div>
+
+            {/* CENTER COLUMN SKELETON */}
+            <div className="lg:col-span-6 flex flex-col gap-5">
+              <div className="bg-white rounded-3xl border border-neutral-200/50 overflow-hidden flex flex-col p-4 md:p-6 mb-6">
+                <div className="w-full h-48 bg-neutral-200 rounded-2xl mb-6"></div>
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-4">
+                    <div className="h-8 w-16 bg-neutral-100 rounded-md"></div>
+                    <div className="h-8 w-16 bg-neutral-100 rounded-md"></div>
+                    <div className="h-8 w-16 bg-neutral-100 rounded-md"></div>
+                  </div>
+                  <div className="h-9 w-24 bg-neutral-200 rounded-xl"></div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 border-b border-neutral-200 pb-2">
+                <div className="h-6 w-16 bg-neutral-200 rounded-md"></div>
+                <div className="h-6 w-16 bg-neutral-100 rounded-md"></div>
+                <div className="h-6 w-16 bg-neutral-100 rounded-md"></div>
+                <div className="h-6 w-16 bg-neutral-100 rounded-md"></div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-6 flex flex-col gap-4">
+                <div className="h-4 w-1/3 bg-neutral-200 rounded-md mb-2"></div>
+                <div className="h-3.5 w-full bg-neutral-100 rounded-md"></div>
+                <div className="h-3.5 w-full bg-neutral-100 rounded-md"></div>
+                <div className="h-3.5 w-4/5 bg-neutral-100 rounded-md"></div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN SKELETON */}
+            <div className="lg:col-span-3 flex flex-col gap-5">
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-5 flex flex-col gap-4">
+                <div className="h-4 w-1/2 bg-neutral-200 rounded-md"></div>
+                <div className="grid grid-cols-2 gap-3">
+                  {Array.from({ length: 6 }).map((_, idx) => (
+                    <div key={idx} className="h-16 bg-neutral-100 rounded-2xl" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-neutral-200/50 p-5 flex flex-col gap-3">
+                <div className="h-12 w-full bg-neutral-100 rounded-xl" />
+                <div className="h-12 w-full bg-neutral-100 rounded-xl" />
+              </div>
+            </div>
+
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#F9FAFB] min-h-screen text-text-primary font-inter flex flex-col pb-28 relative">
@@ -83,7 +173,7 @@ export default function ShopProfilePage() {
               onEditClick={() => setIsEditModalOpen(true)}
             />
             <ContactActionsCard shopInfo={store.shopInfo} />
-            <SocialLinksCard socialLinks={store.socialLinks} />
+            {/* <SocialLinksCard socialLinks={store.socialLinks} /> */}
           </div>
 
           {/* CENTER COLUMN: Tabs view feed (span 6 on desktop) */}
@@ -178,10 +268,10 @@ export default function ShopProfilePage() {
               onEditTimings={() => setIsEditModalOpen(true)}
             />
             <PaymentMethodsCard paymentMethods={store.paymentMethods} />
-            <LatestShopUpdatesCard
+            {/* <LatestShopUpdatesCard
               updates={store.updates}
               onViewAll={() => setActiveTab('Updates')}
-            />
+            /> */}
           </div>
 
         </div>

@@ -164,7 +164,8 @@ export default function BusinessInfoForm() {
         <p className="text-xs text-text-secondary mt-1 font-inter">Complete your store details to list as a verified business on Neargrab.</p>
       </div>
 
-      {/* 1. Business Verification Section */}
+      {/* 1. Business Verification Section (Commented out/Not needed for now) */}
+      {/*
       <div className="border-t border-neutral-100 pt-5 text-left">
         <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted font-poppins mb-4">
           Business Verification <span className="text-[10px] text-text-secondary lowercase">(Optional but recommended)</span>
@@ -190,7 +191,6 @@ export default function BusinessInfoForm() {
           />
         </div>
 
-        {/* Shop License Upload */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
           <ImageUploader
             label="Shop Registration / License"
@@ -210,6 +210,7 @@ export default function BusinessInfoForm() {
           </div>
         </div>
       </div>
+      */}
 
       {/* 2. Shop details: Languages, Price, Tags */}
       <div className="border-t border-neutral-100 pt-5 text-left">
@@ -429,7 +430,7 @@ export default function BusinessInfoForm() {
         </div>
 
         {/* Additional photos drawer */}
-        <div className="flex flex-col text-left">
+        {/* <div className="flex flex-col text-left">
           <label className="block text-xs font-bold text-text-primary mb-2.5 font-poppins">
             Additional Photos
           </label>
@@ -469,7 +470,7 @@ export default function BusinessInfoForm() {
             )}
           </div>
           <span className="text-[9px] text-text-secondary mt-1.5">Add up to 5 additional product or store images</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Actions */}

@@ -352,20 +352,14 @@ export const useShopOnboardingStore = create((set, get) => ({
       });
       if (!contactRes.success) throw new Error('Failed to save contact details');
 
-      // F. Upload registration doc if new File
-      const registrationDocMediaId = await get().uploadFileIfNew(businessInfo.registrationDoc);
-
       // G. Save business info
       const businessRes = await shopkeeperOnboardingService.updateBusiness({
-        gstNumber: businessInfo.gstNumber || undefined,
-        panNumber: businessInfo.panNumber || undefined,
         languages: businessInfo.languages,
         priceRange: businessInfo.priceRange,
         homeDelivery: businessInfo.homeDelivery,
         digitalPayments: businessInfo.digitalPayments,
         upiId: businessInfo.upiId || undefined,
-        tags: businessInfo.tags,
-        ...(registrationDocMediaId && { registrationDocMediaId })
+        tags: businessInfo.tags
       });
       if (!businessRes.success) throw new Error('Failed to save business information');
 

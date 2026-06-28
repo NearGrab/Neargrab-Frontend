@@ -7,6 +7,7 @@ import { useCartStore } from '../../../store/useCartStore';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { searchService } from '../../../features/search/services/searchService';
 import CitySelectionModal from './CitySelectionModal';
+import InitialsAvatar from '../ui/InitialsAvatar';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -295,10 +296,10 @@ export default function Navbar() {
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 className="flex items-center gap-2.5 pl-1 cursor-pointer hover:opacity-90 transition-opacity group"
               >
-                <img
-                  src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80"}
-                  alt={user?.name || "User Avatar"}
-                  className="w-9 h-9 rounded-full object-cover border-2 border-brand-100/50 shadow-sm"
+                <InitialsAvatar
+                  avatarUrl={user?.avatar}
+                  name={user?.name || user?.username || "Guest"}
+                  className="w-9 h-9 border-2 border-brand-100/50 shadow-sm text-xs"
                 />
                 <div className="text-left leading-none pr-1">
                   <div className="flex items-center gap-1">
@@ -383,17 +384,32 @@ export default function Navbar() {
               <span className="font-poppins font-bold text-base text-brand-900 tracking-tight">Neargrab</span>
             </Link>
             
-            <button 
-              type="button"
-              onClick={() => setIsCityModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 rounded-full border border-neutral-200/50 hover:bg-neutral-100 transition-colors cursor-pointer shrink-0 max-w-[50%]"
-            >
-              <MapPin className="w-3.5 h-3.5 text-brand-900 shrink-0" />
-              <span className="text-[11px] font-bold text-text-primary truncate">
-                {userLoc.city || 'Select City'}
-              </span>
-              <ChevronDown className="w-3 h-3 text-text-muted shrink-0" />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button 
+                type="button"
+                onClick={() => setIsCityModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 rounded-full border border-neutral-200/50 hover:bg-neutral-100 transition-colors cursor-pointer shrink-0 max-w-[130px]"
+              >
+                <MapPin className="w-3.5 h-3.5 text-brand-900 shrink-0" />
+                <span className="text-[11px] font-bold text-text-primary truncate">
+                  {userLoc.city || 'Select City'}
+                </span>
+                <ChevronDown className="w-3 h-3 text-text-muted shrink-0" />
+              </button>
+
+              {/* Mobile Notification Trigger */}
+              <button
+                onClick={() => navigate('/notifications')}
+                className="relative w-8.5 h-8.5 rounded-full bg-neutral-50 border border-neutral-200/40 hover:bg-neutral-100 flex items-center justify-center text-text-secondary cursor-pointer transition-colors group shrink-0"
+              >
+                <Bell className="w-4 h-4 text-text-secondary group-hover:text-brand-900 transition-colors" />
+                {isAuthenticated && unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Row 3: Mobile Search Input with suggestions */}
@@ -485,24 +501,24 @@ export default function Navbar() {
           <span className="text-[10px] font-poppins tracking-wide">Home</span>
         </Link>
 
-        {/* 2. Notifications tab */}
+        {/* 2. Cart tab */}
         <Link
-          to="/notifications"
+          to="/cart"
           className={`flex flex-col items-center gap-1 px-3 py-1 transition-all select-none relative ${
-            location.pathname === '/notifications'
+            location.pathname === '/cart'
               ? 'text-brand-900 font-bold scale-105'
               : 'text-text-secondary hover:text-brand-900'
           }`}
         >
           <div className="relative">
-            <Bell className={`w-5 h-5 ${location.pathname === '/notifications' ? 'text-brand-900 fill-brand-900/10' : 'text-text-secondary'}`} />
-            {isAuthenticated && unreadCount > 0 && (
+            <ShoppingCart className={`w-5 h-5 ${location.pathname === '/cart' ? 'text-brand-900 fill-brand-900/10' : 'text-text-secondary'}`} />
+            {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
-                {unreadCount}
+                {cartCount}
               </span>
             )}
           </div>
-          <span className="text-[10px] font-poppins tracking-wide">Alerts</span>
+          <span className="text-[10px] font-poppins tracking-wide">Cart</span>
         </Link>
 
         {/* 3. Search tab (New search link for Mobile bottom nav) */}
@@ -517,6 +533,21 @@ export default function Navbar() {
           <Search className={`w-5 h-5 ${location.pathname === '/search' ? 'text-brand-900' : 'text-text-secondary'}`} />
           <span className="text-[10px] font-poppins tracking-wide">Search</span>
         </Link>
+
+        {/* Shopkeeper Dashboard tab (only if role is SHOPKEEPER) */}
+        {isAuthenticated && user?.role?.toUpperCase() === 'SHOPKEEPER' && (
+          <Link
+            to="/shopkeeper/dashboard"
+            className={`flex flex-col items-center gap-1 px-3 py-1 transition-all select-none ${
+              location.pathname.startsWith('/shopkeeper')
+                ? 'text-brand-900 font-bold scale-105'
+                : 'text-text-secondary hover:text-brand-900'
+            }`}
+          >
+            <Store className={`w-5 h-5 ${location.pathname.startsWith('/shopkeeper') ? 'text-brand-900 fill-brand-900/10' : 'text-text-secondary'}`} />
+            <span className="text-[10px] font-poppins tracking-wide">Shop</span>
+          </Link>
+        )}
 
         {/* 4. Profile tab */}
         <Link
