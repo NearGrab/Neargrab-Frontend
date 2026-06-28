@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url)
 globalThis.require = require
 
 const vitePrerender = require('vite-plugin-prerender')
+const PuppeteerRenderer = vitePrerender.PuppeteerRenderer
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -21,6 +22,10 @@ export default defineConfig({
     vitePrerender({
       staticDir: path.join(__dirname, 'dist'),
       routes: ['/'],
+      renderer: new PuppeteerRenderer({
+        executablePath: '/usr/bin/google-chrome',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      })
     })
   ],
 })
