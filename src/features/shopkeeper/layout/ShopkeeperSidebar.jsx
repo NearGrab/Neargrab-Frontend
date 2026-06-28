@@ -45,7 +45,7 @@ export default function ShopkeeperSidebar({ onClose }) {
     Analytics: BarChart3,
     ShopProfile: Store,
     QRCode: QrCode,
-    Promotions: Megaphone,
+    // Promotions: Megaphone,
     Followers: Users,
     Settings: Settings
   };

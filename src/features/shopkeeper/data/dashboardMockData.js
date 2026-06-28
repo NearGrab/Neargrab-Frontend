@@ -19,7 +19,7 @@ export const dashboardMockData = {
     { title: 'Reviews', path: '/shopkeeper/reviews', icon: 'Reviews', badge: '56' },
     { title: 'Shop Profile', path: '/shopkeeper/profile', icon: 'ShopProfile', badge: '' },
     { title: 'QR Code', path: '/shopkeeper/qr', icon: 'QRCode', badge: '' },
-    { title: 'Promotions', path: '/shopkeeper/promotions', icon: 'Promotions', badge: 'New' },
+    // { title: 'Promotions', path: '/shopkeeper/promotions', icon: 'Promotions', badge: 'New' },
     { title: 'Settings', path: '/shopkeeper/settings', icon: 'Settings', badge: '' }
   ],
 
