@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 
 export default function OnboardingStepper({ currentStep }) {
   const steps = [
+    { number: 0, title: 'Authentication', subtitle: 'Login or Sign up' },
     { number: 1, title: 'Shop Details', subtitle: 'Basic information' },
     { number: 2, title: 'Address', subtitle: 'Shop location' },
     { number: 3, title: 'Contact', subtitle: 'Reachability' },
