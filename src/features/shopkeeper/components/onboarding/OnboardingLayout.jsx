@@ -13,9 +13,11 @@ export default function OnboardingLayout({ children, sidebar, preview }) {
         <div className="flex flex-col lg:flex-row gap-6 items-start w-full relative">
           
           {/* Left Column: Context-aware benefits sidebar */}
-          <div className="hidden lg:block sticky top-24 self-start w-[280px] shrink-0">
-            {sidebar}
-          </div>
+          {sidebar && (
+            <div className="hidden lg:block sticky top-24 self-start w-[280px] shrink-0">
+              {sidebar}
+            </div>
+          )}
 
           {/* Center Column: Stepper and Forms */}
           <div className="bg-white border border-neutral-100/80 rounded-3xl p-4 md:p-8 shadow-sm flex flex-col min-w-0 flex-grow w-full">
@@ -23,9 +25,11 @@ export default function OnboardingLayout({ children, sidebar, preview }) {
           </div>
 
           {/* Right Column: Live shop preview card */}
-          <div className="w-full lg:w-[350px] shrink-0 sticky top-24 self-start">
-            {preview}
-          </div>
+          {preview && (
+            <div className="w-full lg:w-[350px] shrink-0 sticky top-24 self-start">
+              {preview}
+            </div>
+          )}
 
         </div>
 

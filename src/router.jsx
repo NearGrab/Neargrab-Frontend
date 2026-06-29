@@ -160,7 +160,7 @@ export default function AppRouter() {
           <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
 
           {/* Authenticated Shopkeeper Onboarding Page */}
-          <Route path="/shopkeeper/onboarding" element={<ProtectedRoute><ShopOnboardingPage /></ProtectedRoute>} />
+          <Route path="/shopkeeper/onboarding" element={<ShopOnboardingPage />} />
 
           {/* Authenticated Shopkeeper Pages */}
           <Route path="/shopkeeper/dashboard" element={<ShopkeeperRoute><ShopkeeperDashboardPage /></ShopkeeperRoute>} />

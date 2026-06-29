@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useShopOnboardingStore } from '../../../store/useShopOnboardingStore';
+import { useAuthStore } from '../../../store/useAuthStore';
 import OnboardingLayout from '../components/onboarding/OnboardingLayout';
 import OnboardingStepper from '../components/onboarding/OnboardingStepper';
 import BenefitsSidebar from '../components/onboarding/BenefitsSidebar';
@@ -10,24 +11,52 @@ import AddressForm from '../components/onboarding/AddressForm';
 import ContactForm from '../components/onboarding/ContactForm';
 import BusinessInfoForm from '../components/onboarding/BusinessInfoForm';
 import VerificationReview from '../components/onboarding/VerificationReview';
+import LoginForm from '../../auth/components/LoginForm';
+import SignupForm from '../../auth/components/SignupForm';
 import { ChevronLeft, Store, Loader2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function ShopOnboardingPage() {
+  const { isAuthenticated } = useAuthStore();
   const { currentStep, fetchDraft, isLoading, error } = useShopOnboardingStore();
+  const [isLogin, setIsLogin] = useState(true);
 
-  // Load draft state on mount
+  // Load draft state on mount/auth change
   useEffect(() => {
-    fetchDraft();
-  }, [fetchDraft]);
+    if (isAuthenticated) {
+      fetchDraft();
+    }
+  }, [isAuthenticated, fetchDraft]);
 
   // Scroll to top on step transitions
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentStep]);
+  }, [currentStep, isAuthenticated]);
+
+  const displayStep = isAuthenticated ? currentStep : 0;
 
   // Render form of active step
   const renderActiveForm = () => {
+    if (!isAuthenticated) {
+      if (isLogin) {
+        return (
+          <LoginForm
+            onSuccess={fetchDraft}
+            onToggleMode={() => setIsLogin(false)}
+            googleRedirectTo={window.location.origin + '/shopkeeper/onboarding'}
+          />
+        );
+      } else {
+        return (
+          <SignupForm
+            onSuccess={fetchDraft}
+            onToggleMode={() => setIsLogin(true)}
+            googleRedirectTo={window.location.origin + '/shopkeeper/onboarding'}
+          />
+        );
+      }
+    }
+
     switch (currentStep) {
       case 1:
         return <ShopDetailsForm />;
@@ -45,10 +74,10 @@ export default function ShopOnboardingPage() {
   };
 
   // Define sidebar and preview slots
-  const sidebarSlot = <BenefitsSidebar step={currentStep} />;
-  const previewSlot = <ShopPreviewCard />;
+  const sidebarSlot = displayStep > 0 ? <BenefitsSidebar step={displayStep} /> : null;
+  const previewSlot = displayStep > 0 ? <ShopPreviewCard /> : null;
 
-  if (isLoading && currentStep === 1) {
+  if (isAuthenticated && isLoading && currentStep === 1) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-10 h-10 text-brand-900 animate-spin" />
@@ -57,7 +86,7 @@ export default function ShopOnboardingPage() {
     );
   }
 
-  if (error && currentStep === 1) {
+  if (isAuthenticated && error && currentStep === 1) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4 p-6 text-center max-w-md mx-auto">
         <div className="w-14 h-14 bg-red-50 border border-red-200 rounded-full flex items-center justify-center text-red-600">
@@ -114,7 +143,7 @@ export default function ShopOnboardingPage() {
 
       {/* 2. Active Wizard Stepper Progress Bar */}
       <div className="mb-8 bg-[#FAFAFA] border border-neutral-150/55 rounded-2xl p-4 md:px-6 shadow-2xs">
-        <OnboardingStepper currentStep={currentStep} />
+        <OnboardingStepper currentStep={displayStep} />
       </div>
 
       {/* 3. Render Active Form Screen */}

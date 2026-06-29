@@ -155,13 +155,13 @@ export function useAuthStore() {
     }
   };
 
-  const googleLogin = async () => {
+  const googleLogin = async (customRedirectTo) => {
     setGlobalState({ isLoading: true, error: null });
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/explore'
+          redirectTo: customRedirectTo || (window.location.origin + '/explore')
         }
       });
       if (error) throw error;

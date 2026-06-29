@@ -5,7 +5,7 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { Input, Button } from '../../../shared/components/ui';
 import GoogleAuthButton from './GoogleAuthButton';
 
-export default function LoginForm() {
+export default function LoginForm({ onSuccess, onToggleMode, googleRedirectTo }) {
   const navigate = useNavigate();
   const { login, googleLogin, isLoading, error: authError } = useAuthStore();
 
@@ -37,13 +37,17 @@ export default function LoginForm() {
 
     const success = await login(usernameOrEmail, password);
     if (success) {
-      // Redirect successfully authenticated users directly to explore!
-      navigate('/explore');
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Redirect successfully authenticated users directly to explore!
+        navigate('/explore');
+      }
     }
   };
 
   const handleGoogleAuth = async () => {
-    await googleLogin();
+    await googleLogin(googleRedirectTo);
   };
 
   return (
@@ -152,13 +156,24 @@ export default function LoginForm() {
       <div className="mt-6 text-center">
         <p className="text-xs font-medium text-text-secondary font-inter">
           Don't have an account?{' '}
-          <Link
-            to="/signup"
-            className="text-brand-500 hover:text-brand-700 font-extrabold hover:underline inline-flex items-center gap-1 transition-all"
-          >
-            <span>Sign up</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {onToggleMode ? (
+            <button
+              type="button"
+              onClick={onToggleMode}
+              className="text-brand-500 hover:text-brand-700 font-extrabold hover:underline inline-flex items-center gap-1 transition-all cursor-pointer bg-transparent border-none p-0 align-baseline"
+            >
+              <span>Sign up</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <Link
+              to="/signup"
+              className="text-brand-500 hover:text-brand-700 font-extrabold hover:underline inline-flex items-center gap-1 transition-all"
+            >
+              <span>Sign up</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </p>
       </div>
     </div>
