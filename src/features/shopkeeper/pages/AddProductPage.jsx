@@ -81,7 +81,7 @@ export default function AddProductPage() {
   ]);
 
   const handleSaveDraft = async () => {
-    const success = await store.submitProduct(productId);
+    const success = await store.submitProduct(productId, 'DRAFT');
     if (success) {
       alert('Product Draft Saved Successfully!');
       navigate('/shopkeeper/products');
@@ -97,7 +97,7 @@ export default function AddProductPage() {
       return;
     }
     
-    const success = await store.submitProduct(productId);
+    const success = await store.submitProduct(productId, 'ACTIVE');
     if (success) {
       alert(productId ? 'Product updated successfully!' : 'Congratulations! Product published successfully!');
       navigate('/shopkeeper/products');

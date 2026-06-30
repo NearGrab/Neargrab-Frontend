@@ -100,10 +100,10 @@ export const useProductFormStore = create((set, get) => ({
       const res = await productService.getProduct(id);
       if (res.success && res.data) {
         const p = res.data;
-        const mappedImages = p.images?.map((img) => ({
+        const mappedImages = p.images?.map((img, index) => ({
           id: img.mediaId || img.media?.id || img.id,
           src: img.url || img.media?.url || img.imageUrl,
-          isPrimary: img.isPrimary || false,
+          isPrimary: img.isPrimary || img.sortOrder === 0 || index === 0,
           file: null
         })) || [];
 
@@ -114,8 +114,8 @@ export const useProductFormStore = create((set, get) => ({
           subCategory: p.subCategory || '',
           description: p.description || '',
           tags: p.tags || [],
-          price: p.pricePaise ? (p.pricePaise / 100).toString() : '',
-          mrp: p.mrpPaise ? (p.mrpPaise / 100).toString() : '',
+          price: p.pricePaise !== undefined && p.pricePaise !== null ? (p.pricePaise / 100).toString() : '',
+          mrp: p.mrpPaise !== undefined && p.mrpPaise !== null ? (p.mrpPaise / 100).toString() : '',
           unit: p.unit || '1 Piece',
           stockAvailable: p.stockAvailable ?? true,
           hsnCode: p.hsnCode || '',
@@ -135,7 +135,7 @@ export const useProductFormStore = create((set, get) => ({
     }
   },
 
-  submitProduct: async (id = null) => {
+  submitProduct: async (id = null, status = 'ACTIVE') => {
     set({ isLoading: true, error: null });
     try {
       // 1. Ensure categories cache is loaded
@@ -178,6 +178,7 @@ export const useProductFormStore = create((set, get) => ({
 
       // 4. Construct payload
       const payload = {
+        status,
         name: get().productName,
         sku: get().sku || undefined,
         categoryId: categoryId,
@@ -185,7 +186,7 @@ export const useProductFormStore = create((set, get) => ({
         size: get().unit, // Size/unit snapshot
         unit: get().unit,
         tags: get().tags,
-        pricePaise: Math.round(parseFloat(get().price) * 100),
+        pricePaise: get().price ? Math.round(parseFloat(get().price) * 100) : 0,
         mrpPaise: get().mrp ? Math.round(parseFloat(get().mrp) * 100) : undefined,
         stockAvailable: get().stockAvailable,
         stockCount: get().stockAvailable ? 25 : 0,
