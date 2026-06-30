@@ -2,6 +2,7 @@ import React, { Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
 import ErrorBoundary from './shared/components/ErrorBoundary';
+import { analyticsService } from './features/analytics/services/analyticsService';
 
 // Lazy Loaded Pages
 const LandingPage = React.lazy(() => import('./features/landing/pages/LandingPage'));
@@ -130,6 +131,7 @@ export default function AppRouter() {
     if (location.pathname !== '/') {
       document.title = pageName ? `Neargrab | ${pageName}` : 'Neargrab';
     }
+    analyticsService.trackVisit(location.pathname);
   }, [location]);
 
   return (
