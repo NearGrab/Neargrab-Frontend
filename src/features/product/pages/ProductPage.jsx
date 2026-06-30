@@ -19,7 +19,7 @@ export default function ProductPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { location: userLoc } = useLocationStore();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   const [product, setProduct] = useState(null);
   const [stores, setStores] = useState([]);
@@ -33,8 +33,6 @@ export default function ProductPage() {
       setLoading(true);
       try {
         const idToFetch = productId || 'prod-fortune-1l';
-        const prodData = await productService.getProductDetails(idToFetch);
-        
         const radiusKm = userLoc?.radius ? parseInt(userLoc.radius.replace(/[^0-9]/g, '')) : 10;
         const locationParams = {
           city: userLoc?.city,
@@ -42,6 +40,7 @@ export default function ProductPage() {
           longitude: userLoc?.coordinates?.lng,
           radiusKm
         };
+        const prodData = await productService.getProductDetails(idToFetch, locationParams);
         const storeData = await productService.getAvailableStores(idToFetch, locationParams);
         const reviewData = await productService.getTopReviews(idToFetch);
 
@@ -80,6 +79,12 @@ export default function ProductPage() {
       }
     } catch (err) {
       console.error('Failed to toggle wishlist status:', err);
+    }
+  };
+
+  const handleNavigateToMap = () => {
+    if (product?.id && product?.soldBy?.id) {
+      navigate(`/product/${product.id}/map?shopId=${product.soldBy.id}`);
     }
   };
 
@@ -218,43 +223,49 @@ export default function ProductPage() {
             </div>
 
             {/* 2. PHYSICAL ADDRESS & SVG MINI ROUTE MAP CARD */}
-            <AddressCard address={soldBy.address} />
+            <AddressCard 
+              address={soldBy.address} 
+              distance={soldBy.distance}
+              onNavigate={handleNavigateToMap}
+            />
 
             {/* 3. LIST YOUR PRODUCT CTA CONVERSION CARD */}
-            <div className="w-full max-w-[380px] mx-auto lg:max-w-none bg-[#0B3B2C] text-white p-5 rounded-3xl relative overflow-hidden shadow-md border border-brand-800 flex justify-between min-h-[9rem] text-left">
-              {/* Subtle decorative circles */}
-              <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-brand-500/20 blur-2xl rounded-full pointer-events-none"></div>
-              
-              <div className="flex flex-col justify-between flex-grow z-10">
-                <div>
-                  <h3 className="font-poppins font-bold text-sm text-white leading-tight">
-                    Have this product? List it on Neargrab
-                  </h3>
-                  <p className="text-brand-100 text-[10px] sm:text-xs leading-relaxed mt-1 font-inter max-w-[85%]">
-                    Get more visibility and attract nearby customers.
-                  </p>
-                </div>
+            {!(user?.role === 'SHOPKEEPER' || user?.role?.toUpperCase() === 'SHOPKEEPER') && (
+              <div className="w-full max-w-[380px] mx-auto lg:max-w-none bg-[#0B3B2C] text-white p-5 rounded-3xl relative overflow-hidden shadow-md border border-brand-800 flex justify-between min-h-[9rem] text-left">
+                {/* Subtle decorative circles */}
+                <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-brand-500/20 blur-2xl rounded-full pointer-events-none"></div>
                 
-                <Button 
-                  onClick={() => alert('Merchant onboard program details coming soon!')}
-                  variant="secondary"
-                  size="sm"
-                  className="!bg-white !text-[#0B3B2C] !px-4.5 !py-1.8 hover:!bg-brand-50 mt-3 w-fit"
-                  rightIcon={<ArrowUpRight className="w-3.5 h-3.5" />}
-                >
-                  List Your Product
-                </Button>
-              </div>
+                <div className="flex flex-col justify-between flex-grow z-10">
+                  <div>
+                    <h3 className="font-poppins font-bold text-sm text-white leading-tight">
+                      Have this product? List it on Neargrab
+                    </h3>
+                    <p className="text-brand-100 text-[10px] sm:text-xs leading-relaxed mt-1 font-inter max-w-[85%]">
+                      Get more visibility and attract nearby customers.
+                    </p>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => navigate('/shopkeeper/onboarding')}
+                    variant="secondary"
+                    size="sm"
+                    className="!bg-white !text-[#0B3B2C] !px-4.5 !py-1.8 hover:!bg-brand-50 mt-3 w-fit cursor-pointer"
+                    rightIcon={<ArrowUpRight className="w-3.5 h-3.5" />}
+                  >
+                    List Your Product
+                  </Button>
+                </div>
 
-              {/* Graphic Shopkeeper Illustration SVG */}
-              <div className="w-18 h-18 shrink-0 self-end -mb-3 opacity-90 z-0">
-                <svg className="w-full h-full text-brand-500/40" viewBox="0 0 64 64" fill="none">
-                  <rect x="8" y="24" width="48" height="32" rx="4" fill="currentColor" opacity="0.25" />
-                  <path d="M4 24L32 8L60 24H4Z" fill="#FBBF24" />
-                  <rect x="24" y="38" width="16" height="18" fill="#0B3B2C" />
-                </svg>
+                {/* Graphic Shopkeeper Illustration SVG */}
+                <div className="w-18 h-18 shrink-0 self-end -mb-3 opacity-90 z-0">
+                  <svg className="w-full h-full text-brand-500/40" viewBox="0 0 64 64" fill="none">
+                    <rect x="8" y="24" width="48" height="32" rx="4" fill="currentColor" opacity="0.25" />
+                    <path d="M4 24L32 8L60 24H4Z" fill="#FBBF24" />
+                    <rect x="24" y="38" width="16" height="18" fill="#0B3B2C" />
+                  </svg>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 4. TOP REVIEWS LISTING WIDGET */}
             <div className="w-full max-w-[380px] mx-auto lg:max-w-none bg-white border border-neutral-100 p-5 rounded-3xl shadow-sm text-left flex flex-col gap-4">

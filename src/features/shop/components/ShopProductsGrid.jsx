@@ -1,6 +1,7 @@
 import React from 'react';
-import { Pencil, EyeOff, Plus, Check, Heart, Star, ShieldCheck } from 'lucide-react';
+import { Pencil, EyeOff, Plus, Check, Star, ShieldCheck } from 'lucide-react';
 import StockToggle from '../../shopkeeper/components/products/StockToggle';
+import { useCartStore } from '../../../store/useCartStore';
 
 export default function ShopProductsGrid({
   products = [],
@@ -10,12 +11,18 @@ export default function ShopProductsGrid({
   onToggleStock,
   onViewAll
 }) {
+  const { addItem } = useCartStore();
   
   const handleAction = (type, prod) => {
     if (type === 'edit') {
       if (onEditProduct) onEditProduct(prod.id);
       else alert(`Editing "${prod.name}"...`);
     } else if (type === 'add') {
+      addItem({
+        ...prod,
+        store: shopInfo?.name || 'Local Store',
+        shopId: shopInfo?.id || prod.shopId || null
+      });
       alert(`"${prod.name}" successfully added to cart!`);
     }
   };
@@ -66,11 +73,6 @@ export default function ShopProductsGrid({
                 >
                   {prod.stockAvailable ? 'In Stock' : 'Out of Stock'}
                 </span>
-                {!isManageMode && (
-                  <button type="button" className="text-text-muted hover:text-red-500 transition-colors cursor-pointer">
-                    <Heart className="w-3.5 h-3.5" />
-                  </button>
-                )}
               </div>
 
               {/* Thumbnail Image Container */}

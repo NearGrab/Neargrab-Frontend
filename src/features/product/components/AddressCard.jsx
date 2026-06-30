@@ -1,20 +1,26 @@
 import React from 'react';
 import { Copy, MapPin } from 'lucide-react';
 
-export default function AddressCard({ address }) {
+export default function AddressCard({ address, distance, onNavigate }) {
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
     alert('Address copied to clipboard!');
   };
 
   return (
-    <div className="w-full max-w-[380px] mx-auto lg:max-w-none bg-white border border-neutral-100 p-5 rounded-3xl shadow-sm text-left flex flex-col gap-4">
+    <div 
+      onClick={onNavigate}
+      className="w-full max-w-[380px] mx-auto lg:max-w-none bg-white border border-neutral-100 p-5 rounded-3xl shadow-sm text-left flex flex-col gap-4 cursor-pointer hover:border-brand-300 hover:shadow-md transition-all duration-200"
+    >
       <div className="flex items-center justify-between">
         <h3 className="font-poppins font-extrabold text-text-muted text-[11px] uppercase tracking-wider">
           Address
         </h3>
         <button
-          onClick={handleCopyAddress}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCopyAddress();
+          }}
           className="p-1.5 hover:bg-neutral-50 rounded-lg text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
           aria-label="Copy address to clipboard"
         >
@@ -80,7 +86,7 @@ export default function AddressCard({ address }) {
           <g transform="translate(85, 42)">
             <rect x="0" y="0" width="76" height="16" rx="8" fill="#FFFBEB" stroke="#FBBF24" strokeWidth="0.8" />
             <text x="38" y="11" fill="#D97706" fontSize="7.5" fontWeight="extrabold" textAnchor="middle" fontFamily="Inter">
-              0.2 km from you
+              {distance ? `${distance} km from you` : 'Nearby'}
             </text>
           </g>
         </svg>

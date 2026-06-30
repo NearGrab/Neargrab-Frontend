@@ -2,8 +2,53 @@ import { supabase } from './supabase';
 
 const DEFAULT_TIMEOUT = 30000; // 30 seconds, enough for slow local or cold-started backends
 
+let refreshPromise = null;
+
+async function performTokenRefresh() {
+  const provider = localStorage.getItem('neargrab_auth_provider');
+  if (provider === 'google') {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session) throw new Error('Google session expired');
+    localStorage.setItem('neargrab_access_token', session.access_token);
+    if (session.refresh_token) {
+      localStorage.setItem('neargrab_refresh_token', session.refresh_token);
+    }
+    return {
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      user: JSON.parse(localStorage.getItem('neargrab_user') || 'null')
+    };
+  } else {
+    const localRefreshToken = localStorage.getItem('neargrab_refresh_token');
+    if (!localRefreshToken) throw new Error('No refresh token');
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const refreshResponse = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken: localRefreshToken })
+    });
+    if (!refreshResponse.ok) {
+      throw new Error('Refresh token request failed');
+    }
+    const resData = await refreshResponse.json();
+    if (!resData.success || !resData.data) {
+      throw new Error('Refresh token invalid');
+    }
+    const { accessToken, refreshToken, user } = resData.data;
+    localStorage.setItem('neargrab_access_token', accessToken);
+    if (refreshToken) {
+      localStorage.setItem('neargrab_refresh_token', refreshToken);
+    }
+    if (user) {
+      localStorage.setItem('neargrab_user', JSON.stringify(user));
+    }
+    return { accessToken, refreshToken, user };
+  }
+}
+
 const apiClient = {
   onUnauthorized: null, // Registered by auth store to handle global logout
+  onTokenRefreshed: null, // Registered by auth store to handle token sync
 
   async request(path, options = {}) {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -120,8 +165,46 @@ const apiClient = {
 
     // Handle unauthorized response (e.g. invalid/revoked Supabase token)
     if (response.status === 401) {
-      clearTokensAndLogout();
-      throw await parseErrorResponse(response, requestId);
+      const isRefreshRequest = path.includes('/auth/refresh');
+      if (isRefreshRequest) {
+        clearTokensAndLogout();
+        throw await parseErrorResponse(response, requestId);
+      }
+
+      try {
+        if (!refreshPromise) {
+          refreshPromise = performTokenRefresh().finally(() => {
+            refreshPromise = null;
+          });
+        }
+        const refreshResult = await refreshPromise;
+        const newAccessToken = refreshResult.accessToken;
+
+        if (apiClient.onTokenRefreshed) {
+          apiClient.onTokenRefreshed(refreshResult.accessToken, refreshResult.refreshToken, refreshResult.user);
+        }
+
+        // Retry the request with the new token
+        mergedHeaders['Authorization'] = `Bearer ${newAccessToken}`;
+        const retryController = new AbortController();
+        const retryId = setTimeout(() => retryController.abort(), timeout);
+
+        response = await fetch(url, {
+          ...fetchOptions,
+          headers: mergedHeaders,
+          signal: retryController.signal
+        });
+        clearTimeout(retryId);
+
+        if (response.status === 401) {
+          clearTokensAndLogout();
+          throw await parseErrorResponse(response, requestId);
+        }
+      } catch (refreshError) {
+        console.error('Token refresh failed, logging out:', refreshError);
+        clearTokensAndLogout();
+        throw await parseErrorResponse(response, requestId);
+      }
     }
 
     if (!response.ok) {

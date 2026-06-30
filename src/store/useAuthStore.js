@@ -28,6 +28,16 @@ apiClient.onUnauthorized = () => {
   });
 };
 
+// Handle global token refresh synchronization from apiClient
+apiClient.onTokenRefreshed = (accessToken, refreshToken, user) => {
+  setGlobalState({
+    accessToken,
+    refreshToken,
+    user,
+    isAuthenticated: true
+  });
+};
+
 const clearSession = () => {
   localStorage.removeItem('neargrab_access_token');
   localStorage.removeItem('neargrab_refresh_token');

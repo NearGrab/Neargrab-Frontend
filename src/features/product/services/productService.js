@@ -5,8 +5,13 @@ export const productService = {
   /**
    * Fetch rich product details.
    */
-  async getProductDetails(productId) {
-    const { data } = await apiClient.get(`/api/v1/products/${productId}`);
+  async getProductDetails(productId, locationParams = {}) {
+    const { data } = await apiClient.get(`/api/v1/products/${productId}`, {
+      params: {
+        latitude: locationParams.latitude || undefined,
+        longitude: locationParams.longitude || undefined,
+      }
+    });
     
     const shop = data.shop || {};
     const address = shop.address || {};
@@ -24,7 +29,7 @@ export const productService = {
       distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,
       delivery: 'Not available',
       address: `${address.street || ''}, ${address.city || ''} - ${address.pincode || ''}`.replace(/^,\s*/, ''),
-      image: shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80',
+      image: shop.logoUrl || shop.logo?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80',
       googleMapsUrl: shop.googleMapsUrl || ''
     };
 

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Store, Trash2, ArrowUpRight, Navigation, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartItemsSection({ items, updateQuantity, removeItem, onViewRoute }) {
+  const navigate = useNavigate();
+
   // Group items by shop
   const groupedShops = items.reduce((acc, item) => {
     const shopName = item.store || 'Local Store';
@@ -89,7 +92,10 @@ export default function CartItemsSection({ items, updateQuantity, removeItem, on
                 return (
                   <div key={item.id} className="py-5 flex items-center justify-between gap-4 group">
                     {/* Product visual info */}
-                    <div className="flex items-center gap-4 flex-grow min-w-0">
+                    <div
+                      onClick={() => navigate(`/product/${item.productId || item.id}`)}
+                      className="flex items-center gap-4 flex-grow min-w-0 cursor-pointer"
+                    >
                       <div className="w-16 h-16 bg-neutral-50 rounded-2xl border border-neutral-100 overflow-hidden shrink-0 flex items-center justify-center relative group-hover:border-brand-200 transition-colors">
                         <img
                           src={item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80"}

@@ -88,16 +88,26 @@ export const exploreService = {
     }
 
     // Nearby Stores
-    const stores = (data.nearbyShops || []).map(shop => ({
-      id: shop.id,
-      slug: shop.slug || null,
-      name: shop.name,
-      tags: ['Grocery', 'Local'],
-      distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,
-      rating: shop.ratingAvg || 4.5,
-      reviewsCount: shop.reviewCount || 10,
-      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'
-    }));
+    const stores = (data.nearbyShops || []).map(shop => {
+      let tags = shop.tags && shop.tags.length > 0 ? shop.tags : [];
+      if (tags.length === 0 && shop.categoryName) {
+        tags = [shop.categoryName];
+      }
+      if (tags.length === 0) {
+        tags = ['Grocery', 'Local'];
+      }
+
+      return {
+        id: shop.id,
+        slug: shop.slug || null,
+        name: shop.name,
+        tags,
+        distance: typeof shop.distanceKm === 'number' ? Number(shop.distanceKm.toFixed(1)) : 0.5,
+        rating: typeof shop.ratingAvg === 'number' ? shop.ratingAvg : 4.5,
+        reviewsCount: typeof shop.reviewCount === 'number' ? shop.reviewCount : 0,
+        image: shop.coverUrl || shop.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'
+      };
+    });
 
     // Top Picks
     const topPicks = (data.sections?.topPicks || data.topProducts || []).map(mapBackendProductToFrontend);

@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { Award, ShieldCheck, HeartHandshake, CheckCircle2, ChevronDown, ChevronUp, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Rating from '../../../shared/components/Rating';
 import Badge from '../../../shared/components/ui/Badge';
 import { useCartStore } from '../../../store/useCartStore';
 
 export default function ProductInfo({ product, onReportClick }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { addItem } = useCartStore();
+  const navigate = useNavigate();
+  const { addItem, items } = useCartStore();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
+  const isAlreadyInCart = items.some(item => (item.productId === product.id || item.id === product.id));
+
   const handleAddToCart = () => {
-    addItem(product, qty);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    if (isAlreadyInCart) {
+      navigate('/cart');
+    } else {
+      addItem(product, qty);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    }
   };
 
   const getBadgeIcon = (text) => {
@@ -97,13 +105,15 @@ export default function ProductInfo({ product, onReportClick }) {
         <button
           onClick={handleAddToCart}
           className={`flex-grow flex items-center justify-center gap-2 py-3 px-6 rounded-full font-poppins font-bold text-sm shadow-md transition-all active:scale-98 cursor-pointer select-none ${
-            added 
+            isAlreadyInCart
               ? 'bg-[#12634B] hover:bg-[#0B3B2C] text-white' 
-              : 'bg-brand-900 hover:bg-brand-800 text-white shadow-brand-900/10'
+              : added 
+                ? 'bg-[#12634B] hover:bg-[#0B3B2C] text-white' 
+                : 'bg-brand-900 hover:bg-brand-800 text-white shadow-brand-900/10'
           }`}
         >
           <ShoppingCart className="w-4 h-4" />
-          <span>{added ? 'Added to Cart ✓' : 'Add to Cart'}</span>
+          <span>{isAlreadyInCart ? 'Go to Cart' : added ? 'Added to Cart ✓' : 'Add to Cart'}</span>
         </button>
       </div>
 

@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Plus, MapPin } from 'lucide-react';
+import { Plus, MapPin } from 'lucide-react';
 import Rating from '../../../shared/components/Rating';
+import { useCartStore } from '../../../store/useCartStore';
 
 export default function TopPicks({ picks }) {
   const navigate = useNavigate();
-  const [wishlist, setWishlist] = useState({});
-
-  const toggleWishlist = (id) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
+  const { addItem } = useCartStore();
 
   return (
     <div className="w-full mt-6 md:mt-8">
@@ -35,8 +29,6 @@ export default function TopPicks({ picks }) {
       {/* Responsive Products Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 px-4 md:px-0">
         {picks.map((pick) => {
-          const isLiked = !!wishlist[pick.id];
-
           return (
             <div
               key={pick.id}
@@ -44,21 +36,6 @@ export default function TopPicks({ picks }) {
               className="bg-white border border-neutral-100/80 p-3 rounded-2xl flex flex-col justify-between hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer group"
             >
               <div className="relative">
-                {/* Wishlist Heart Toggle */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleWishlist(pick.id);
-                  }}
-                  className="absolute right-1 top-1 w-7 h-7 rounded-full bg-white border border-neutral-150 flex items-center justify-center shadow-sm cursor-pointer hover:bg-neutral-50 active:scale-90 transition-all z-10"
-                >
-                  <Heart
-                    className={`w-3.5 h-3.5 transition-colors ${
-                      isLiked ? 'text-red-500 fill-red-500' : 'text-text-muted hover:text-red-500'
-                    }`}
-                  />
-                </button>
-
                 {/* Product image container aspect-square */}
                 <div className="w-full aspect-square flex items-center justify-center mb-2.5 bg-neutral-50 rounded-xl overflow-hidden p-3.5">
                   <img
@@ -96,7 +73,8 @@ export default function TopPicks({ picks }) {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Quick addition to cart logic here if desired
+                      addItem(pick);
+                      alert(`"${pick.name}" successfully added to cart!`);
                     }}
                     className="w-6.5 h-6.5 rounded-lg bg-[#10B981] hover:bg-emerald-600 text-white flex items-center justify-center shadow-md cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all shrink-0 ml-1"
                     aria-label="Add to cart"
