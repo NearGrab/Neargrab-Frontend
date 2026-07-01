@@ -52,16 +52,6 @@ export default function ShopCoverBanner({
 
       {/* Buttons container */}
       <div className="absolute bottom-4 right-4 flex items-center gap-2">
-        {/* View Photos trigger */}
-        <button
-          type="button"
-          onClick={onViewPhotos}
-          className="flex items-center gap-1.5 bg-white/90 backdrop-blur-xs border border-neutral-200/50 text-text-primary px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-bold font-poppins shadow-sm hover:bg-white active:scale-95 transition-all cursor-pointer"
-        >
-          <Camera className="w-3.5 h-3.5" />
-          <span>View Photos ({photosCount})</span>
-        </button>
-
         {/* Edit Cover Trigger (Shopkeeper only) */}
         {isManageMode && (
           <button

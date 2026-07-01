@@ -2,9 +2,11 @@ import React from 'react';
 import { ShoppingCart, ArrowRight, Store, Star, MapPin, Link } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import ReviewCard from '../../../shared/components/ReviewCard';
+import { useCartStore } from '../../../store/useCartStore';
 
 export default function ExploreSidebar({ offers, listShop, reviews }) {
   const navigate = useNavigate();
+  const { addItem } = useCartStore();
 
   return (
     <div className="w-full flex flex-col gap-8">
@@ -25,6 +27,7 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
           {offers.map((offer) => (
             <div
               key={offer.id}
+              onClick={() => navigate(`/product/${offer.id}`)}
               className="flex items-center justify-between gap-3 p-2.5 rounded-2xl hover:bg-neutral-50 transition-colors duration-200 cursor-pointer group"
             >
               {/* Product Thumbnail with float orange discount badge */}
@@ -64,6 +67,11 @@ export default function ExploreSidebar({ offers, listShop, reviews }) {
 
               {/* Shopping cart quick add button */}
               <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(offer);
+                  alert(`"${offer.name}" successfully added to cart!`);
+                }}
                 className="w-8 h-8 rounded-lg bg-[#E6F4EA] hover:bg-brand-500 hover:text-white text-[#10B981] flex items-center justify-center shrink-0 shadow-sm cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all"
                 aria-label="Add offer to cart"
               >

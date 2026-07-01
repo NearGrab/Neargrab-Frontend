@@ -1,13 +1,66 @@
 import React from 'react';
 import { User, Lock, MapPin, CreditCard, UserX, ChevronRight } from 'lucide-react';
 
-export default function QuickActions() {
+export default function QuickActions({ setActiveTab }) {
   const quickActions = [
-    { label: 'Edit Profile', icon: <User className="w-4 h-4" />, action: () => alert('Edit profile details trigger') },
-    { label: 'Change Password', icon: <Lock className="w-4 h-4" />, action: () => alert('Password update expander trigger') },
-    { label: 'Manage Addresses', icon: <MapPin className="w-4 h-4" />, action: () => alert('Directing to manage addresses...') },
-    { label: 'Payment Methods', icon: <CreditCard className="w-4 h-4" />, action: () => alert('Opening saved cards and UPIs...') },
-    { label: 'Blocked Users', icon: <UserX className="w-4 h-4" />, action: () => alert('Showing blocked users list...') },
+    { 
+      label: 'Edit Profile', 
+      icon: <User className="w-4 h-4" />, 
+      action: () => {
+        if (setActiveTab) {
+          setActiveTab('Account');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } 
+    },
+    { 
+      label: 'Change Password', 
+      icon: <Lock className="w-4 h-4" />, 
+      action: () => {
+        if (setActiveTab) {
+          setActiveTab('Account');
+          setTimeout(() => {
+            const el = document.getElementById('security-settings-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              window.scrollTo({ top: 400, behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      } 
+    },
+    // { 
+    //   label: 'Manage Addresses', 
+    //   icon: <MapPin className="w-4 h-4" />, 
+    //   action: () => {
+    //     if (setActiveTab) {
+    //       setActiveTab('Privacy');
+    //       setTimeout(() => {
+    //         alert('Neargrab: Manage your delivery addresses. You can add or edit your primary delivery coordinates here!');
+    //       }, 100);
+    //     }
+    //   } 
+    // },
+    // { 
+    //   label: 'Payment Methods', 
+    //   icon: <CreditCard className="w-4 h-4" />, 
+    //   action: () => {
+    //     alert('Neargrab Payments: No saved cards found. You can link UPI wallets or cards during checkout!');
+    //   } 
+    // },
+    // { 
+    //   label: 'Blocked Users', 
+    //   icon: <UserX className="w-4 h-4" />, 
+    //   action: () => {
+    //     if (setActiveTab) {
+    //       setActiveTab('Privacy');
+    //       setTimeout(() => {
+    //         alert('Neargrab Privacy: You have not blocked any neighbors or stores yet.');
+    //       }, 100);
+    //     }
+    //   } 
+    // },
   ];
 
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function PopularSearches({ tags, onTagClick }) {
   return (
-    <div className="w-full bg-white border border-neutral-100 rounded-3xl p-5 shadow-sm text-left select-none">
+    <div className="w-full bg-white border border-neutral-100 rounded-3xl p-5 shadow-sm text-left">
       <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-50">
         <h3 className="font-poppins font-bold text-sm text-text-primary">
           Popular searches

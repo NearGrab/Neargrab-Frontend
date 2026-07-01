@@ -170,7 +170,7 @@ export default function PublicShopProfilePage() {
     { id: 'Overview', label: 'Overview', icon: <Info className="w-4 h-4" />, count: null },
     { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: products.length },
     { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: reviews.length },
-    { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: shopInfo?.photos?.length || 0 },
+    // { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: shopInfo?.photos?.length || 0 },
     // { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: updates.length }
   ];
 

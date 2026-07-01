@@ -202,7 +202,7 @@ export const searchService = {
         reviewsCount: shop.reviewCount || 10,
         distance: shop.distanceKm !== null && shop.distanceKm !== undefined ? Number(shop.distanceKm.toFixed(1)) : 0.5,
         verified: shop.verificationStatus === 'VERIFIED',
-        image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
+        image: shop.logoUrl || shop.coverUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'
       }));
     } catch (err) {
       console.error('Failed to fetch top rated stores:', err);

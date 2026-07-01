@@ -35,6 +35,7 @@ export default function Navbar() {
   }, [userLoc.city]);
 
   const containerRef = useRef(null);
+  const mobileContainerRef = useRef(null);
   const locationRef = useRef(null);
 
   // Parse actual active filter count from URL query parameters
@@ -80,7 +81,10 @@ export default function Navbar() {
   // Handle outside clicks to close suggestion drawers
   useEffect(() => {
     function handleClickOutside(event) {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      const clickedDesktop = containerRef.current && containerRef.current.contains(event.target);
+      const clickedMobile = mobileContainerRef.current && mobileContainerRef.current.contains(event.target);
+      
+      if (!clickedDesktop && !clickedMobile) {
         setShowSuggestions(false);
       }
       if (locationRef.current && !locationRef.current.contains(event.target)) {
@@ -413,7 +417,7 @@ export default function Navbar() {
           </div>
 
           {/* Row 3: Mobile Search Input with suggestions */}
-          <div className="flex items-center gap-2 w-full">
+          <div ref={mobileContainerRef} className="flex items-center gap-2 w-full">
             <div className="relative flex-grow">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
               <input

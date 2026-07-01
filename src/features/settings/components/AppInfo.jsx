@@ -9,11 +9,11 @@ export default function AppInfo() {
       <div className="space-y-2.5 text-xs">
         <div className="flex justify-between items-center py-1">
           <span className="text-text-secondary font-medium">App Version</span>
-          <span className="text-text-primary font-poppins font-bold">1.2.0</span>
+          <span className="text-text-primary font-poppins font-bold">1.0.0</span>
         </div>
         <div className="flex justify-between items-center py-1">
           <span className="text-text-secondary font-medium">Last Updated</span>
-          <span className="text-text-primary font-poppins font-bold">May 20, 2025</span>
+          <span className="text-text-primary font-poppins font-bold">July 1, 2026</span>
         </div>
         
         <div className="pt-3 border-t border-neutral-100 flex flex-col gap-2">

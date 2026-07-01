@@ -9,7 +9,9 @@ export default function AccountSettings({ user, onUpdateUser }) {
       <ProfileInfoForm user={user} onUpdateUser={onUpdateUser} />
 
       {/* Security Credentials Edit Form */}
-      <SecuritySettings />
+      <div id="security-settings-section">
+        <SecuritySettings />
+      </div>
     </div>
   );
 }

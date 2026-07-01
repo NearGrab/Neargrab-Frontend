@@ -153,7 +153,7 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* COLUMN 1: LEFT SIDEBAR (Avatar, Bio, Sidebar Nav Menu, Support Local Widget) */}
+          {/* COLUMN 1: LEFT SIDEBAR (Avatar, Bio, Sidebar Nav Menu) */}
           <div className="lg:col-span-3 flex flex-col gap-6 w-full">
             <ProfileSidebar
               user={currentUser}
@@ -162,28 +162,6 @@ export default function SettingsPage() {
               setActiveSidebarTab={setActiveSidebarTab}
               onEditClick={() => alert('Change avatar option triggered')}
             />
-
-            {/* Support Local Banner (matches look in screenshot perfectly) */}
-            <div className="bg-white rounded-3xl border border-neutral-200/50 shadow-sm p-6 text-center relative group hover:shadow-md transition-shadow">
-              <div className="relative w-24 h-24 mx-auto mb-4 bg-emerald-50 rounded-2xl flex items-center justify-center overflow-hidden border border-emerald-100">
-                <span className="text-5xl group-hover:scale-105 transition-transform duration-300">🏪</span>
-              </div>
-              <h4 className="font-poppins font-extrabold text-sm text-text-primary mb-1">
-                Support Local. Grow Together.
-              </h4>
-              <p className="text-[11px] leading-relaxed text-text-secondary mb-4 font-medium">
-                Every review and visit helps your neighborhood grow stronger.
-              </p>
-              <Button
-                variant="primary"
-                size="sm"
-                className="w-full font-bold flex items-center justify-center gap-1.5 shadow-sm"
-                onClick={() => navigate('/explore')}
-              >
-                <span>Explore Shops</span>
-                <span className="text-[10px]">➔</span>
-              </Button>
-            </div>
           </div>
 
           {/* COLUMN 2: CENTER WORKSPACE (Settings Dashboard) */}
@@ -263,7 +241,7 @@ export default function SettingsPage() {
 
           {/* COLUMN 3: RIGHT SIDEBAR (Quick Actions, Your Plan, Connected Accounts, App Info) */}
           <div className="lg:col-span-3 flex flex-col gap-6 w-full">
-            <RightSidebarWidgets />
+            <RightSidebarWidgets setActiveTab={setActiveTab} />
           </div>
 
         </div>

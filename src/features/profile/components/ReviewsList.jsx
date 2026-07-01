@@ -9,7 +9,7 @@ export default function ReviewsList({ initialReviews }) {
   const [sortBy, setSortBy] = useState('Most Recent');
 
   // Interactive Tab list
-  const tabs = ['Reviews', 'Helpful Votes', 'Photos', 'Activity'];
+  const tabs = ['Reviews'];
 
   // Handle helpful votes toggle incrementation reactive state
   const handleHelpfulClick = (reviewId) => {
@@ -59,23 +59,25 @@ export default function ReviewsList({ initialReviews }) {
   return (
     <div className="w-full flex flex-col">
       {/* Tab selection bar layout with emerald underline indicators */}
-      <div className="w-full bg-white rounded-2xl border border-neutral-200/50 p-1 flex items-center justify-between mb-6 shadow-sm overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-2 w-full">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 md:flex-none text-center py-2.5 px-5 rounded-xl font-poppins font-bold text-xs md:text-sm transition-all duration-300 cursor-pointer ${
-                activeTab === tab
-                  ? 'bg-brand-900 text-white shadow-md'
-                  : 'text-text-secondary hover:bg-neutral-50'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+      {tabs.length > 1 && (
+        <div className="w-full bg-white rounded-2xl border border-neutral-200/50 p-1 flex items-center justify-between mb-6 shadow-sm overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 w-full">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 md:flex-none text-center py-2.5 px-5 rounded-xl font-poppins font-bold text-xs md:text-sm transition-all duration-300 cursor-pointer ${
+                  activeTab === tab
+                    ? 'bg-brand-900 text-white shadow-md'
+                    : 'text-text-secondary hover:bg-neutral-50'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Reviews Header card */}
       <div className="w-full bg-white rounded-3xl border border-neutral-200/50 shadow-sm p-5 md:p-6 text-left">

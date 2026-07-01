@@ -46,7 +46,7 @@ export default function ShopProfilePage() {
     { id: 'Overview', label: 'Overview', icon: <Info className="w-4 h-4" />, count: null },
     { id: 'Products', label: 'Products', icon: <Package className="w-4 h-4" />, count: store.products.length },
     { id: 'Reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, count: store.reviews.length },
-    { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: store.photos.length },
+    // { id: 'Photos', label: 'Photos', icon: <Camera className="w-4 h-4" />, count: store.photos.length },
     // { id: 'Updates', label: 'Updates', icon: <Bell className="w-4 h-4" />, count: store.updates.length }
   ];
 
